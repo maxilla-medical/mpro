@@ -1,0 +1,169 @@
+<div id="mxMenu" style="
+    display:flex; flex-direction:column;
+    min-height:100vh; box-sizing:border-box;
+    padding:calc(24 * var(--u)) calc(16 * var(--u));
+    background:#FFFFFF;
+    border:none; border-radius:0; box-shadow:none; margin:0;
+    font-family:'Manrope',sans-serif;
+">
+    <a href="https://maxilla.pro/client/" class="mxm-brand">
+        <span class="mxm-brand-name">MAXILLA</span>
+        <span class="mxm-brand-sub">Medical Group</span>
+    </a>
+
+    <nav class="mxm-nav">
+        <a class="mxm-item mxm-home" href="https://maxilla.pro/client/">
+            <i class="mxm-i" data-lucide="house"></i><span>Головна</span>
+        </a>
+
+        <div class="mxm-group">Знімки</div>
+        <a class="mxm-item" href="https://maxilla.pro/client/custompage/40/">
+            <i class="mxm-i" data-lucide="users"></i><span>Пацієнти</span>
+        </a>
+
+        <div class="mxm-group">Дослідження</div>
+        <a class="mxm-item" href="https://maxilla.pro/client/myorders/radiology-reports/">
+            <i class="mxm-i" data-lucide="file-text"></i><span>Описи знімків</span>
+        </a>
+        <a class="mxm-item" href="https://maxilla.pro/client/custompage/53/">
+            <i class="mxm-i" data-lucide="scan-face"></i><span>3D-Ceph аналізи</span>
+        </a>
+        <a class="mxm-item" href="https://maxilla.pro/client/custompage/57/">
+            <i class="mxm-i" data-lucide="layers"></i><span>Суперімпозиція</span>
+        </a>
+
+        <div class="mxm-group">GuideFlow</div>
+        <a class="mxm-item" href="https://maxilla.pro/client/custompage/58/">
+            <i class="mxm-i" data-lucide="target"></i><span>Шаблони</span>
+        </a>
+
+        <div class="mxm-group">PrintFlow</div>
+        <a class="mxm-item" href="https://maxilla.pro/client/custompage/59/">
+            <i class="mxm-i" data-lucide="printer"></i><span>3D-друк</span>
+        </a>
+    </nav>
+
+    <div class="mxm-bottom">
+        <div class="mxm-line"></div>
+        <a class="mxm-util" href="https://t.me/edmaxilla">
+            <i class="mxm-ico-sm" data-lucide="life-buoy"></i><span>Підтримка</span>
+        </a>
+
+        <div class="mxm-profile">
+            <div class="mxm-pop" id="mxProfilePop">
+                <a class="mxm-pop-item" href="https://maxilla.pro/client/setting/">
+                    <i class="mxm-ico-sm" data-lucide="settings"></i><span>Налаштування</span>
+                </a>
+                <a class="mxm-pop-item" href="https://maxilla.pro/client/mybonus/">
+                    <i class="mxm-ico-sm" data-lucide="gift"></i><span>Мої бонуси</span>
+                </a>
+                <div class="mxm-pop-line"></div>
+                <a class="mxm-pop-item mxm-pop-exit" href="https://maxilla.pro/client/login/">
+                    <i class="mxm-ico-sm" data-lucide="log-out"></i><span>Вихід</span>
+                </a>
+            </div>
+
+            <button type="button" class="mxm-chip" id="mxProfileChip">
+                <span class="mxm-ava"><span id="mxMenuInitials"></span></span>
+                <span class="mxm-who">
+                    <span class="mxm-who-name" id="mxMenuDoctor"></span>
+                    <span class="mxm-who-bonus">
+                        <span class="mxm-bdot"></span>
+                        Бонусів&nbsp;<b id="mxMenuBonus">0</b>
+                    </span>
+                </span>
+                <i class="mxm-chev" data-lucide="chevrons-up-down"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+#mxMenu .mxm-brand{ display:block; padding:calc(6 * var(--u)) calc(10 * var(--u)); margin-bottom:calc(20 * var(--u)); text-decoration:none; }
+#mxMenu .mxm-brand-name{ display:block; font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:.06em; line-height:1; }
+#mxMenu .mxm-brand-sub{ display:block; font-size:calc(9.5 * var(--u)); font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:.16em; margin-top:calc(5 * var(--u)); line-height:1; }
+#mxMenu .mxm-nav{ display:flex; flex-direction:column; }
+#mxMenu .mxm-home{ margin-bottom:calc(3 * var(--u)); }
+#mxMenu .mxm-group{ font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:.09em; padding:0 calc(10 * var(--u)); margin:calc(16 * var(--u)) 0 calc(5 * var(--u)); }
+#mxMenu .mxm-item{ display:flex; align-items:center; gap:calc(11 * var(--u)); font-size:calc(14 * var(--u)); font-weight:500; color:#475569; text-decoration:none; padding:calc(8 * var(--u)) calc(10 * var(--u)); border-radius:calc(9 * var(--u)); white-space:nowrap; transition:background .14s ease, color .14s ease; }
+#mxMenu .mxm-item + .mxm-item{ margin-top:calc(1 * var(--u)); }
+#mxMenu .mxm-i{ width:calc(18 * var(--u)); height:calc(18 * var(--u)); color:#94A3B8; flex-shrink:0; transition:color .14s ease; }
+#mxMenu .mxm-item:hover{ background:#F1F5F9; color:#0F172A; }
+#mxMenu .mxm-item:hover .mxm-i{ color:#0F172A; }
+#mxMenu .mxm-item.mxm-active{ background:#F1F5F9; color:#0F172A; font-weight:600; }
+#mxMenu .mxm-item.mxm-active .mxm-i{ color:#0F172A; }
+#mxMenu .mxm-line{ height:1px; background:#F1F5F9; margin:calc(4 * var(--u)) calc(6 * var(--u)) calc(12 * var(--u)); }
+#mxMenu .mxm-bottom{ margin-top:auto; }
+#mxMenu .mxm-util{ display:flex; align-items:center; gap:calc(11 * var(--u)); padding:calc(8 * var(--u)) calc(10 * var(--u)); text-decoration:none; font-size:calc(14 * var(--u)); font-weight:500; border-radius:calc(9 * var(--u)); color:#475569; transition:background .14s ease, color .14s ease; }
+#mxMenu .mxm-util:hover{ background:#F1F5F9; color:#0F172A; }
+#mxMenu .mxm-ico-sm{ width:calc(18 * var(--u)); height:calc(18 * var(--u)); color:#94A3B8; flex-shrink:0; transition:color .14s ease; }
+#mxMenu .mxm-util:hover .mxm-ico-sm{ color:#0F172A; }
+#mxMenu .mxm-profile{ position:relative; margin-top:calc(6 * var(--u)); }
+#mxMenu .mxm-chip{ display:flex; align-items:center; gap:calc(11 * var(--u)); width:100%; background:transparent; border:1px solid transparent; border-radius:calc(12 * var(--u)); padding:calc(10 * var(--u)); cursor:pointer; text-align:left; font-family:'Manrope',sans-serif; transition:background .14s ease, border-color .14s ease; }
+#mxMenu .mxm-chip:hover{ background:#F8FAFC; border-color:#E8ECF1; }
+#mxMenu .mxm-ava{ width:calc(38 * var(--u)); height:calc(38 * var(--u)); border-radius:50%; background:#0F172A; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:calc(13 * var(--u)); font-weight:700; letter-spacing:.5px; flex-shrink:0; }
+#mxMenu .mxm-who{ display:flex; flex-direction:column; gap:calc(2 * var(--u)); min-width:0; flex:1; }
+#mxMenu .mxm-who-name{ font-size:calc(14 * var(--u)); font-weight:700; color:#0F172A; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#mxMenu .mxm-who-bonus{ display:inline-flex; align-items:center; gap:calc(5 * var(--u)); font-size:calc(12 * var(--u)); color:#475569; line-height:1; }
+#mxMenu .mxm-who-bonus b{ color:#0F172A; font-weight:700; }
+#mxMenu .mxm-bdot{ width:calc(5 * var(--u)); height:calc(5 * var(--u)); border-radius:50%; background:#CBD5E1; flex-shrink:0; }
+#mxMenu .mxm-chev{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); color:#94A3B8; flex-shrink:0; }
+#mxMenu .mxm-pop{ display:none; position:absolute; bottom:calc(100% + calc(8 * var(--u))); left:0; right:0; background:#FFFFFF; border:1px solid #E3E8EF; border-radius:calc(12 * var(--u)); box-shadow:0 4px 24px rgba(15,23,42,0.10), 0 1px 2px rgba(15,23,42,0.04); padding:calc(6 * var(--u)); z-index:60; }
+#mxMenu .mxm-pop.mxm-open{ display:block; }
+#mxMenu .mxm-pop-item{ display:flex; align-items:center; gap:calc(10 * var(--u)); padding:calc(9 * var(--u)) calc(10 * var(--u)); border-radius:calc(8 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; color:#475569; text-decoration:none; transition:background .14s ease, color .14s ease; }
+#mxMenu .mxm-pop-item:hover{ background:#F1F5F9; color:#0F172A; }
+#mxMenu .mxm-pop-item:hover .mxm-ico-sm{ color:#0F172A; }
+#mxMenu .mxm-pop-line{ height:1px; background:#F1F5F9; margin:calc(5 * var(--u)) calc(4 * var(--u)); }
+#mxMenu .mxm-pop-exit{ color:#64748B; }
+#mxMenu .mxm-pop-exit:hover{ background:#FEF2F2; color:#DC2626; }
+#mxMenu .mxm-pop-exit:hover .mxm-ico-sm{ color:#DC2626; }
+</style>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide) lucide.createIcons();</script>
+
+<script>
+(function(){
+    function initialsOf(name){
+        var parts=name.replace(/[.\-]/g,' ').split(/\s+/).filter(Boolean);
+        var a=parts[0]?parts[0].charAt(0):'';
+        var b=parts[1]?parts[1].charAt(0):'';
+        return (a+b).toUpperCase();
+    }
+    function fill(){
+        var el=$j('.client-cell-body.aside-right .os-flex-wrapper .element span').first();
+        var name=el.length?el.text().trim():'';
+        if(name){ $j('#mxMenuDoctor').text(name); $j('#mxMenuInitials').text(initialsOf(name)); }
+        var bF=false;
+        $j('.js-data-element').each(function(){
+            var cap=$j(this).find('.flex-caption').text().trim();
+            if(cap.indexOf('Бонус')!==-1){
+                var val=$j(this).find('.flex-value').text().trim();
+                var num=val.replace(/[^0-9.]/g,'');
+                $j('#mxMenuBonus').text(num!==''?num:'0'); bF=true;
+            }
+        });
+        if(!name||!bF){setTimeout(fill,500);}
+    }
+    $j(document).ready(fill);
+})();
+
+(function(){
+    var chip=document.getElementById('mxProfileChip');
+    var pop=document.getElementById('mxProfilePop');
+    if(!chip||!pop) return;
+    chip.addEventListener('click',function(e){ e.stopPropagation(); pop.classList.toggle('mxm-open'); });
+    document.addEventListener('click',function(e){ if(!pop.contains(e.target)) pop.classList.remove('mxm-open'); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') pop.classList.remove('mxm-open'); });
+})();
+
+(function(){
+    var path=location.pathname.replace(/\/+$/,'');
+    document.querySelectorAll('#mxMenu .mxm-item').forEach(function(a){
+        var href=a.getAttribute('href');
+        if(!href||href.indexOf('#')!==-1) return;
+        var ap=new URL(href,location.origin).pathname.replace(/\/+$/,'');
+        if(ap && ap===path) a.classList.add('mxm-active');
+    });
+})();
+</script>

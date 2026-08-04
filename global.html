@@ -1,0 +1,711 @@
+<!-- ==================== MAXILLA global (тяжёлая часть) — грузится загрузчиком из OneBox ==================== -->
+<!-- ПОДКЛЮЧЕНИЕ ИКОНОК LUCIDE -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) lucide.createIcons();
+  });
+</script>
+<style>
+/* ПРИМІТКА: --u визначено ІНЛАЙН у блоці-завантажувачі OneBox (над прелоадером). Тут його немає навмисно. */
+
+/* 1. ФОН */
+body.custom-body,.custom-body,.nc-client-grid,.client-row-body,.client-row-head,
+.client-cell-body,.nc-client-mob-button {
+    background: #F4F6F8 !important; font-family: 'Manrope', sans-serif !important;
+}
+/* 2. КАРТОЧКИ */
+.nc-client-grid table,.nc-client-grid .os-list,.nc-client-grid [class*="list-"],
+.nc-client-grid .ob-list,.client-cell-body .os-list-item,.client-cell-body table {
+    background: #FFFFFF !important; border: 1px solid #E3E8EF !important;
+    border-radius: calc(18 * var(--u)) !important;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 4px 16px rgba(15,23,42,0.06) !important;
+}
+/* 3. ТАБЛИЦА */
+.nc-client-grid table td,.nc-client-grid table th {
+    border: none !important; padding: calc(15 * var(--u)) calc(22 * var(--u)) !important; font-family: 'Manrope', sans-serif !important;
+}
+.nc-client-grid table th { color:#0F172A !important; font-weight:600 !important; font-size:calc(13 * var(--u)) !important; }
+.nc-client-grid table td { color:#0F172A !important; font-size:calc(15 * var(--u)) !important; }
+/* 4. СТРОКА hover */
+.nc-client-grid table tr:hover td { background:#FAFBFC !important; }
+/* 5. ЗАГОЛОВКИ */
+.nc-client-grid h1,.nc-client-grid h2 {
+    font-family:'Manrope',sans-serif !important; font-weight:700 !important;
+    color:#0F172A !important; letter-spacing:-0.3px !important;
+}
+/* 7. МАКС. ШИРИНА контента — немає */
+.nc-client-grid .client-cell-body:not(.aside-left):not(.aside-right) { max-width:none !important; }
+/* 8. ПРАВАЯ ПАНЕЛЬ — скрыть (НЕ УДАЛЯТЬ: источник данных врача!) */
+.client-cell-body.aside-right { display:none !important; width:0 !important; padding:0 !important; margin:0 !important; border:none !important; }
+/* 9. ШИРИНА ЛІВОГО МЕНЮ */
+.nc-client-grid.has-adaptive-slide-menu .client-cell-body.aside-left.aside-left,
+.nc-client-grid .client-cell-body.aside-left {
+    flex: 0 0 calc(252 * var(--u)) !important; width: calc(252 * var(--u)) !important;
+    min-width: calc(252 * var(--u)) !important; max-width: calc(252 * var(--u)) !important; box-sizing: border-box !important;
+}
+/* 10. ВІДСТУПИ КОНТЕНТУ (поджато 30/40) */
+.nc-client-grid .client-cell-body:not(.aside-left):not(.aside-right) { padding-left: calc(30 * var(--u)) !important; padding-right: calc(40 * var(--u)) !important; }
+/* 11. МЕНЮ ПРИЛИПАЄ ЗВЕРХУ */
+.nc-client-grid .client-cell-body.aside-left { position: sticky !important; top: 0 !important; align-self: flex-start !important; }
+/* 12. ПОРОЖНЯ ВЕРХНЯ ЗОНА */
+.nc-client-grid .client-row-head { padding-top:0 !important; padding-bottom:0 !important; margin:0 !important; min-height:0 !important; }
+/* 13. РЯД — sticky без overflow-обрізки */
+.nc-client-grid .client-row-body { overflow: visible !important; align-items: flex-start !important; }
+/* 14. FLUSH */
+.nc-client-grid { padding-left:0 !important; padding-top:0 !important; }
+.nc-client-grid .client-row-body { padding-left:0 !important; }
+.nc-client-grid .client-cell-body.aside-left { padding:0 !important; }
+/* 15. ГРИД І РЯД НА ВСЮ ШИРИНУ */
+.nc-client-grid,.nc-client-grid.has-adaptive-slide-menu { max-width:none !important; width:100% !important; margin-left:0 !important; margin-right:0 !important; }
+.nc-client-grid .client-row-body { max-width:none !important; width:100% !important; margin-left:0 !important; margin-right:0 !important; }
+/* 16. ПІДВАЛ ДО НИЗУ */
+.nc-client-grid .client-cell-body:not(.aside-left):not(.aside-right) { display:flex !important; flex-direction:column !important; min-height:100vh !important; }
+#mxFooterWrap { margin-top:auto !important; }
+/* 17. КОЛОНКА МЕНЮ */
+.nc-client-grid .client-cell-body.aside-left { background:#FFFFFF !important; border-right:1px solid #E8ECF1 !important; min-height:100vh !important; }
+
+/* ===== 18. СТИЛІ ТАБЛИЦІ + ПОШУКУ (fluid) ===== */
+.mx-sec-label{font-family:'Manrope',sans-serif;font-size:calc(12.5 * var(--u));font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.08em;margin:0 0 calc(11 * var(--u)) calc(2 * var(--u));}
+#mxLblOrders{margin-top:calc(26 * var(--u)) !important;margin-bottom:calc(11 * var(--u));}
+#mxSearchHint{font-family:'Manrope',sans-serif;font-size:calc(14.5 * var(--u));color:#475569;margin:0 0 calc(9 * var(--u)) calc(2 * var(--u));}
+#mxSearchHint b{color:#0F172A;font-weight:700;}
+.client-cell-body .os-overflow-table{margin-bottom:0 !important;}
+.client-cell-body table td{color:#0F172A !important;font-size:calc(15 * var(--u)) !important;text-transform:none !important;letter-spacing:0 !important;}
+.client-cell-body table tr.mx-thead td{color:#64748B !important;font-size:calc(12.5 * var(--u)) !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:.06em !important;padding:calc(16 * var(--u)) calc(22 * var(--u)) calc(10 * var(--u)) !important;white-space:nowrap !important;}
+.client-cell-body table tr:not(.mx-thead):not(:last-child) td{border-bottom:1px solid #EEF1F5 !important;}
+.client-cell-body table tr:not(.mx-thead) td:first-child{font-variant-numeric:tabular-nums !important;white-space:nowrap !important;}
+.client-cell-body table .ob-wf-stage{border:none !important;border-radius:calc(999 * var(--u)) !important;padding:calc(7 * var(--u)) calc(16 * var(--u)) !important;font-size:calc(14 * var(--u)) !important;font-weight:500 !important;text-transform:none !important;letter-spacing:0 !important;display:inline-flex !important;align-items:center !important;}
+.client-cell-body table .ob-wf-stage::before{display:none !important;}
+.client-cell-body table tr.mx-rowlink{cursor:pointer !important;transition:background .12s ease !important;}
+.client-cell-body table tr.mx-rowlink:hover td{background:#FAFBFC !important;}
+.client-cell-body table a.mx-viewlink,
+.client-cell-body table a.mx-viewlink:link,
+.client-cell-body table a.mx-viewlink:visited,
+.client-cell-body table a.mx-viewlink:hover {
+    display:inline-flex !important; align-items:center !important; gap:calc(6 * var(--u)) !important;
+    color:#0F172A !important; font-size:calc(14.5 * var(--u)) !important; font-weight:500 !important;
+    text-decoration:none !important; background:none !important; background-color:transparent !important;
+    border:none !important; box-shadow:none !important; padding:0 !important; margin:0 !important;
+    border-radius:0 !important; min-width:0 !important; white-space:nowrap !important;
+}
+.client-cell-body table a.mx-viewlink .mx-ch{color:#64748B !important;font-size:calc(18 * var(--u)) !important;font-weight:400 !important;line-height:1 !important;transition:color .12s ease, transform .12s ease !important;}
+.client-cell-body table a.mx-rowtext,
+.client-cell-body table a.mx-rowtext:link,
+.client-cell-body table a.mx-rowtext:visited,
+.client-cell-body table a.mx-rowtext:hover{
+    color:#0F172A !important; text-decoration:none !important;
+    background:none !important; background-color:transparent !important; border:none !important;
+    box-shadow:none !important; padding:0 !important; margin:0 !important; border-radius:0 !important;
+}
+.client-cell-body table tr.mx-rowlink:hover a.mx-viewlink .mx-ch{color:#0F172A !important;transform:translateX(3px) !important;}
+.client-cell-body table tr{transition:background .12s ease !important;}
+.client-cell-body:not(.aside-left):not(.aside-right) input[name="filtername"]::placeholder{color:#64748B !important;}
+.client-cell-body:not(.aside-left):not(.aside-right) .params-form .flex-item.small{display:none !important;}
+.client-cell-body:not(.aside-left):not(.aside-right) .params-form .flex-item.big{width:100% !important;flex:1 1 100% !important;max-width:calc(460 * var(--u)) !important;margin-right:auto !important;position:relative !important;}
+
+/* ===== 19. ФОРМИ (преміум-стан: rest / focus / error) ===== */
+@keyframes mxErrIn{ from{ opacity:0; transform:translateY(calc(-3 * var(--u))); } to{ opacity:1; transform:translateY(0); } }
+/* картка форми — центрована, з тінню (конверсійний вигляд) */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form){
+    max-width:calc(540 * var(--u)) !important; margin:calc(6 * var(--u)) auto calc(28 * var(--u)) !important;
+    background:#FFFFFF !important; border:1px solid #E8ECF1 !important; border-radius:calc(20 * var(--u)) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,0.04), 0 10px 34px rgba(15,23,42,0.07) !important;
+    padding:calc(30 * var(--u)) calc(30 * var(--u)) calc(28 * var(--u)) !important;
+    animation:mxErrIn .3s ease both !important;
+}
+/* компактна шапка форми: h2 + інтро-текст */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) > h2{
+    font-family:'Manrope',sans-serif !important; font-size:calc(21 * var(--u)) !important; font-weight:700 !important;
+    color:#0F172A !important; letter-spacing:-0.4px !important; margin:0 0 calc(4 * var(--u)) !important; line-height:1.15 !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) > br{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) > form{ margin-top:calc(20 * var(--u)) !important; }
+.mx-form-intro{ font-family:'Manrope',sans-serif !important; font-size:calc(13.5 * var(--u)) !important; color:#64748B !important; line-height:1.5 !important; margin:0 !important; }
+.mx-form-time{ display:inline-flex !important; align-items:center !important; gap:calc(4 * var(--u)) !important; white-space:nowrap !important; vertical-align:baseline !important; margin-left:calc(2 * var(--u)) !important; padding:calc(2 * var(--u)) calc(9 * var(--u)) !important; background:#F1F5F9 !important; border-radius:calc(999 * var(--u)) !important; font-size:calc(12 * var(--u)) !important; font-weight:600 !important; color:#475569 !important; }
+.mx-form-time svg{ width:calc(12 * var(--u)) !important; height:calc(12 * var(--u)) !important; color:#94A3B8 !important; }
+/* оверлей завантаження файлів */
+#mxUploadOverlay{ position:fixed; inset:0; z-index:99998; display:flex; align-items:center; justify-content:center; background:rgba(244,246,248,0.94); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); font-family:'Manrope',sans-serif; opacity:0; transition:opacity .25s ease; }
+#mxUploadOverlay.mxul-show{ opacity:1; }
+#mxUploadOverlay .mxul-box{ width:calc(360 * var(--u)); max-width:88vw; box-sizing:border-box; background:#FFFFFF; border:1px solid #E8ECF1; border-radius:calc(18 * var(--u)); box-shadow:0 1px 2px rgba(15,23,42,0.04), 0 12px 40px rgba(15,23,42,0.10); padding:calc(28 * var(--u)) calc(26 * var(--u)); text-align:center; }
+#mxUploadOverlay .mxul-title{ font-size:calc(16 * var(--u)); font-weight:700; color:#0F172A; letter-spacing:-0.2px; margin-bottom:calc(16 * var(--u)); }
+#mxUploadOverlay .mxul-bar{ position:relative; width:100%; height:calc(7 * var(--u)); border-radius:calc(999 * var(--u)); background:#EEF2F7; overflow:hidden; }
+#mxUploadOverlay .mxul-bar-i{ position:absolute; left:0; top:0; height:100%; width:0%; border-radius:calc(999 * var(--u)); background:#2c3bff; transition:width .2s linear; }
+#mxUploadOverlay .mxul-pct{ margin-top:calc(10 * var(--u)); font-size:calc(13 * var(--u)); font-weight:700; color:#2c3bff; font-variant-numeric:tabular-nums; }
+#mxUploadOverlay .mxul-sub{ margin-top:calc(12 * var(--u)); font-size:calc(12.5 * var(--u)); color:#64748B; line-height:1.5; }
+
+/* ===== 20. СТОРІНКА ПРОЦЕСУ (order): хром, поля, кнопка ===== */
+.mx-proc-head{ margin:0 0 calc(16 * var(--u)); }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element.js-section-01.mx-hide-labels .js-data-element .flex-caption{ display:none !important; }
+.mx-proc-head .mx-proc-title{ font-family:'Manrope',sans-serif !important; font-size:calc(17 * var(--u)); font-weight:600; color:#0F172A; letter-spacing:-0.2px; line-height:1.25; margin:0; }
+.mx-proc-head .mx-proc-sub{ font-family:'Manrope',sans-serif !important; font-size:calc(13.5 * var(--u)); color:#64748B; line-height:1.45; margin-top:calc(4 * var(--u)); }
+/* ховаємо стандартний хром OneBox */
+.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-history{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status-place{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element .flex-element.empty{ display:none !important; }
+/* поля процесу → картка (як у форми) */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element.js-section-01{
+    max-width:calc(560 * var(--u)) !important; margin:0 auto !important;
+    background:#FFFFFF !important; border:1px solid #E8ECF1 !important; border-radius:calc(20 * var(--u)) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,0.04), 0 10px 34px rgba(15,23,42,0.07) !important;
+    padding:calc(26 * var(--u)) calc(28 * var(--u)) !important; box-sizing:border-box !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element.js-section-01 .ob-data-element.js-data-element{
+    display:flex !important; flex-direction:column !important; margin-bottom:calc(14 * var(--u)) !important; background:none !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-wrap{ display:flex !important; flex-direction:column !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-caption{
+    order:1 !important; display:flex !important; align-items:center !important; gap:calc(8 * var(--u)) !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(13.5 * var(--u)) !important;
+    font-weight:600 !important; color:#0F172A !important; letter-spacing:-0.1px !important;
+    margin:0 0 calc(6 * var(--u)) calc(2 * var(--u)) !important; white-space:nowrap !important; flex-wrap:nowrap !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-caption .js-text{ white-space:nowrap !important; }
+.mx-fnum{ display:inline-flex !important; align-items:center !important; justify-content:center !important; width:calc(20 * var(--u)) !important; height:calc(20 * var(--u)) !important; border-radius:calc(6 * var(--u)) !important; background:#EEF2FF !important; color:#2c3bff !important; font-size:calc(11 * var(--u)) !important; font-weight:700 !important; flex-shrink:0 !important; font-family:'Manrope',sans-serif !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-value.data-view{ order:2 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit{ order:2 !important; padding-right:0 !important; width:100% !important; box-sizing:border-box !important; }
+/* ховаємо кнопку очищення (червоний ×) та іконки-віджети OneBox у полі */
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .ob-link-delete,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .ob-link-accept,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .js-clear,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-clear,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element [class*="clear"],
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element [class*="delete"],
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element [class*="accept"],
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-caption a,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-caption img,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-caption svg,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-caption [onclick]{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit input[type="text"],
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit input[type="email"],
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit input[type="tel"],
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit input:not([type]),
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit select,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit textarea{
+    width:100% !important; box-sizing:border-box !important; height:calc(46 * var(--u)) !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(15 * var(--u)) !important;
+    color:#0F172A !important; background:#FFFFFF !important;
+    border:1px solid #E3E8EF !important; border-radius:calc(12 * var(--u)) !important;
+    padding:calc(11 * var(--u)) calc(15 * var(--u)) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,0.04) !important; outline:none !important;
+    transition:border-color .16s ease, box-shadow .16s ease !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit input:focus,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit select:focus,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit textarea:focus,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element textarea:focus{
+    border-color:#2c3bff !important; box-shadow:0 0 0 calc(3 * var(--u)) rgba(44,59,255,0.10), 0 2px 10px rgba(44,59,255,0.10) !important;
+    transform:translateY(-1px) !important;
+}
+/* поля типу Текст (textarea) — гарантовано видимі, активні без кліку, компактні */
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit{ display:block !important; pointer-events:auto !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-view{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element textarea{
+    display:block !important; visibility:visible !important; pointer-events:auto !important;
+    width:100% !important; box-sizing:border-box !important;
+    min-height:0 !important; height:calc(46 * var(--u)) !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(15 * var(--u)) !important; line-height:calc(21 * var(--u)) !important;
+    color:#0F172A !important; background:#FFFFFF !important;
+    border:1px solid #E3E8EF !important; border-radius:calc(12 * var(--u)) !important;
+    padding:calc(11 * var(--u)) calc(15 * var(--u)) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,0.04) !important; outline:none !important; resize:none !important; overflow:hidden !important;
+    white-space:nowrap !important;
+    transition:border-color .16s ease, box-shadow .16s ease !important;
+}
+/* багаторядкове поле (Коментар) */
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element textarea.mx-ta-big{
+    min-height:calc(92 * var(--u)) !important; height:calc(92 * var(--u)) !important; resize:vertical !important; overflow:auto !important; white-space:pre-wrap !important; line-height:1.5 !important;
+}
+/* кнопка «Далі» — розхром'ю фіксовану полосу, роблю нашою пілюлею */
+.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status.js-button-fixed{
+    position:static !important; background:none !important; box-shadow:none !important; border:none !important;
+    padding:0 !important; margin:calc(16 * var(--u)) auto 0 !important; max-width:calc(560 * var(--u)) !important; width:100% !important; box-sizing:border-box !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status[data-mxhidebar="1"]{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) a.js-change-order-status,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status:link,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status:visited{
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    width:100% !important; height:calc(46 * var(--u)) !important; box-sizing:border-box !important;
+    background:#0F172A !important; color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(14.5 * var(--u)) !important; font-weight:600 !important;
+    border:none !important; border-radius:calc(12 * var(--u)) !important; text-decoration:none !important;
+    box-shadow:0 1px 3px rgba(15,23,42,0.10) !important; cursor:pointer !important;
+    transition:background .15s ease, transform .06s ease !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status *{ color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status:hover{ background:#1E293B !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status:active{ transform:translateY(1px) !important; }
+/* прибираємо темну смугу/рамку врапера поля процесу */
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .data-edit,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-wrap,
+.client-cell-body:not(.aside-left):not(.aside-right) .js-data-element .flex-value{ border:none !important; border-bottom:none !important; background:none !important; box-shadow:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element{
+    display:flex !important; flex-direction:column !important; margin-bottom:calc(14 * var(--u)) !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element .title{
+    order:1 !important; font-family:'Manrope',sans-serif !important; font-size:calc(13.5 * var(--u)) !important;
+    font-weight:600 !important; color:#0F172A !important; letter-spacing:-0.1px !important;
+    margin:0 0 calc(6 * var(--u)) calc(2 * var(--u)) !important; text-transform:none !important;
+}
+.mx-req{ color:#CBD5E1 !important; margin-left:calc(3 * var(--u)) !important; font-weight:600 !important; transition:color .18s ease !important; }
+/* заголовок секції — тихий uppercase-eyebrow з лінією (як у решті кабінету) */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section{
+    margin:calc(16 * var(--u)) 0 calc(9 * var(--u)) !important;
+    padding-top:calc(13 * var(--u)) !important; border-top:1px solid #EEF1F5 !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section:first-child{
+    margin-top:0 !important; padding-top:0 !important; border-top:none !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section .title{
+    font-size:calc(12 * var(--u)) !important; font-weight:700 !important; color:#64748B !important;
+    text-transform:uppercase !important; letter-spacing:.08em !important; margin:0 !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section .title .mx-req{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section input,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section textarea,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section select,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section .description,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-section .required-message{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-el-invalid .title .mx-req{ color:#DC2626 !important; }
+/* опис перенесено в placeholder — ховаємо */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element .description{ display:none !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element .clear{ display:none !important; }
+/* поля */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="text"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="email"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="tel"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="number"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="date"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input:not([type]),
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) select,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) textarea{
+    order:2 !important; width:100% !important; box-sizing:border-box !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(15 * var(--u)) !important;
+    color:#0F172A !important; background:#FFFFFF !important;
+    border:1px solid #E3E8EF !important; border-radius:calc(12 * var(--u)) !important;
+    padding:calc(12 * var(--u)) calc(15 * var(--u)) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,0.04) !important;
+    outline:none !important; margin:0 !important;
+    transition:border-color .16s ease, box-shadow .16s ease !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input::placeholder,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) textarea::placeholder{ color:#94A3B8 !important; opacity:1 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) textarea{
+    min-height:calc(96 * var(--u)) !important; resize:vertical !important; line-height:1.5 !important;
+}
+/* OneBox інлайном ставить border:red — гасимо в спокої (крім невалідних) */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element:not(.mx-el-invalid) input[style*="red"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element:not(.mx-el-invalid) textarea[style*="red"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element:not(.mx-el-invalid) select[style*="red"]{ border-color:#E3E8EF !important; }
+/* FOCUS — рамка темніє (активне поле) */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element:not(.mx-el-invalid) input:focus,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element:not(.mx-el-invalid) select:focus,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element:not(.mx-el-invalid) textarea:focus{
+    border-color:#0F172A !important; box-shadow:0 0 0 calc(3 * var(--u)) rgba(15,23,42,0.05) !important;
+}
+/* ERROR — червона рамка на невалідному полі */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-el-invalid input,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-el-invalid select,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-el-invalid textarea{
+    border-color:#DC2626 !important; box-shadow:0 0 0 calc(3 * var(--u)) rgba(220,38,38,0.06) !important;
+}
+/* повідомлення про помилку — сховане, зʼявляється лише при помилці з анімацією */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element .required-message{
+    order:3 !important; display:none !important;
+    background:none !important; background-color:transparent !important;
+    border:none !important; border-radius:0 !important; padding:0 !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(12.5 * var(--u)) !important; font-weight:500 !important;
+    line-height:1.4 !important; color:#DC2626 !important; margin:calc(5 * var(--u)) 0 0 calc(2 * var(--u)) !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element.mx-el-invalid .required-message{
+    display:block !important; animation:mxErrIn .2s ease both !important;
+}
+/* файлові поля → drag-drop зона */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input.mx-filehidden{
+    position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important; overflow:hidden !important; pointer-events:none !important; margin:0 !important; padding:0 !important; border:none !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dropzone{
+    order:2 !important; display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:flex-start !important; gap:calc(13 * var(--u)) !important;
+    width:100% !important; box-sizing:border-box !important; min-height:auto !important;
+    padding:calc(13 * var(--u)) calc(16 * var(--u)) !important;
+    border:1.5px dashed #CBD5E1 !important; border-radius:calc(12 * var(--u)) !important; background:#FBFCFE !important;
+    cursor:pointer !important; text-align:left !important; transition:border-color .16s ease, background .16s ease !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-textwrap{ display:flex !important; flex-direction:column !important; gap:calc(2 * var(--u)) !important; min-width:0 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dropzone:hover{ border-color:#94A3B8 !important; background:#F8FAFC !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dropzone.mx-drag{ border-color:#0F172A !important; background:#F1F5F9 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-ico{ width:calc(32 * var(--u)) !important; height:calc(32 * var(--u)) !important; border-radius:calc(9 * var(--u)) !important; background:#EEF2F7 !important; display:flex !important; align-items:center !important; justify-content:center !important; flex-shrink:0 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-ico svg{ width:calc(17 * var(--u)) !important; height:calc(17 * var(--u)) !important; color:#64748B !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-title{ font-family:'Manrope',sans-serif !important; font-size:calc(14.5 * var(--u)) !important; font-weight:600 !important; color:#334155 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-title b{ color:#0F172A !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-sub{ font-family:'Manrope',sans-serif !important; font-size:calc(12.5 * var(--u)) !important; color:#94A3B8 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-files{ order:3 !important; margin-top:calc(10 * var(--u)) !important; display:flex !important; flex-direction:column !important; gap:calc(6 * var(--u)) !important; width:100% !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-file{ display:flex !important; align-items:center !important; gap:calc(9 * var(--u)) !important; padding:calc(9 * var(--u)) calc(12 * var(--u)) !important; background:#F8FAFC !important; border:1px solid #E3E8EF !important; border-radius:calc(10 * var(--u)) !important; font-family:'Manrope',sans-serif !important; font-size:calc(13 * var(--u)) !important; color:#0F172A !important; animation:mxErrIn .2s ease both !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-file svg{ width:calc(15 * var(--u)) !important; height:calc(15 * var(--u)) !important; color:#64748B !important; flex-shrink:0 !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-file .mx-dz-name{ white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-file .mx-dz-x{ margin-left:auto !important; color:#94A3B8 !important; cursor:pointer !important; font-size:calc(16 * var(--u)) !important; line-height:1 !important; padding:0 calc(2 * var(--u)) !important; transition:color .12s ease !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .mx-dz-file .mx-dz-x:hover{ color:#DC2626 !important; }
+/* кнопка */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="submit"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) button[type="submit"],
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .os-button:not(.mx-search-btn){
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    width:100% !important; max-width:none !important;
+    height:calc(48 * var(--u)) !important; padding:0 calc(26 * var(--u)) !important;
+    background:#0F172A !important; color:#FFFFFF !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(15.5 * var(--u)) !important; font-weight:600 !important;
+    border:none !important; border-radius:calc(13 * var(--u)) !important;
+    cursor:pointer !important; box-shadow:0 2px 8px rgba(15,23,42,0.12) !important;
+    transition:background .15s ease, transform .06s ease, box-shadow .15s ease !important; -webkit-appearance:none !important; appearance:none !important;
+    margin-top:calc(14 * var(--u)) !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="submit"]:hover,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) button[type="submit"]:hover,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .os-button:not(.mx-search-btn):hover{ background:#1E293B !important; }
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) input[type="submit"]:active,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) button[type="submit"]:active,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .os-button:not(.mx-search-btn):active{ transform:translateY(1px) !important; box-shadow:0 1px 3px rgba(15,23,42,0.12) !important; }
+/* helper-підказка для файлових полів (placeholder на file не працює) */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-block-form:not(.params-form) .element .description.mx-filehelp{
+    display:block !important; order:3 !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(12.5 * var(--u)) !important;
+    color:#94A3B8 !important; margin:calc(5 * var(--u)) 0 0 calc(2 * var(--u)) !important; line-height:1.4 !important;
+}
+/* SUCCESS — преміум-стан після відправки */
+.client-cell-body:not(.aside-left):not(.aside-right) .os-success.js-success,
+.client-cell-body:not(.aside-left):not(.aside-right) .os-success{
+    max-width:calc(600 * var(--u)) !important;
+    background:#FFFFFF !important; border:1px solid #E3E8EF !important;
+    border-radius:calc(18 * var(--u)) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,0.04), 0 8px 28px rgba(15,23,42,0.06) !important;
+    padding:calc(40 * var(--u)) calc(32 * var(--u)) !important;
+    font-family:'Manrope',sans-serif !important; font-size:calc(16 * var(--u)) !important;
+    color:#0F172A !important; text-align:center !important;
+    animation:mxErrIn .35s ease both !important;
+}
+.client-cell-body:not(.aside-left):not(.aside-right) .os-success::before{
+    content:"" !important; display:block !important; margin:0 auto calc(18 * var(--u)) !important;
+    width:calc(54 * var(--u)) !important; height:calc(54 * var(--u)) !important; border-radius:50% !important;
+    background:#ECFDF5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/calc(26 * var(--u)) no-repeat !important;
+}
+</style>
+<!-- ==================== Глобал: JS (part 2) ==================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    function pageKey(){
+        var p = location.pathname;
+        if(p.indexOf('custompage/40') !== -1) return 'patients';
+        if(p.indexOf('radiology-reports') !== -1) return 'reports';
+        if(p.indexOf('custompage/53') !== -1) return 'ceph';
+        if(p.indexOf('custompage/57') !== -1) return 'superimp';
+        if(p.indexOf('custompage/58') !== -1) return 'guides';
+        if(p.indexOf('custompage/59') !== -1) return 'print';
+        if(p.indexOf('/order/') !== -1) return 'process';
+        return 'home';
+    }
+    var TEXT = {
+        home:     { hint:'<b>Пошук по всіх модулях</b> — знімки, дослідження, шаблони', label:'Найновіші замовлення' },
+        patients: { hint:'<b>Знайдіть пацієнта</b> за прізвищем', label:'Найновіші дослідження' },
+        reports:  { hint:'<b>Знайдіть опис</b> за прізвищем пацієнта', label:'Найновіші описи' },
+        ceph:     { hint:'<b>Знайдіть аналіз</b> за прізвищем пацієнта', label:'Найновіші аналізи' },
+        superimp: { hint:'<b>Знайдіть суперімпозицію</b> за прізвищем пацієнта', label:'Найновіші суперімпозиції' },
+        guides:   { hint:'<b>Знайдіть шаблон</b> за прізвищем пацієнта', label:'Найновіші шаблони' },
+        print:    { hint:'<b>Знайдіть друк</b> за прізвищем пацієнта', label:'Найновіші замовлення' }
+    };
+    var HEADS = ['Дата замовлення','Дата візиту','Створено','Пацієнт','Зона опису','Статус','Виконано','Дії','Дата','Клієнт'];
+    var PLACEHOLDER = 'Введіть прізвище пацієнта...';
+    var DATE_RE = new RegExp('^([0-9]{4})-([0-9]{2})-([0-9]{2})[ ]+([0-9]{2}):([0-9]{2})(:[0-9]{2})?$');
+    var tries = 0;
+    function apply(){
+        var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+        if(!col) return false;
+        var form = col.querySelector('.os-block-form.params-form');
+        var inp = col.querySelector('input[name="filtername"]');
+        var tbls = col.querySelectorAll('table');
+        if(!form || !inp || !tbls.length) return false;
+        var key = pageKey();
+        var cfg = TEXT[key] || TEXT.home;
+        if(inp.placeholder !== PLACEHOLDER) inp.placeholder = PLACEHOLDER;
+        if(!document.getElementById('mxSearchHint')){
+            var h = document.createElement('div');
+            h.id = 'mxSearchHint';
+            h.innerHTML = '<span>' + cfg.hint + '</span>';
+            form.parentNode.insertBefore(h, form);
+        }
+        if(!document.getElementById('mxLblOrders')){
+            var l2 = document.createElement('div');
+            l2.id = 'mxLblOrders';
+            l2.className = 'mx-sec-label';
+            var q = '';
+            try { var usp = new URLSearchParams(window.location.search); q = (usp.get('filtername') || '').trim(); } catch(err) { q = ''; }
+            if(q !== ''){ l2.textContent = 'Результати пошуку: ' + q; } else { l2.textContent = cfg.label; }
+            form.parentNode.insertBefore(l2, form.nextSibling);
+        }
+        Array.prototype.forEach.call(tbls, function(tbl){
+            Array.prototype.forEach.call(tbl.querySelectorAll('tr'), function(tr){
+                if(tr.classList.contains('mx-thead')) return;
+                var tds = tr.querySelectorAll('td, th');
+                if(!tds.length) return;
+                var hits = 0;
+                Array.prototype.forEach.call(tds, function(td){ if(HEADS.indexOf(td.textContent.trim()) !== -1) hits = hits + 1; });
+                if(hits * 2 >= tds.length){ tr.classList.add('mx-thead'); }
+            });
+            Array.prototype.forEach.call(tbl.querySelectorAll('tr:not(.mx-thead) td'), function(td){
+                var m = DATE_RE.exec(td.textContent.trim());
+                if(m){ td.textContent = m[3]+'.'+m[2]+'.'+m[1]+', '+m[4]+':'+m[5]; }
+            });
+            Array.prototype.forEach.call(tbl.querySelectorAll('tr:not(.mx-thead)'), function(tr){
+                if(tr.classList.contains('mx-rowlink')) return;
+                var anchors = Array.prototype.filter.call(tr.querySelectorAll('a[href]'), function(el){
+                    var h = el.getAttribute('href');
+                    return h && h !== '#';
+                });
+                if(!anchors.length) return;
+                // ссылка-дія: спершу за текстом «Переглянути», інакше — остання в рядку
+                var action = null;
+                for(var i=0;i<anchors.length;i++){
+                    var t = anchors[i].textContent.trim().replace(/\u203A/g,'').trim();
+                    if(t === 'Переглянути'){ action = anchors[i]; break; }
+                }
+                if(!action) action = anchors[anchors.length - 1];
+                if(!action.querySelector('.mx-ch')){
+                    var txt = action.textContent.trim();
+                    action.textContent = txt + ' ';
+                    var ch = document.createElement('span');
+                    ch.className = 'mx-ch';
+                    ch.textContent = '\u203A';
+                    action.appendChild(ch);
+                }
+                action.classList.add('mx-viewlink');
+                // решта посилань у рядку (напр. прізвище) — звичайний тёмний текст без стрілки
+                anchors.forEach(function(el){ if(el !== action) el.classList.add('mx-rowtext'); });
+                var href = action.getAttribute('href');
+                tr.classList.add('mx-rowlink');
+                tr.addEventListener('click', function(e){
+                    if(e.target.closest('a')) return;
+                    if(window.__mxPreShow) window.__mxPreShow();
+                    window.location.href = href;
+                });
+            });
+        });
+        if(window.lucide) lucide.createIcons();
+        return true;
+    }
+    function boot(){ tries = tries + 1; if(apply()) return; if(tries > 40) return; setTimeout(boot, 300); }
+    boot();
+
+    var OB_TITLES = ['Група Описи Досілджень','Група GuideFlow','Група Пацієнти','Група 3D-Ceph','Група Суперімпозиція','Група Суперпозиція'];
+    var htries = 0;
+    function hideObTitles(){
+        htries = htries + 1;
+        var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+        if(col){
+            var hs = col.querySelectorAll('h1');
+            Array.prototype.forEach.call(hs, function(el){ if(OB_TITLES.indexOf(el.textContent.trim()) !== -1){ el.style.display = 'none'; } });
+        }
+        if(htries > 40) return;
+        setTimeout(hideObTitles, 300);
+    }
+    hideObTitles();
+
+    // ===== оверлей завантаження файлів (псевдо-прогрес) =====
+    function showUploadOverlay(hasFiles){
+        if(document.getElementById('mxUploadOverlay')) return;
+        var ov = document.createElement('div');
+        ov.id = 'mxUploadOverlay';
+        ov.innerHTML = '<div class="mxul-box">'
+            + '<div class="mxul-title">' + (hasFiles ? 'Завантаження файлів…' : 'Надсилання заявки…') + '</div>'
+            + '<div class="mxul-bar"><span class="mxul-bar-i"></span></div>'
+            + '<div class="mxul-pct">0%</div>'
+            + (hasFiles ? '<div class="mxul-sub">Великі файли (КТ) можуть вантажитись до хвилини.<br>Будь ласка, не закривайте сторінку.</div>' : '<div class="mxul-sub">Зачекайте, будь ласка…</div>')
+            + '</div>';
+        document.body.appendChild(ov);
+        var bar = ov.querySelector('.mxul-bar-i');
+        var pctEl = ov.querySelector('.mxul-pct');
+        requestAnimationFrame(function(){ ov.classList.add('mxul-show'); });
+        var pct = 0;
+        var cap = hasFiles ? 94 : 88;
+        var timer = setInterval(function(){
+            var remaining = cap - pct;
+            pct += Math.max(0.25, remaining * 0.055);
+            if(pct > cap) pct = cap;
+            bar.style.width = pct + '%';
+            pctEl.textContent = Math.round(pct) + '%';
+        }, 200);
+        // безпека: не тримати таймер вічно (навігація на success сама прибере оверлей)
+        setTimeout(function(){ clearInterval(timer); }, 180000);
+    }
+
+    // ===== преміум-стани форм: placeholder, обовʼязкові, помилки =====
+    var rtries = 0;
+    function markRequired(){
+        rtries = rtries + 1;
+        var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+        if(col){
+            var forms = col.querySelectorAll('.os-block-form:not(.params-form)');
+            Array.prototype.forEach.call(forms, function(form){
+                // компактна шапка: голий інтро-текст після h2 → стилізований підзаголовок
+                if(!form.getAttribute('data-mxhead')){
+                    form.setAttribute('data-mxhead','1');
+                    var h2 = form.querySelector('h2');
+                    if(h2){
+                        var introTxt = '';
+                        var n = h2.nextSibling;
+                        var toRemove = [];
+                        while(n && !(n.nodeType === 1 && n.tagName === 'FORM')){
+                            if(n.nodeType === 3){ introTxt += n.textContent; }
+                            if(n.nodeType === 1 && n.tagName === 'BR'){ /* skip */ }
+                            var next = n.nextSibling;
+                            if(n.nodeType === 3 || (n.nodeType === 1 && n.tagName === 'BR')) toRemove.push(n);
+                            n = next;
+                        }
+                        introTxt = introTxt.replace(/\s+/g,' ').trim();
+                        toRemove.forEach(function(node){ if(node.parentNode) node.parentNode.removeChild(node); });
+                        if(introTxt){
+                            var sub = document.createElement('div');
+                            sub.className = 'mx-form-intro';
+                            sub.appendChild(document.createTextNode(introTxt + ' '));
+                            var pill = document.createElement('span');
+                            pill.className = 'mx-form-time';
+                            pill.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~2 хвилини';
+                            sub.appendChild(pill);
+                            if(h2.nextSibling){ h2.parentNode.insertBefore(sub, h2.nextSibling); }
+                            else { h2.parentNode.appendChild(sub); }
+                        }
+                    }
+                }
+                var els = form.querySelectorAll('.element');
+                Array.prototype.forEach.call(els, function(el){
+                    if(el.getAttribute('data-mxel')) return;
+                    el.setAttribute('data-mxel','1');
+                    // секція-заголовок: маркер heading_filed: в описі
+                    var descEl = el.querySelector('.description');
+                    var dtxt0 = descEl ? descEl.textContent.trim() : '';
+                    if(dtxt0.indexOf('heading_filed:') === 0){
+                        el.classList.add('mx-section');
+                        var titleEl = el.querySelector('.title');
+                        var SECT = { 'Patient':'Пацієнт', 'Planning':'Планування', 'Files':'Файли', 'Doctor':'Лікар', 'Comments':'Коментарі' };
+                        var keySec = dtxt0.split(':')[1] ? dtxt0.split(':')[1].trim() : '';
+                        if(titleEl && SECT[keySec]){ titleEl.textContent = SECT[keySec]; }
+                        return; // це не поле
+                    }
+                    var field = el.querySelector('input:not([type="hidden"]):not([type="file"]), select, textarea');
+                    var desc = el.querySelector('.description');
+                    var fileField = el.querySelector('input[type="file"]');
+                    // опис → placeholder (звичайні поля) або helper під кнопкою (файлові)
+                    if(field && desc){
+                        var dtext = desc.textContent.trim();
+                        if(dtext && !field.getAttribute('placeholder')){ field.setAttribute('placeholder', dtext); }
+                    } else if(fileField && !fileField.getAttribute('data-mxdz')){
+                        fileField.setAttribute('data-mxdz','1');
+                        fileField.classList.add('mx-filehidden');
+                        var dhint = desc ? desc.textContent.trim() : '';
+                        if(desc) desc.style.display = 'none';
+                        var multiple = fileField.hasAttribute('multiple');
+                        var dz = document.createElement('div');
+                        dz.className = 'mx-dropzone';
+                        dz.innerHTML = '<div class="mx-dz-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.7A5 5 0 0 0 18 7h-1.3A8 8 0 1 0 4 15.2"/></svg></div>'
+                            + '<div class="mx-dz-textwrap"><div class="mx-dz-title">Перетягніть файл' + (multiple ? 'и' : '') + ' сюди або <b>оберіть</b></div>'
+                            + (dhint ? '<div class="mx-dz-sub">' + dhint + '</div>' : '') + '</div>';
+                        var list = document.createElement('div');
+                        list.className = 'mx-dz-files';
+                        fileField.parentNode.insertBefore(dz, fileField);
+                        fileField.parentNode.insertBefore(list, fileField.nextSibling);
+                        var render = function(){
+                            list.innerHTML = '';
+                            var files = fileField.files;
+                            if(!files) return;
+                            for(var i=0;i<files.length;i++){
+                                (function(f){
+                                    var row = document.createElement('div');
+                                    row.className = 'mx-dz-file';
+                                    row.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span class="mx-dz-name">' + f.name + '</span>';
+                                    list.appendChild(row);
+                                })(files[i]);
+                            }
+                            if(files.length){
+                                dz.querySelector('.mx-dz-title').innerHTML = 'Файл' + (files.length>1?'и':'') + ' додано — <b>змінити</b>';
+                            } else {
+                                dz.querySelector('.mx-dz-title').innerHTML = 'Перетягніть файл' + (multiple?'и':'') + ' сюди або <b>оберіть</b>';
+                            }
+                        };
+                        dz.addEventListener('click', function(){ fileField.click(); });
+                        ['dragover','dragenter'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.add('mx-drag'); }); });
+                        ['dragleave','dragend'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.remove('mx-drag'); }); });
+                        dz.addEventListener('drop', function(e){
+                            e.preventDefault(); dz.classList.remove('mx-drag');
+                            if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
+                                try { fileField.files = e.dataTransfer.files; } catch(err){}
+                                render();
+                            }
+                        });
+                        fileField.addEventListener('change', render);
+                    }
+                    // Enter → наступне поле (окрім textarea)
+                    if(field && field.tagName !== 'TEXTAREA' && field.tagName !== 'SELECT'){
+                        field.addEventListener('keydown', function(e){
+                            if(e.key !== 'Enter') return;
+                            e.preventDefault();
+                            var all = Array.prototype.slice.call(form.querySelectorAll('input:not([type="hidden"]):not([type="submit"]), select, textarea'));
+                            var idx = all.indexOf(e.target);
+                            if(idx > -1 && idx < all.length - 1){ all[idx + 1].focus(); }
+                            else {
+                                var sb = form.querySelector('input[type="submit"], button[type="submit"], .js-check-required');
+                                if(sb) sb.focus();
+                            }
+                        });
+                    }
+                    var isReq = el.querySelector('.js-required, input[required], select[required], textarea[required]');
+                    if(isReq){
+                        var title = el.querySelector('.title');
+                        if(title && !title.querySelector('.mx-req')){
+                            var st = document.createElement('span');
+                            st.className = 'mx-req'; st.textContent = '*';
+                            title.appendChild(st);
+                        }
+                        if(field){
+                            field.addEventListener('blur', function(){
+                                if(!field.value || !field.value.trim()){ el.classList.add('mx-el-invalid'); }
+                                else { el.classList.remove('mx-el-invalid'); }
+                            });
+                            field.addEventListener('input', function(){
+                                if(field.value && field.value.trim()){ el.classList.remove('mx-el-invalid'); }
+                            });
+                        }
+                    }
+                });
+                var submit = form.querySelector('input[type="submit"], button[type="submit"], .js-check-required');
+                if(submit && !submit.getAttribute('data-mxsub')){
+                    submit.setAttribute('data-mxsub','1');
+                    submit.addEventListener('click', function(){
+                        Array.prototype.forEach.call(form.querySelectorAll('.element'), function(el){
+                            var f = el.querySelector('.js-required, input[required], select[required], textarea[required]');
+                            if(f && (!f.value || !f.value.trim())){ el.classList.add('mx-el-invalid'); }
+                        });
+                    }, true);
+                }
+                // оверлей завантаження при валідній відправці
+                var realForm = form.querySelector('form.js-form-validate') || form.querySelector('form');
+                if(realForm && !realForm.getAttribute('data-mxul')){
+                    realForm.setAttribute('data-mxul','1');
+                    realForm.addEventListener('submit', function(){
+                        var hasEmpty = false;
+                        Array.prototype.forEach.call(realForm.querySelectorAll('.js-required, input[required], select[required], textarea[required]'), function(f){
+                            if(!f.value || !f.value.trim()){ hasEmpty = true; }
+                        });
+                        if(hasEmpty) return; // OneBox заблокує сабміт — оверлей не потрібен
+                        var hasFiles = false;
+                        Array.prototype.forEach.call(realForm.querySelectorAll('input[type="file"]'), function(fi){ if(fi.files && fi.files.length){ hasFiles = true; } });
+                        showUploadOverlay(hasFiles);
+                    });
+                }
+            });
+        }
+        if(rtries > 40) return;
+        setTimeout(markRequired, 300);
+    }
+    markRequired();
+});
+</script>
