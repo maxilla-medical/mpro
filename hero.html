@@ -58,6 +58,21 @@
 #mxProcGrid .os-block-form .element .title .req,
 #mxProcGrid .os-block-form .element .title .mx-req,
 #mxProcGrid .os-block-form .element .title sup{ display:none !important; }
+/* на ФОРМІ пилюля «Обовʼязково» нейтральна (трохи темніша за «Опційно») —
+   червоною стає лише в стані помилки, після спроби перейти далі з порожнім полем */
+#mxProcGrid .os-block-form .element .title .mx-req-badge.mx-req-star{ color:#334155; background:#E2E8F0; }
+#mxProcGrid .os-block-form .element.mx-req-miss .title .mx-req-badge.mx-req-star{ color:#E11D48; background:#FEF2F2; }
+html #mxProcGrid .os-block-form .element.mx-req-miss input[type="text"],
+html #mxProcGrid .os-block-form .element.mx-req-miss input[type="email"],
+html #mxProcGrid .os-block-form .element.mx-req-miss input[type="tel"],
+html #mxProcGrid .os-block-form .element.mx-req-miss input[type="number"],
+html #mxProcGrid .os-block-form .element.mx-req-miss select,
+html #mxProcGrid .os-block-form .element.mx-req-miss textarea{ border-color:#F87171 !important; }
+html #mxProcGrid .os-block-form .element.mx-req-miss input:focus,
+html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-color:#F87171 !important; box-shadow:0 0 0 3px rgba(220,38,38,0.10) !important; }
+#mxProcGrid .os-block-form .element.mx-req-miss{ animation:mxshake .45s ease; }
+/* стандартні повідомлення OneBox не потрібні — стан показуємо самі */
+#mxProcGrid .os-block-form .required-message{ display:none !important; }
 #mxProcGrid .mx-col-form{ flex:1 1 calc(600 * var(--u)); min-width:0; max-width:calc(600 * var(--u)); display:flex; flex-direction:column; }
 #mxProcGrid .mx-col-side{ flex:0 0 calc(300 * var(--u)); display:flex; flex-direction:column; }
 /* панель вирівнюється по верхній межі картки форми (відступ = висота заголовка) */
@@ -1035,7 +1050,27 @@
                 var proxy = document.createElement('a');
                 proxy.id = 'mxNextProxy'; proxy.className = 'mx-next-proxy'; proxy.href = 'javascript:void(0)';
                 proxy.innerHTML = 'Далі <span style="margin-left:calc(4 * var(--u))">\u2192</span>';
-                proxy.addEventListener('click', function(e){ e.preventDefault(); sb.click(); });
+                // м'яка валідація: червоним стають лише незаповнені обовʼязкові поля ПІСЛЯ спроби переходу
+                proxy.addEventListener('click', function(e){
+                    e.preventDefault();
+                    var missing = [];
+                    Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el2){
+                        var inp = el2.querySelector('input.js-required, textarea.js-required, select.js-required');
+                        if(!inp || !inp.offsetParent) return;
+                        if(!(inp.value || '').trim()){ el2.classList.remove('mx-req-miss'); void el2.offsetWidth; el2.classList.add('mx-req-miss'); missing.push(el2); }
+                    });
+                    if(missing.length){
+                        try{ missing[0].scrollIntoView({ behavior:'smooth', block:'center' }); }catch(_){ }
+                        var fi2 = missing[0].querySelector('input, textarea'); if(fi2){ try{ fi2.focus({ preventScroll:true }); }catch(_){ } }
+                        return;
+                    }
+                    sb.click();
+                });
+                // заповнив поле → червоний стан гасне одразу
+                card.addEventListener('input', function(ev){
+                    var el2 = (ev.target && ev.target.closest) ? ev.target.closest('.element') : null;
+                    if(el2 && el2.classList.contains('mx-req-miss') && (ev.target.value || '').trim()){ el2.classList.remove('mx-req-miss'); }
+                }, true);
                 lcol.appendChild(proxy);
             }
 
