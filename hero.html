@@ -35,9 +35,28 @@
    (без цього грід на сторінці форми стискався, і блоки виглядали меншими, ніж на кроці 2) */
 #mxProcGrid .mx-col-form .os-block-form,
 #mxProcGrid .mx-col-form .os-block-element.js-section-01{ width:100%; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; box-sizing:border-box; }
-/* підписи полів кроку 1 = стиль кроку 2 (номер · назва, flex з тим самим відступом) */
-#mxProcGrid .os-block-form .element .title{ display:flex !important; align-items:center; gap:calc(8 * var(--u)); font-size:calc(14.5 * var(--u)) !important; font-weight:700 !important; color:#0F172A !important; letter-spacing:-0.2px; }
+/* ===== крок 1 = крок 2: однакова геометрія картки, підписів і полів (звірено замірами) ===== */
+/* картка: ті самі внутрішні відступи, що в картки кроку 2 (26u зверху, 28u з боків) */
+#mxProcGrid .mx-col-form .os-block-form{ padding:calc(26 * var(--u)) calc(28 * var(--u)) calc(28 * var(--u)) !important; }
+/* підпис поля: той самий кегль (13.5u, як реально рендериться на кроці 2), flex 8u від номера */
+#mxProcGrid .os-block-form .element .title{ display:flex !important; align-items:center; gap:calc(8 * var(--u)); margin:0 0 calc(9 * var(--u)) !important; font-size:calc(13.5 * var(--u)) !important; font-weight:700 !important; color:#0F172A !important; letter-spacing:-0.2px; }
 #mxProcGrid .os-block-form .element .title .mx-fnum{ margin-right:0 !important; }
+/* поле вводу: висота/кегль/рамка в масштабі зон кроку 2 (замість дрібних 36px-инпутів) */
+#mxProcGrid .os-block-form .element{ margin:0 0 calc(16 * var(--u)) !important; padding:0 !important; }
+#mxProcGrid .os-block-form .element input[type="text"],
+#mxProcGrid .os-block-form .element input[type="email"],
+#mxProcGrid .os-block-form .element input[type="tel"],
+#mxProcGrid .os-block-form .element input[type="number"],
+#mxProcGrid .os-block-form .element select{ width:100% !important; box-sizing:border-box; height:calc(46 * var(--u)) !important; padding:0 calc(14 * var(--u)) !important; font-family:'Manrope',sans-serif; font-size:calc(13.5 * var(--u)) !important; color:#0F172A !important; background:#FFFFFF !important; border:1.5px solid #E2E8F0 !important; border-radius:calc(12 * var(--u)) !important; outline:none; transition:border-color .15s ease, box-shadow .15s ease; }
+#mxProcGrid .os-block-form .element textarea{ width:100% !important; box-sizing:border-box; min-height:calc(90 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)) !important; font-family:'Manrope',sans-serif; font-size:calc(13.5 * var(--u)) !important; color:#0F172A !important; background:#FFFFFF !important; border:1.5px solid #E2E8F0 !important; border-radius:calc(12 * var(--u)) !important; outline:none; resize:vertical; transition:border-color .15s ease, box-shadow .15s ease; }
+#mxProcGrid .os-block-form .element input:focus,
+#mxProcGrid .os-block-form .element select:focus,
+#mxProcGrid .os-block-form .element textarea:focus{ border-color:#2c3bff !important; box-shadow:0 0 0 3px rgba(44,59,255,0.12); }
+#mxProcGrid .os-block-form .element input::placeholder,
+#mxProcGrid .os-block-form .element textarea::placeholder{ color:#94A3B8; font-size:calc(13 * var(--u)); }
+/* зірочки обовʼязковості ховаємо — статус показують пилюлі, як на кроці 2 */
+#mxProcGrid .os-block-form .element .title .req,
+#mxProcGrid .os-block-form .element .title sup{ display:none !important; }
 #mxProcGrid .mx-col-form{ flex:1 1 calc(600 * var(--u)); min-width:0; max-width:calc(600 * var(--u)); display:flex; flex-direction:column; }
 #mxProcGrid .mx-col-side{ flex:0 0 calc(300 * var(--u)); display:flex; flex-direction:column; }
 /* панель вирівнюється по верхній межі картки форми (відступ = висота заголовка) */
@@ -218,9 +237,9 @@
 #mxProcGrid .mx-filefield .flex-caption a.ob-link-info{ display:none !important; }
 #mxProcGrid .mx-filefield .flex-caption div[class*="js-universal-block-order"]{ display:none !important; }
 /* бейджі: обов'язкове (червоне) / опційне (сіре) — головний сигнал з півпогляду */
-#mxProcGrid .mx-filefield .mx-req-badge{ flex:0 0 auto; font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:.01em; border-radius:calc(999 * var(--u)); padding:calc(3 * var(--u)) calc(10 * var(--u)); line-height:1.35; }
-#mxProcGrid .mx-filefield .mx-req-star{ color:#E11D48; background:#FEF2F2; }
-#mxProcGrid .mx-filefield .mx-req-opt{ color:#64748B; background:#F1F5F9; }
+#mxProcGrid .mx-filefield .mx-req-badge, #mxProcGrid .os-block-form .mx-req-badge{ flex:0 0 auto; font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:.01em; border-radius:calc(999 * var(--u)); padding:calc(3 * var(--u)) calc(10 * var(--u)); line-height:1.35; }
+#mxProcGrid .mx-filefield .mx-req-star, #mxProcGrid .os-block-form .mx-req-star{ color:#E11D48; background:#FEF2F2; }
+#mxProcGrid .mx-filefield .mx-req-opt, #mxProcGrid .os-block-form .mx-req-opt{ color:#64748B; background:#F1F5F9; }
 /* зона завантаження: іконка · двострічковий текст (дія + формат/кілька) · «Обрати» */
 #mxProcGrid .mx-filefield .ob-block-attach{ display:block; width:100%; box-sizing:border-box; margin:0; }
 #mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn{ display:flex; align-items:center; gap:calc(14 * var(--u)); width:100%; box-sizing:border-box; min-height:calc(66 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:calc(14 * var(--u)); color:#475569; text-decoration:none; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
@@ -994,6 +1013,16 @@
                 num = num + 1;
                 var badge = document.createElement('span'); badge.className = 'mx-fnum'; badge.textContent = num;
                 title.insertBefore(badge, title.firstChild);
+                // статус поля — пилюлі, як на кроці 2 (зірочку прибираємо)
+                var isReq = /\*/.test(title.textContent) || !!el.querySelector('.req, [required]');
+                Array.prototype.forEach.call(title.childNodes, function(n){
+                    if(n.nodeType === 3 && n.textContent.indexOf('*') !== -1){ n.textContent = n.textContent.replace(/\s*\*\s*/g, ' ').replace(/\s+$/,''); }
+                });
+                var star = title.querySelector('.req, sup'); if(star && star.parentNode){ star.parentNode.removeChild(star); }
+                var pill = document.createElement('span');
+                if(isReq){ pill.className = 'mx-req-badge mx-req-star'; pill.textContent = 'Обов’язково'; }
+                else { pill.className = 'mx-req-badge mx-req-opt'; pill.textContent = 'Опційно'; }
+                title.appendChild(pill);
             });
 
             // «Далі →» окремою пілюлею ПІД карткою (як у F1). Справжній сабміт лишаємо у формі
