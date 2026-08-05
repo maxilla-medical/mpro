@@ -136,6 +136,11 @@
 .client-cell-body:not(.aside-left):not(.aside-right) .params-form input.mx-search-btn:hover {
     background: #F1F5F9 !important; color: #0F172A !important; border-left-color: #E3E8EF !important;
 }
+/* ===== ФОРМА-ЗАЯВКА у вигляді F1 (двоколонковий layout) ===== */
+#mxProcGrid .mx-col-form > .os-block-form:not(.params-form){ max-width:100% !important; margin:0 !important; }
+#mxProcGrid .os-block-form:not(.params-form) > h2,
+#mxProcGrid .os-block-form:not(.params-form) .mx-form-intro{ display:none !important; }
+#mxProcGrid .os-block-form:not(.params-form) .element.mx-section{ display:none !important; }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -445,33 +450,93 @@
         }
         renderProc();
     } else if(key === 'form'){
-        var heroEl = document.getElementById('mxHero');
-        if(heroEl) heroEl.style.display = 'none';
-        // шапка форми: ← Назад (гібрид) + reassurance
-        var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
-        if(col && !document.getElementById('mxFormTopbar')){
-            var bar = document.createElement('div');
-            bar.className = 'mx-form-topbar';
-            bar.id = 'mxFormTopbar';
-            bar.innerHTML =
-                '<a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' +
-                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>' +
-                    'Назад</a>' +
-                '<span class="mx-fsafe">' +
-                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>' +
-                    'Дані захищені</span>';
-            var anchor = heroEl || col.firstChild;
-            if(anchor){ col.insertBefore(bar, anchor); } else { col.appendChild(bar); }
-            var backBtn = bar.querySelector('.mx-fback');
-            backBtn.addEventListener('click', function(e){
-                var sameOrigin = document.referrer && document.referrer.indexOf(location.origin) === 0;
-                if(window.history.length > 1 && sameOrigin){
-                    e.preventDefault();
-                    history.back();
-                }
-                // інакше — звичайний перехід по href на Шаблони (fallback для прямого заходу)
+        // ФОРМА-ЗАЯВКА (/form/): одягаємо у двоколонковий дизайн F1.
+        // Форма нічого не створює при заході; «Далі» → OneBox створює процес на F2.
+        var heroElF = document.getElementById('mxHero');
+        if(heroElF) heroElF.style.display = 'none';
+        var STEP_LBL_F = ['Дані замовлення','КТ та Скани'];
+        var fBackSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>';
+        var fSafeSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>';
+        var fI1 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.5" fill="currentColor"/></svg>';
+        var fI2 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+        var fI3 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="14" width="12" height="8" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/><path d="M6 9V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v5"/></svg>';
+        var fIGrid = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+        var fICheck = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+        var ftries = 0;
+        function renderForm(){
+            ftries = ftries + 1;
+            var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+            var card = col ? col.querySelector('.os-block-form:not(.params-form)') : null;
+            if(!col || !card){ if(ftries <= 50) setTimeout(renderForm, 200); return; }
+            if(document.getElementById('mxProcGrid')) return;   // вже зібрано
+
+            var top = document.getElementById('mxProcTop');
+            if(!top){ top = document.createElement('div'); top.id = 'mxProcTop'; col.insertBefore(top, col.firstChild); }
+            top.innerHTML =
+                '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + fBackSvg + 'Назад</a>' +
+                '<span class="mx-fsafe">' + fSafeSvg + 'Дані захищені</span></div>';
+
+            var dots = '';
+            for(var di=1; di<=STEP_LBL_F.length; di++){ dots += '<span class="mx-fd' + (di===1?' mx-on':'') + '"></span>'; }
+            var headHTML =
+                '<div class="mx-form-head">' +
+                '<div class="mx-fill"><span class="mx-fill-badge">Крок 1 з ' + STEP_LBL_F.length + '</span>' +
+                '<span class="mx-fill-dots">' + dots + '</span>' +
+                '<span class="mx-fill-name">' + STEP_LBL_F[0] + '</span></div>' +
+                '<div class="mx-fh-h1">Хірургічний шаблон</div>' +
+                '<div class="mx-fh-sub">Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b></div></div>';
+
+            var grid = document.createElement('div'); grid.id = 'mxProcGrid';
+            var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
+            var rcol = document.createElement('div'); rcol.className = 'mx-col-side';
+            rcol.innerHTML =
+                '<div class="mx-side">' +
+                    '<div class="mx-side-hero">' + fI1 + '<div><div class="mx-sh-t">Точна навігація</div><div class="mx-sh-s">3D-планування імплантації</div></div></div>' +
+                    '<div class="mx-side-eyebrow">Що ви отримаєте</div>' +
+                    '<div class="mx-side-item"><div class="mx-side-ico">' + fI2 + '</div><div class="mx-side-txt"><div class="mx-side-t">48 годин</div><div class="mx-side-s">Виготовлення після затвердження плану</div></div></div>' +
+                    '<div class="mx-side-item"><div class="mx-side-ico">' + fI3 + '</div><div class="mx-side-txt"><div class="mx-side-t">Гарантований друк</div><div class="mx-side-s">Друк на вашому принтері за нашим профілем</div></div></div>' +
+                    '<div class="mx-side-item"><div class="mx-side-ico">' + fIGrid + '</div><div class="mx-side-txt"><div class="mx-side-t">100+ систем</div><div class="mx-side-s">Плануємо під усі системи імплантатів</div></div></div>' +
+                    '<div class="mx-side-foot">' + fICheck + 'Дані пацієнта захищені та зашифровані</div>' +
+                '</div>';
+            grid.appendChild(lcol); grid.appendChild(rcol);
+            top.parentNode.insertBefore(grid, top.nextSibling);
+            lcol.insertAdjacentHTML('afterbegin', headHTML);
+            lcol.appendChild(card);              // переносимо картку форми ліворуч
+
+            // нумерація реальних полів (пропускаємо секції-заголовки heading_filed)
+            var num = 0;
+            Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
+                if(el.classList.contains('mx-section')) return;
+                var d = el.querySelector('.description');
+                if(d && d.textContent.trim().indexOf('heading_filed:') === 0) return;
+                var fld = el.querySelector('input:not([type="hidden"]):not([type="submit"]), select, textarea');
+                var title = el.querySelector('.title');
+                if(!fld || !title || title.querySelector('.mx-fnum')) return;
+                num = num + 1;
+                var badge = document.createElement('span'); badge.className = 'mx-fnum'; badge.textContent = num;
+                title.insertBefore(badge, title.firstChild);
             });
+
+            // кнопка → «Далі →»
+            var sb = card.querySelector('input[type="submit"], button[type="submit"]');
+            if(sb){ if(sb.tagName === 'INPUT'){ sb.value = 'Далі \u2192'; } else { sb.innerHTML = 'Далі <span style="margin-left:calc(4 * var(--u))">\u2192</span>'; } }
+
+            // вирівнюємо панель (верх по картці, низи зводить flex)
+            var alignFormSide = function(){
+                var sideEl = rcol.querySelector('.mx-side');
+                if(!sideEl) return;
+                sideEl.style.minHeight = ''; rcol.style.marginTop = '';
+                if(window.innerWidth <= 900){ rcol.style.removeProperty('--mx-head-h'); return; }
+                var off = card.getBoundingClientRect().top - lcol.getBoundingClientRect().top;
+                rcol.style.setProperty('--mx-head-h', (off > 0 ? off : 0) + 'px');
+            };
+            requestAnimationFrame(function(){ requestAnimationFrame(alignFormSide); });
+            setTimeout(alignFormSide, 200); setTimeout(alignFormSide, 600); setTimeout(alignFormSide, 1200); setTimeout(alignFormSide, 2500);
+            window.__mxAlignFn = alignFormSide;
+            if(!window.__mxAlignBound){ window.__mxAlignBound = true; window.addEventListener('resize', function(){ if(window.__mxAlignFn) window.__mxAlignFn(); }); }
+            if(window.ResizeObserver){ if(window.__mxRO){ try{ window.__mxRO.disconnect(); }catch(_){ } } window.__mxRO = new ResizeObserver(function(){ if(window.__mxAlignFn) window.__mxAlignFn(); }); window.__mxRO.observe(lcol); }
         }
+        renderForm();
     } else if(key === 'home'){
         var hh = new Date().getHours();
         var g = 'Добрий день';
