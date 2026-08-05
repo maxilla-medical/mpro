@@ -855,7 +855,7 @@
                                 '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">3</span></div>' +
                                     '<div class="mx-stp-txt"><div class="mx-stp-t">Шаблон у клініці за 48 годин</div>' +
                                     '<div class="mx-stp-s">Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.</div></div></div>' +
-                                '<div class="mx-side-foot">' + iCheck + 'Дані пацієнта захищені та зашифровані</div>' +
+                                '<div class="mx-side-foot">' + iCheck + 'Дані пацієнта захищені</div>' +
                             '</div>';
                         grid.appendChild(lcol); grid.appendChild(rcol);
                         top.parentNode.insertBefore(grid, top.nextSibling);
@@ -955,14 +955,20 @@
             var grid = document.createElement('div'); grid.id = 'mxProcGrid';
             var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
             var rcol = document.createElement('div'); rcol.className = 'mx-col-side';
+            // той самий таймлайн, що на кроці 2 — обидва кроки виглядають як один продукт
             rcol.innerHTML =
                 '<div class="mx-side">' +
-                    '<div class="mx-side-hero">' + fI1 + '<div><div class="mx-sh-t">Точна навігація</div><div class="mx-sh-s">3D-планування імплантації</div></div></div>' +
-                    '<div class="mx-side-eyebrow">Що ви отримаєте</div>' +
-                    '<div class="mx-side-item"><div class="mx-side-ico">' + fI2 + '</div><div class="mx-side-txt"><div class="mx-side-t">48 годин</div><div class="mx-side-s">Виготовлення після затвердження плану</div></div></div>' +
-                    '<div class="mx-side-item"><div class="mx-side-ico">' + fI3 + '</div><div class="mx-side-txt"><div class="mx-side-t">Гарантований друк</div><div class="mx-side-s">Друк на вашому принтері за нашим профілем</div></div></div>' +
-                    '<div class="mx-side-item"><div class="mx-side-ico">' + fIGrid + '</div><div class="mx-side-txt"><div class="mx-side-t">100+ систем</div><div class="mx-side-s">Плануємо під усі системи імплантатів</div></div></div>' +
-                    '<div class="mx-side-foot">' + fICheck + 'Дані пацієнта захищені та зашифровані</div>' +
+                    '<div class="mx-side-eyebrow">Як це працює</div>' +
+                    '<div class="mx-stp mx-stp-act"><div class="mx-stp-rail"><span class="mx-stp-n">1</span><span class="mx-stp-line"></span></div>' +
+                        '<div class="mx-stp-txt"><div class="mx-stp-t">Спочатку — оцінка<span class="mx-stp-here">Ви тут</span></div>' +
+                        '<div class="mx-stp-s">Надсилаєте КТ і скани — ми аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b></div></div></div>' +
+                    '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">2</span><span class="mx-stp-line"></span></div>' +
+                        '<div class="mx-stp-txt"><div class="mx-stp-t">Оплата після погодження</div>' +
+                        '<div class="mx-stp-s">Вносите оплату лише тоді, коли запропонований план Вас влаштовує.</div></div></div>' +
+                    '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">3</span></div>' +
+                        '<div class="mx-stp-txt"><div class="mx-stp-t">Шаблон у клініці за 48 годин</div>' +
+                        '<div class="mx-stp-s">Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.</div></div></div>' +
+                    '<div class="mx-side-foot">' + fICheck + 'Дані пацієнта захищені</div>' +
                 '</div>';
             grid.appendChild(lcol); grid.appendChild(rcol);
             top.parentNode.insertBefore(grid, top.nextSibling);
