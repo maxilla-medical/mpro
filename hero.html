@@ -43,6 +43,18 @@
 .mx-col-form .mx-form-head .mx-fh-h1{ font-size:calc(26 * var(--u)); font-weight:700; color:#0F172A; letter-spacing:-0.5px; line-height:1.15; margin:0 0 calc(7 * var(--u)); }
 .mx-col-form .mx-form-head .mx-fh-sub{ font-size:calc(13.5 * var(--u)); color:#64748B; line-height:1.5; }
 .mx-col-form .mx-form-head .mx-fh-sub b{ color:#0F172A; font-weight:600; }
+/* візуальний маршрут кроку 2: «КТ → скани (якщо є) → ми зв'яжемось» — читається як картинка */
+.mx-col-form .mx-form-head .mx-fh-flow{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(6 * var(--u)); margin-top:calc(12 * var(--u)); }
+.mx-flow-step{ display:inline-flex; align-items:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E7ECF3; border-radius:calc(999 * var(--u)); padding:calc(7 * var(--u)) calc(15 * var(--u)) calc(7 * var(--u)) calc(8 * var(--u)); box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+.mx-flow-ic{ flex:0 0 auto; width:calc(26 * var(--u)); height:calc(26 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; }
+.mx-flow-ic svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
+.mx-flow-ic.f1{ background:#EEF2FF; color:#2c3bff; }
+.mx-flow-ic.f2{ background:#F1F5F9; color:#64748B; }
+.mx-flow-ic.f3{ background:#ECFDF5; color:#059669; }
+.mx-flow-t{ font-size:calc(12.5 * var(--u)); font-weight:700; color:#0F172A; white-space:nowrap; line-height:1.2; }
+.mx-flow-t small{ display:block; font-size:calc(10.5 * var(--u)); font-weight:500; color:#94A3B8; letter-spacing:.01em; }
+.mx-flow-sep{ flex:0 0 auto; color:#CBD5E1; display:inline-flex; }
+.mx-flow-sep svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
 /* кнопка «Далі» — у ширину колонки форми */
 #mxProcGrid .mx-col-form .nc-block-change-status.js-button-fixed{ max-width:100% !important; margin:calc(16 * var(--u)) 0 0 !important; }
 /* права панель «Що ви отримаєте» */
@@ -383,16 +395,27 @@
                     top.innerHTML =
                         '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + backSvg + 'Назад</a>' +
                         '<span class="mx-fsafe">' + safeSvg + 'Дані захищені</span></div>';
-                    var subHTML = (stepN === 2)
-                        ? 'Мінімум — завантажте <b>КТ</b>. Скани щелеп можна додати пізніше.'
-                        : 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
+                    var subHTML, subCls = 'mx-fh-sub';
+                    if(stepN === 2){
+                        subCls = 'mx-fh-sub mx-fh-flow';
+                        var fUp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V5"/><path d="m6 11 6-6 6 6"/><path d="M4 21h16"/></svg>';
+                        var fPl = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>';
+                        var fMs = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1-5.7a8.5 8.5 0 1 1 17-2.8z"/></svg>';
+                        var fSep = '<span class="mx-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>';
+                        subHTML =
+                            '<span class="mx-flow-step"><span class="mx-flow-ic f1">' + fUp + '</span><span class="mx-flow-t">Завантажте КТ</span></span>' + fSep +
+                            '<span class="mx-flow-step"><span class="mx-flow-ic f2">' + fPl + '</span><span class="mx-flow-t">Скани<small>якщо вже є</small></span></span>' + fSep +
+                            '<span class="mx-flow-step"><span class="mx-flow-ic f3">' + fMs + '</span><span class="mx-flow-t">Ми зв’яжемось<small>уточнимо деталі</small></span></span>';
+                    } else {
+                        subHTML = 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
+                    }
                     var headHTML =
                         '<div class="mx-form-head">' +
                         '<div class="mx-fill"><span class="mx-fill-badge">Крок ' + stepN + ' з ' + STEP_LBL.length + '</span>' +
                         '<span class="mx-fill-dots">' + dots + '</span>' +
                         '<span class="mx-fill-name">' + STEP_LBL[stepN-1] + '</span></div>' +
                         '<div class="mx-fh-h1">Хірургічний шаблон</div>' +
-                        '<div class="mx-fh-sub">' + subHTML + '</div></div>';
+                        '<div class="' + subCls + '">' + subHTML + '</div></div>';
                     // контекст тепер у лівому заголовку (form-head), у картці шапку не додаємо
                     var card = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element.js-section-01');
                     // пруф-рядок ВНИЗУ (під кнопкою переходу)
