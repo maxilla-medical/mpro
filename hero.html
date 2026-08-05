@@ -147,24 +147,29 @@
 #mxProcGrid .mx-col-form > .mx-next-proxy{ display:flex !important; align-items:center; justify-content:center; width:100%; height:calc(46 * var(--u)); box-sizing:border-box; margin:calc(16 * var(--u)) 0 0; background:#0F172A; color:#FFFFFF; -webkit-text-fill-color:#FFFFFF; font-family:'Manrope',sans-serif; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(12 * var(--u)); text-decoration:none; box-shadow:0 1px 3px rgba(15,23,42,0.10); cursor:pointer; transition:background .15s ease, transform .06s ease; }
 #mxProcGrid .mx-col-form > .mx-next-proxy:hover{ background:#1E293B; }
 #mxProcGrid .mx-col-form > .mx-next-proxy:active{ transform:translateY(1px); }
-/* ===== F2: OneBox DropUploader → преміум drag&drop зона ===== */
-#mxProcGrid .js-data-element.mx-filefield .data-edit{ padding:0 !important; display:block !important; }
+/* ===== F2: OneBox DropUploader → преміум drag&drop зона (компактна) ===== */
+#mxProcGrid .js-data-element.mx-filefield{ margin:0 0 calc(16 * var(--u)) !important; padding:0 !important; }
+#mxProcGrid .js-data-element.mx-filefield:last-of-type{ margin-bottom:0 !important; }
+#mxProcGrid .js-data-element.mx-filefield .flex-wrap{ margin:0 !important; padding:0 !important; }
+#mxProcGrid .js-data-element.mx-filefield .flex-caption{ margin:0 0 calc(9 * var(--u)) !important; padding:0 !important; font-size:calc(13.5 * var(--u)); font-weight:600; color:#0F172A; }
+#mxProcGrid .js-data-element.mx-filefield .data-edit{ padding:0 !important; margin:0 !important; display:block !important; }
 #mxProcGrid .mx-filefield .flex-caption a.ob-link-info{ display:none !important; }
-#mxProcGrid .mx-filefield .flex-caption > div[class*="js-universal-block-order"]{ display:none !important; }
-#mxProcGrid .mx-filefield .ob-block-attach{ display:block; width:100%; box-sizing:border-box; }
-#mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(8 * var(--u)); text-align:center; width:100%; box-sizing:border-box; min-height:calc(120 * var(--u)); padding:calc(20 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:calc(14 * var(--u)); color:#475569; text-decoration:none; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+#mxProcGrid .mx-filefield .flex-caption div[class*="js-universal-block-order"]{ display:none !important; }
+#mxProcGrid .mx-filefield .ob-block-attach{ display:block; width:100%; box-sizing:border-box; margin:0; }
+#mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn{ display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:calc(12 * var(--u)); text-align:left; width:100%; box-sizing:border-box; min-height:calc(56 * var(--u)); padding:calc(12 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:calc(12 * var(--u)); color:#475569; text-decoration:none; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
 #mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn:hover{ border-color:#2c3bff; background:#F4F6FF; }
 #mxProcGrid .mx-filefield .ob-block-attach.mx-drag a.ob-button-attach.mx-dz-btn{ border-color:#2c3bff; background:#EEF2FF; }
-#mxProcGrid .mx-filefield .mx-dz-ico{ width:calc(34 * var(--u)); height:calc(34 * var(--u)); color:#94A3B8; transition:color .15s ease; }
+#mxProcGrid .mx-filefield .mx-dz-ico{ width:calc(22 * var(--u)); height:calc(22 * var(--u)); flex:0 0 auto; color:#94A3B8; transition:color .15s ease; }
 #mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn:hover .mx-dz-ico{ color:#2c3bff; }
 #mxProcGrid .mx-filefield .mx-dz-ico svg{ width:100%; height:100%; display:block; }
-#mxProcGrid .mx-filefield .mx-dz-main{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#475569; line-height:1.35; }
+#mxProcGrid .mx-filefield .mx-dz-txt{ display:flex; flex-direction:column; gap:calc(1 * var(--u)); min-width:0; }
+#mxProcGrid .mx-filefield .mx-dz-main{ font-size:calc(13 * var(--u)); font-weight:600; color:#475569; line-height:1.25; }
 #mxProcGrid .mx-filefield .mx-dz-link{ color:#2c3bff; text-decoration:underline; text-underline-offset:2px; }
-#mxProcGrid .mx-filefield .mx-dz-hint{ font-size:calc(12 * var(--u)); font-weight:500; color:#94A3B8; }
+#mxProcGrid .mx-filefield .mx-dz-hint{ font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; line-height:1.2; }
 #mxProcGrid .mx-filefield .ob-link-delete, #mxProcGrid .mx-filefield .ob-link-accept{ display:none !important; }
 #mxProcGrid .mx-filefield.mx-has-file a.ob-button-attach.mx-dz-btn{ border-style:solid; border-color:#BBF7D0; background:#F0FDF4; }
-#mxProcGrid .mx-filefield.mx-has-file .data-view{ margin-top:calc(8 * var(--u)); }
-#mxProcGrid .mx-filefield .data-view a[href]{ display:inline-block; color:#0F172A; font-weight:600; font-size:calc(13.5 * var(--u)); word-break:break-all; }
+#mxProcGrid .mx-filefield.mx-has-file .data-view{ margin-top:calc(7 * var(--u)); }
+#mxProcGrid .mx-filefield .data-view a[href]{ display:inline-block; color:#0F172A; font-weight:600; font-size:calc(13 * var(--u)); word-break:break-all; }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -420,6 +425,12 @@
                             if(de){ de.style.display = 'block'; de.style.paddingRight = '0'; }
                             var btn = attach.querySelector('.ob-button-attach');
                             if(btn){ btn.style.display = ''; }         // повертаємо кнопку, якщо її приховало правило вище
+                            // ховаємо службову підказку-дубль та інфо-іконку в підписі (OneBox може повертати їх) — щоразу
+                            var capNoise = el.querySelector('.flex-caption');
+                            if(capNoise){
+                                var _ic = capNoise.querySelector('a.ob-link-info'); if(_ic){ _ic.style.display = 'none'; }
+                                Array.prototype.forEach.call(capNoise.querySelectorAll('div[class*="js-universal-block-order"]'), function(d){ d.style.display = 'none'; });
+                            }
                             if(el.getAttribute('data-mxfz')){ return; } // решту робимо лише раз
                             el.setAttribute('data-mxfz','1');
                             el.classList.add('mx-filefield');
@@ -446,8 +457,10 @@
                                 btn.classList.add('mx-dz-btn');
                                 btn.innerHTML =
                                     '<span class="mx-dz-ico">' + DZ_ICO + '</span>' +
-                                    '<span class="mx-dz-main">Перетягніть файл сюди або <span class="mx-dz-link">оберіть</span></span>' +
-                                    (hint ? '<span class="mx-dz-hint">' + hint + '</span>' : '');
+                                    '<span class="mx-dz-txt">' +
+                                        '<span class="mx-dz-main">Перетягніть файл сюди або <span class="mx-dz-link">оберіть</span></span>' +
+                                        (hint ? '<span class="mx-dz-hint">' + hint + '</span>' : '') +
+                                    '</span>';
                             }
                             // drag-візуал на зоні (сам аплоад робить DropUploader OneBox)
                             attach.addEventListener('dragenter', function(){ attach.classList.add('mx-drag'); });
