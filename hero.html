@@ -71,7 +71,8 @@
 #mxUploadOverlay .mxul-row.mxul-cnl .mxul-st{ color:#94A3B8; }
 #mxUploadOverlay .mxul-foot{ margin-top:calc(14 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; text-align:center; }
 /* фінал історії всередині картки: «Далі — за нами» */
-#mxProcGrid .mx-next-note{ display:flex; align-items:center; gap:calc(11 * var(--u)); margin-top:calc(18 * var(--u)); padding:calc(12 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(12 * var(--u)); }
+#mxProcGrid .mx-next-note{ display:flex; align-items:center; justify-content:center; gap:calc(11 * var(--u)); margin-top:calc(18 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(12 * var(--u)); }
+#mxProcGrid .mx-nn-t{ max-width:calc(420 * var(--u)); text-wrap:balance; }
 #mxProcGrid .mx-nn-ic{ flex:0 0 auto; width:calc(28 * var(--u)); height:calc(28 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#ECFDF5; color:#059669; }
 #mxProcGrid .mx-nn-ic svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
 #mxProcGrid .mx-nn-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.45; }
@@ -241,8 +242,10 @@
 #mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-main,
 #mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-sub{ display:none; }
 #mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-more{ display:block; }
-/* «можна кілька файлів» — у під-рядку зони, коли поле багатофайлове */
+/* під-рядок зони: «кілька файлів» (мульти) + «або пізніше» (опційне) */
 #mxProcGrid .mx-filefield.mx-multi .mx-dz-sub::after{ content:' · можна кілька файлів'; }
+#mxProcGrid .mx-filefield.mx-multi:not(.mx-req-field) .mx-dz-sub::after{ content:' · можна кілька файлів · або пізніше'; }
+#mxProcGrid .mx-filefield:not(.mx-multi):not(.mx-req-field) .mx-dz-sub::after{ content:' · можна пізніше'; }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -433,7 +436,7 @@
                         var nnIc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1-5.7a8.5 8.5 0 1 1 17-2.8z"/></svg>';
                         var nn = document.createElement('div');
                         nn.id = 'mxNextNote'; nn.className = 'mx-next-note';
-                        nn.innerHTML = '<span class="mx-nn-ic">' + nnIc + '</span><span class="mx-nn-t"><b>Далі — за нами.</b> Ознайомимось із кейсом і зв’яжемось для уточнення деталей.</span>';
+                        nn.innerHTML = '<span class="mx-nn-ic">' + nnIc + '</span><span class="mx-nn-t"><b>Далі — за нами.</b> Ознайомимось із кейсом та зв’яжемось з Вами для уточнення деталей.</span>';
                         card.appendChild(nn);
                     }
                     // пруф-рядок ВНИЗУ (під кнопкою переходу)
@@ -542,6 +545,7 @@
                         row.querySelector('.mxul-x').addEventListener('click', function(){
                             try{ if(dz && dz.removeFile) dz.removeFile(file); }catch(_){ }
                             mxUpDone(file, 'cancel');
+                            var sw = 0, swT = setInterval(function(){ mxToastSweep(); if(++sw > 8) clearInterval(swT); }, 500);
                         });
                         ov.querySelector('.mxul-rows').appendChild(row);
                         mxUpRows[k] = { row: row, done: false };
@@ -578,6 +582,27 @@
                         setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); mxUpRows = {}; }, 260);
                     }
                     function mxUpBusy(){ mxUpEnsure(); if(mxUpSafety) clearTimeout(mxUpSafety); mxUpSafety = setTimeout(mxUpHide, 180000); }
+                    // ---- глушимо російсько-англійські тости OneBox («Ошибка загрузки / Upload canceled») ----
+                    var MX_TOAST_RE = /upload canceled|ошибка загрузки|ошибка/i;
+                    function mxToastZap(n){
+                        try{
+                            if(!n || n.nodeType !== 1 || n.id === 'mxUploadOverlay') return;
+                            var t = n.textContent || '';
+                            if(t.length && t.length < 220 && MX_TOAST_RE.test(t)){ n.style.display = 'none'; }
+                        }catch(_){ }
+                    }
+                    function mxToastSweep(){
+                        Array.prototype.forEach.call(document.body.children, function(c){
+                            mxToastZap(c);
+                            if(c.children){ Array.prototype.forEach.call(c.children, mxToastZap); }
+                        });
+                    }
+                    if(!window.__mxToastKill && window.MutationObserver){
+                        window.__mxToastKill = true;
+                        new MutationObserver(function(muts){
+                            muts.forEach(function(m){ Array.prototype.forEach.call(m.addedNodes, mxToastZap); });
+                        }).observe(document.body, { childList:true, subtree:true });
+                    }
                     // ---- спільні хелпери: список завантажених файлів у полі (1..N) ----
                     function mxEsc(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
                     function mxFileNameOf(uf){ var t = (uf.textContent || '').replace(/\s+/g, ' ').trim(); return t || 'Файл'; }
@@ -650,6 +675,8 @@
                                     if(_dzi){
                                         el.__mxDzBound = true;
                                         if(_dzi.options && _dzi.options.maxFiles > 1){ el.classList.add('mx-multi'); }
+                                        // 1 файл = 1 запит (послідовно): «Скасувати» зупиняє лише СВІЙ файл, а не весь пакет
+                                        try{ _dzi.options.parallelUploads = 1; }catch(_){ }
                                         var _upOn = function(){ el.classList.add('mx-uploading'); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); } el.__mxUpTimer = setTimeout(function(){ el.classList.remove('mx-uploading'); }, 180000); };
                                         var _upOff = function(){ el.classList.remove('mx-uploading'); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); el.__mxUpTimer = null; } mxUpMaybeClose(); mxSyncFiles(el); };
                                         _dzi.on('addedfile', function(f){ _upOn(); mxUpAdd(_dzi, f); });
@@ -677,7 +704,7 @@
                                 capEl.appendChild(document.createTextNode(label));
                                 var badge = document.createElement('span');
                                 if(required){ badge.className = 'mx-req-badge mx-req-star'; badge.textContent = 'Обов’язково'; }
-                                else { badge.className = 'mx-req-badge mx-req-opt'; badge.textContent = 'Опційно'; }
+                                else { badge.className = 'mx-req-badge mx-req-opt'; badge.textContent = 'Опційно'; badge.setAttribute('title', 'Можна завантажити пізніше'); }
                                 capEl.appendChild(badge);
                             }
                             var instr = MX_TOUCH ? 'Оберіть файли з пристрою' : 'Перетягніть або оберіть файли';
