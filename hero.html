@@ -206,6 +206,15 @@
 #mxProcGrid .mx-filefield.mx-has-file:not(.mx-multi) .ob-block-attach{ display:none !important; }
 #mxProcGrid .mx-filefield.mx-multi.mx-has-file .ob-block-attach{ margin-top:calc(8 * var(--u)); }
 #mxProcGrid .mx-filefield.mx-multi.mx-has-file a.ob-button-attach.mx-dz-btn{ min-height:calc(46 * var(--u)); }
+/* довгий список не розриває layout */
+#mxProcGrid .mx-filefield .mx-files{ max-height:calc(232 * var(--u)); overflow-y:auto; }
+/* контекстний текст зони «Додати ще файл» (для мультиполя, коли вже є файли) */
+#mxProcGrid .mx-filefield .mx-dz-more{ display:none; flex:1 1 auto; min-width:0; font-size:calc(12.5 * var(--u)); font-weight:600; color:#2c3bff; }
+#mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-main{ display:none; }
+#mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-more{ display:block; }
+/* пояснення під підписом поля (багатофайловість / опційність) */
+#mxProcGrid .mx-filefield .mx-field-hint{ margin:calc(-4 * var(--u)) 0 calc(10 * var(--u)); font-size:calc(12 * var(--u)); font-weight:500; color:#64748B; line-height:1.45; }
+#mxProcGrid .mx-filefield .mx-field-hint b{ color:#0F172A; font-weight:600; }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -380,7 +389,7 @@
                         '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + backSvg + 'Назад</a>' +
                         '<span class="mx-fsafe">' + safeSvg + 'Дані захищені</span></div>';
                     var subHTML = (stepN === 2)
-                        ? 'Дані замовлення отримано. Тепер завантажте знімки — за ними ми опрацюємо клінічну ситуацію та підготуємо план лікування. Обов’язково додайте <b>КТ</b>; скани щелеп — якщо вже готові.'
+                        ? 'Дані замовлення отримано. Додайте знімки — за ними опрацюємо клінічну ситуацію та підготуємо план. Для старту достатньо <b>КТ</b> — це мінімум; скани щелеп можна надіслати пізніше. У кожне поле можна завантажити <b>кілька файлів одразу</b>.'
                         : 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
                     var headHTML =
                         '<div class="mx-form-head">' +
@@ -568,6 +577,19 @@
                                     }
                                 }catch(_e){ }
                             }
+                            // пояснення під підписом (оновлюємо щоразу — mx-multi зʼявляється після ініту Dropzone):
+                            // «мінімум КТ / за бажанням + можна пізніше» та «можна кілька файлів»
+                            (function(){
+                                var capE = el.querySelector('.flex-caption'); if(!capE) return;
+                                var fh = el.querySelector('.mx-field-hint');
+                                if(!fh){ fh = document.createElement('div'); fh.className = 'mx-field-hint'; if(capE.parentNode){ capE.parentNode.insertBefore(fh, capE.nextSibling); } }
+                                var req = isReqCap(capE.textContent);
+                                var multi = el.classList.contains('mx-multi');
+                                var lead = req ? 'Достатньо для старту — це <b>мінімум</b>, щоб ми оцінили ситуацію' : 'За бажанням — можна надіслати пізніше';
+                                var tail = multi ? ' · можна кілька файлів одразу' : '';
+                                var html = lead + tail + '.';
+                                if(fh.innerHTML !== html){ fh.innerHTML = html; }
+                            })();
                             if(el.getAttribute('data-mxfz')){ return; } // решту робимо лише раз
                             el.setAttribute('data-mxfz','1');
                             el.classList.add('mx-filefield');
@@ -593,6 +615,7 @@
                                 btn.innerHTML =
                                     '<span class="mx-dz-ico">' + DZ_ICO + '</span>' +
                                     '<span class="mx-dz-main">' + instr + '</span>' +
+                                    '<span class="mx-dz-more">Додати ще файл</span>' +
                                     (fmt ? '<span class="mx-dz-fmt">' + fmt + '</span>' : '') +
                                     '<span class="mx-dz-cta">Обрати</span>' +
                                     '<span class="mx-dz-loading"><span class="mx-dz-spin"></span>Завантаження…</span>';
