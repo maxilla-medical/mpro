@@ -990,17 +990,36 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var dots = '';
             for(var di=1; di<=STEP_LBL_F.length; di++){ dots += '<span class="mx-fd' + (di===1?' mx-on':'') + '"></span>'; }
             // заголовок/підзаголовок тягнемо з налаштувань форми OneBox:
-            // «Название формы» → прихований <h2> у картці; «Описание» → текстовий блок картки до <form>.
-            // Якщо в налаштуваннях порожньо — фолбек на стандартні тексти.
-            var fName = '', fDesc = '';
+            // «Название формы» → <h2> у картці; «Описание» → все, що OneBox рендерить між <h2> і <form>
+            // (текст + інлайн-теги на кшталт <b>). Прочитане прибираємо з картки, щоб не дублювалось.
+            function mxDescScan(purge){
+                var hh = card.querySelector('h2');
+                if(!hh) return '';
+                var html = '', consumed = [];
+                var n = hh.nextSibling;
+                while(n && !(n.nodeType === 1 && n.tagName === 'FORM')){
+                    if(n.nodeType === 3){ html += n.textContent; consumed.push(n); }
+                    else if(n.nodeType === 1){
+                        var tg = n.tagName.toLowerCase();
+                        if(tg !== 'style' && tg !== 'script'){
+                            if(n.classList && n.classList.contains('mx-form-intro')){
+                                // перехідний випадок: легасі-обгортка зі старого global.html — беремо текст без чипа часу
+                                var cl = n.cloneNode(true);
+                                Array.prototype.forEach.call(cl.querySelectorAll('.mx-form-time'), function(x){ if(x.parentNode) x.parentNode.removeChild(x); });
+                                html += ' ' + cl.innerHTML;
+                            } else { html += ' ' + n.outerHTML; }
+                            consumed.push(n);
+                        }
+                    }
+                    n = n.nextSibling;
+                }
+                html = html.replace(/\s+/g, ' ').replace(/[\s·]+$/, '').trim();
+                if(purge && html){ consumed.forEach(function(x){ if(x.parentNode) x.parentNode.removeChild(x); }); }
+                return html;
+            }
+            var fName = '', fDesc = mxDescScan(true);
             var fH2 = card.querySelector('h2');
             if(fH2){ fName = (fH2.textContent || '').replace(/\s+/g, ' ').trim(); }
-            Array.prototype.forEach.call(card.children, function(c){
-                if(fDesc || !c.tagName) return;
-                var tg = c.tagName.toLowerCase();
-                if(tg === 'h2' || tg === 'form' || tg === 'style' || tg === 'script') return;
-                if((c.textContent || '').replace(/\s+/g, ' ').trim()){ fDesc = c.innerHTML; }
-            });
             var headHTML =
                 '<div class="mx-form-head">' +
                 '<div class="mx-fill"><span class="mx-fill-badge">Крок 1 з ' + STEP_LBL_F.length + '</span>' +
@@ -1012,19 +1031,33 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var grid = document.createElement('div'); grid.id = 'mxProcGrid';
             var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
             var rcol = document.createElement('div'); rcol.className = 'mx-col-side';
-            // той самий таймлайн, що на кроці 2 — обидва кроки виглядають як один продукт
+            // права панель «Як це працює» — контент залежить від форми (id з URL /client/form/N/).
+            // Немає запису в MX_FORM_STEPS → стандартний сценарій хірургічного шаблону.
+            var MX_FORM_STEPS = {
+                '2': [   // Замовити направлення
+                    { t:'Заповніть заявку', s:'Вкажіть адресу доставки та контактну особу на місці — цього достатньо.', here:true },
+                    { t:'Готуємо направлення', s:'Формуємо направлення одразу після отримання заявки.' },
+                    { t:'Швидка доставка', s:'Надсилаємо направлення за вказаною адресою <b>максимально швидко</b>.' }
+                ]
+            };
+            var MX_STEPS_DEFAULT = [
+                { t:'Спочатку — оцінка', s:'Заповнюєте заявку, надсилаєте КТ — ми аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b>', here:true },
+                { t:'Оплата після погодження', s:'Вносите оплату лише тоді, коли запропонований план Вас влаштовує.' },
+                { t:'Шаблон у клініці за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.' }
+            ];
+            var mxFid = (location.pathname.match(/\/client\/form\/(\d+)/) || [])[1] || '';
+            var mxSteps = MX_FORM_STEPS[mxFid] || MX_STEPS_DEFAULT;
+            var mxStepsHtml = '';
+            mxSteps.forEach(function(st, i){
+                var last = (i === mxSteps.length - 1);
+                mxStepsHtml +=
+                    '<div class="mx-stp' + (st.here ? ' mx-stp-act' : '') + '"><div class="mx-stp-rail"><span class="mx-stp-n">' + (i + 1) + '</span>' + (last ? '' : '<span class="mx-stp-line"></span>') + '</div>' +
+                    '<div class="mx-stp-txt"><div class="mx-stp-t">' + st.t + (st.here ? '<span class="mx-stp-here">Ви тут</span>' : '') + '</div>' +
+                    '<div class="mx-stp-s">' + st.s + '</div></div></div>';
+            });
             rcol.innerHTML =
                 '<div class="mx-side">' +
-                    '<div class="mx-side-eyebrow">Як це працює</div>' +
-                    '<div class="mx-stp mx-stp-act"><div class="mx-stp-rail"><span class="mx-stp-n">1</span><span class="mx-stp-line"></span></div>' +
-                        '<div class="mx-stp-txt"><div class="mx-stp-t">Спочатку — оцінка<span class="mx-stp-here">Ви тут</span></div>' +
-                        '<div class="mx-stp-s">Заповнюєте заявку, надсилаєте КТ — ми аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b></div></div></div>' +
-                    '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">2</span><span class="mx-stp-line"></span></div>' +
-                        '<div class="mx-stp-txt"><div class="mx-stp-t">Оплата після погодження</div>' +
-                        '<div class="mx-stp-s">Вносите оплату лише тоді, коли запропонований план Вас влаштовує.</div></div></div>' +
-                    '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">3</span></div>' +
-                        '<div class="mx-stp-txt"><div class="mx-stp-t">Шаблон у клініці за 48 годин</div>' +
-                        '<div class="mx-stp-s">Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.</div></div></div>' +
+                    '<div class="mx-side-eyebrow">Як це працює</div>' + mxStepsHtml +
                     '<div class="mx-side-foot">' + fICheck + 'Дані пацієнта захищені</div>' +
                 '</div>';
             grid.appendChild(lcol); grid.appendChild(rcol);
@@ -1040,20 +1073,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     var hh = card.querySelector('h2');
                     var nm = hh ? (hh.textContent || '').replace(/\s+/g, ' ').trim() : '';
                     if(nm && h1El && h1El.textContent !== nm){ h1El.textContent = nm; }
-                    var d = card.querySelector('.mx-form-intro, .description-form, .form-description, .os-form-description');
-                    if(!d){
-                        Array.prototype.forEach.call(card.children, function(c){
-                            if(d || !c.tagName) return;
-                            var tg = c.tagName.toLowerCase();
-                            if(tg === 'h2' || tg === 'form' || tg === 'style' || tg === 'script') return;
-                            if((c.textContent || '').replace(/\s+/g, ' ').trim()){ d = c; }
-                        });
-                    }
-                    if(d && subEl){
-                        var html = (d.innerHTML || '').trim();
-                        if(html && subEl.innerHTML !== html){ subEl.innerHTML = html; }
+                    var dHtml = mxDescScan(true);
+                    if(dHtml && subEl){
+                        if(subEl.innerHTML !== dHtml){ subEl.innerHTML = dHtml; }
                         clearInterval(t);
-                    } else if(tries > 25){ clearInterval(t); }   // ~5с, далі лишаємо фолбек
+                    } else if(tries > 25){ clearInterval(t); }   // ~5с — далі просто без підзаголовка
                 }, 200);
             })();
 
