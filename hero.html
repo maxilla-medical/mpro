@@ -1030,6 +1030,31 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             top.parentNode.insertBefore(grid, top.nextSibling);
             lcol.insertAdjacentHTML('afterbegin', headHTML);
             lcol.appendChild(card);              // переносимо картку форми ліворуч
+            // назва/опис можуть дорендерюватись ПІЗНІШЕ за наш перший рід — доганяємо кілька секунд
+            (function(){
+                var h1El = lcol.querySelector('.mx-fh-h1'), subEl = lcol.querySelector('.mx-fh-sub');
+                var tries = 0;
+                var t = setInterval(function(){
+                    tries++;
+                    var hh = card.querySelector('h2');
+                    var nm = hh ? (hh.textContent || '').replace(/\s+/g, ' ').trim() : '';
+                    if(nm && h1El && h1El.textContent !== nm){ h1El.textContent = nm; }
+                    var d = card.querySelector('.mx-form-intro, .description-form, .form-description, .os-form-description');
+                    if(!d){
+                        Array.prototype.forEach.call(card.children, function(c){
+                            if(d || !c.tagName) return;
+                            var tg = c.tagName.toLowerCase();
+                            if(tg === 'h2' || tg === 'form' || tg === 'style' || tg === 'script') return;
+                            if((c.textContent || '').replace(/\s+/g, ' ').trim()){ d = c; }
+                        });
+                    }
+                    if(d && subEl){
+                        var html = (d.innerHTML || '').trim();
+                        if(html && subEl.innerHTML !== html){ subEl.innerHTML = html; }
+                        clearInterval(t);
+                    } else if(tries > 25){ clearInterval(t); }   // ~5с, далі лишаємо фолбек
+                }, 200);
+            })();
 
             // нумерація реальних полів (пропускаємо секції-заголовки heading_filed)
             var num = 0;
