@@ -147,24 +147,24 @@
 #mxProcGrid .mx-col-form > .mx-next-proxy{ display:flex !important; align-items:center; justify-content:center; width:100%; height:calc(46 * var(--u)); box-sizing:border-box; margin:calc(16 * var(--u)) 0 0; background:#0F172A; color:#FFFFFF; -webkit-text-fill-color:#FFFFFF; font-family:'Manrope',sans-serif; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(12 * var(--u)); text-decoration:none; box-shadow:0 1px 3px rgba(15,23,42,0.10); cursor:pointer; transition:background .15s ease, transform .06s ease; }
 #mxProcGrid .mx-col-form > .mx-next-proxy:hover{ background:#1E293B; }
 #mxProcGrid .mx-col-form > .mx-next-proxy:active{ transform:translateY(1px); }
-/* ===== F2: drag&drop зони для файлів ===== */
-#mxProcGrid .js-data-element.mx-hasfile .data-edit input[type="file"]{ position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:0 !important; opacity:0 !important; overflow:hidden !important; pointer-events:none !important; clip:rect(0 0 0 0) !important; }
-.mx-dropzone{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(8 * var(--u)); text-align:center; width:100%; box-sizing:border-box; min-height:calc(120 * var(--u)); padding:calc(20 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:calc(14 * var(--u)); cursor:pointer; transition:border-color .15s ease, background .15s ease; }
-.mx-dropzone:hover{ border-color:#2c3bff; background:#F4F6FF; }
-.mx-dropzone.mx-drag{ border-color:#2c3bff; background:#EEF2FF; }
-.mx-dropzone .mx-dz-ico{ width:calc(34 * var(--u)); height:calc(34 * var(--u)); color:#94A3B8; transition:color .15s ease; }
-.mx-dropzone:hover .mx-dz-ico{ color:#2c3bff; }
-.mx-dropzone .mx-dz-ico svg{ width:100%; height:100%; display:block; }
-.mx-dropzone .mx-dz-main{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#475569; line-height:1.35; }
-.mx-dropzone .mx-dz-link{ color:#2c3bff; text-decoration:underline; text-underline-offset:2px; }
-.mx-dropzone .mx-dz-hint{ font-size:calc(12 * var(--u)); font-weight:500; color:#94A3B8; }
-.mx-dropzone.mx-has{ flex-direction:row; justify-content:flex-start; gap:calc(12 * var(--u)); min-height:0; padding:calc(14 * var(--u)) calc(16 * var(--u)); text-align:left; border-style:solid; border-color:#BBF7D0; background:#F0FDF4; cursor:default; }
-.mx-dropzone.mx-has:hover{ border-color:#BBF7D0; background:#F0FDF4; }
-.mx-dropzone.mx-has .mx-dz-ico-file{ width:calc(22 * var(--u)); height:calc(22 * var(--u)); color:#22C55E; flex:0 0 auto; }
-.mx-dropzone.mx-has .mx-dz-fname{ flex:1 1 auto; min-width:0; font-size:calc(13.5 * var(--u)); font-weight:600; color:#0F172A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.mx-dropzone .mx-dz-x{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(26 * var(--u)); height:calc(26 * var(--u)); padding:0; border:none; background:transparent; color:#94A3B8; border-radius:calc(8 * var(--u)); cursor:pointer; transition:background .14s ease, color .14s ease; }
-.mx-dropzone .mx-dz-x:hover{ background:#FEE2E2; color:#DC2626; }
-.mx-dropzone .mx-dz-x svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
+/* ===== F2: OneBox DropUploader → преміум drag&drop зона ===== */
+#mxProcGrid .js-data-element.mx-filefield .data-edit{ padding:0 !important; display:block !important; }
+#mxProcGrid .mx-filefield .flex-caption a.ob-link-info{ display:none !important; }
+#mxProcGrid .mx-filefield .flex-caption > div[class*="js-universal-block-order"]{ display:none !important; }
+#mxProcGrid .mx-filefield .ob-block-attach{ display:block; width:100%; box-sizing:border-box; }
+#mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(8 * var(--u)); text-align:center; width:100%; box-sizing:border-box; min-height:calc(120 * var(--u)); padding:calc(20 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:calc(14 * var(--u)); color:#475569; text-decoration:none; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+#mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn:hover{ border-color:#2c3bff; background:#F4F6FF; }
+#mxProcGrid .mx-filefield .ob-block-attach.mx-drag a.ob-button-attach.mx-dz-btn{ border-color:#2c3bff; background:#EEF2FF; }
+#mxProcGrid .mx-filefield .mx-dz-ico{ width:calc(34 * var(--u)); height:calc(34 * var(--u)); color:#94A3B8; transition:color .15s ease; }
+#mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn:hover .mx-dz-ico{ color:#2c3bff; }
+#mxProcGrid .mx-filefield .mx-dz-ico svg{ width:100%; height:100%; display:block; }
+#mxProcGrid .mx-filefield .mx-dz-main{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#475569; line-height:1.35; }
+#mxProcGrid .mx-filefield .mx-dz-link{ color:#2c3bff; text-decoration:underline; text-underline-offset:2px; }
+#mxProcGrid .mx-filefield .mx-dz-hint{ font-size:calc(12 * var(--u)); font-weight:500; color:#94A3B8; }
+#mxProcGrid .mx-filefield .ob-link-delete, #mxProcGrid .mx-filefield .ob-link-accept{ display:none !important; }
+#mxProcGrid .mx-filefield.mx-has-file a.ob-button-attach.mx-dz-btn{ border-style:solid; border-color:#BBF7D0; background:#F0FDF4; }
+#mxProcGrid .mx-filefield.mx-has-file .data-view{ margin-top:calc(8 * var(--u)); }
+#mxProcGrid .mx-filefield .data-view a[href]{ display:inline-block; color:#0F172A; font-weight:600; font-size:calc(13.5 * var(--u)); word-break:break-all; }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -313,8 +313,10 @@
                     t.setAttribute('data-mxcap','1');
                     t.textContent = t.textContent.replace(/\s*:\s*$/, '');
                 });
-                // ховаємо кнопки очищення (червоний ×) у полях процесу
+                // ховаємо кнопки очищення (червоний ×) у полях процесу,
+                // але НЕ чіпаємо кнопку завантаження файлу (ob-button-attach) та інфо-іконку
                 Array.prototype.forEach.call(col.querySelectorAll('.js-data-element a, .js-data-element [title*="чист"], .js-data-element [title*="идал"], .js-data-element [class*="delete"], .js-data-element [class*="Clear"]'), function(x){
+                    if(x.classList && (x.classList.contains('ob-button-attach') || x.classList.contains('ob-link-info'))) return;
                     x.style.display = 'none';
                 });
                 var top = document.getElementById('mxProcTop');
@@ -374,6 +376,13 @@
                     };
                     function applyPH(){
                         Array.prototype.forEach.call(col.querySelectorAll('.js-data-element'), function(el){
+                            // файлове поле (OneBox DropUploader) — лише показуємо режим завантаження,
+                            // data-view НЕ ховаємо (там з'явиться прикріплений файл). Решту робить applyFileZones.
+                            if(el.querySelector('.ob-block-attach')){
+                                var deF = el.querySelector('.data-edit');
+                                if(deF){ deF.style.display = 'block'; deF.style.paddingRight = '0'; }
+                                return;
+                            }
                             // форсуємо режим редагування (без кліку): показати data-edit, сховати data-view
                             var de = el.querySelector('.data-edit'); var dv = el.querySelector('.data-view');
                             if(de){ de.style.display = 'block'; }
@@ -393,63 +402,71 @@
                     }
                     applyPH();
                     setTimeout(applyPH, 400); setTimeout(applyPH, 900); setTimeout(applyPH, 1600);
-                    // F2: перетворюємо file-інпути на drag&drop зони
+                    // F2: OneBox-аплоадер (DropUploader) → преміум drag&drop зона.
+                    // НЕ підміняємо механізм OneBox — лише стилізуємо його зону та кнопку,
+                    // щоб не зламати шифрований аплоад і нативний drag&drop DropUploader.
                     function fileHint(capText){
                         var t = (capText || '').toLowerCase();
                         if(t.indexOf('томограм') !== -1) return 'У форматі DICOM';
-                        if(t.indexOf('кани') !== -1) return 'У форматі STL';
+                        if(t.indexOf('скани') !== -1 || t.indexOf('щелеп') !== -1) return 'У форматі STL';
                         return '';
                     }
                     var DZ_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>';
-                    var DZ_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
-                    var DZ_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>';
                     function applyFileZones(){
                         Array.prototype.forEach.call(col.querySelectorAll('.js-data-element'), function(el){
-                            var fin = el.querySelector('.data-edit input[type="file"]');
-                            if(!fin) return;
-                            if(el.querySelector('.mx-dropzone')) return;   // вже зроблено
-                            el.classList.add('mx-hasfile');
-                            var capEl = el.querySelector('.flex-caption .js-text');
+                            var attach = el.querySelector('.ob-block-attach');
+                            if(!attach) return;                        // не файлове поле
+                            var de = el.querySelector('.data-edit');
+                            if(de){ de.style.display = 'block'; de.style.paddingRight = '0'; }
+                            var btn = attach.querySelector('.ob-button-attach');
+                            if(btn){ btn.style.display = ''; }         // повертаємо кнопку, якщо її приховало правило вище
+                            if(el.getAttribute('data-mxfz')){ return; } // решту робимо лише раз
+                            el.setAttribute('data-mxfz','1');
+                            el.classList.add('mx-filefield');
+                            var capEl = el.querySelector('.flex-caption');
                             var hint = fileHint(capEl ? capEl.textContent : '');
-                            var dz = document.createElement('div');
-                            dz.className = 'mx-dropzone';
-                            function renderEmpty(){
-                                dz.classList.remove('mx-has');
-                                dz.innerHTML =
-                                    '<div class="mx-dz-ico">' + DZ_ICO + '</div>' +
-                                    '<div class="mx-dz-main">Перетягніть файл сюди або <span class="mx-dz-link">оберіть</span></div>' +
-                                    (hint ? '<div class="mx-dz-hint">' + hint + '</div>' : '');
-                            }
-                            function renderFile(name){
-                                dz.classList.add('mx-has');
-                                dz.innerHTML =
-                                    '<div class="mx-dz-ico mx-dz-ico-file">' + DZ_FILE + '</div>' +
-                                    '<div class="mx-dz-fname">' + name + '</div>' +
-                                    '<button type="button" class="mx-dz-x" aria-label="Прибрати">' + DZ_X + '</button>';
-                                var x = dz.querySelector('.mx-dz-x');
-                                if(x) x.addEventListener('click', function(e){
-                                    e.stopPropagation(); e.preventDefault();
-                                    try { fin.value = ''; } catch(_){ }
-                                    fin.dispatchEvent(new Event('change', {bubbles:true}));
-                                    renderEmpty();
-                                });
-                            }
-                            dz.addEventListener('click', function(){ fin.click(); });
-                            dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('mx-drag'); });
-                            dz.addEventListener('dragleave', function(){ dz.classList.remove('mx-drag'); });
-                            dz.addEventListener('drop', function(e){
-                                e.preventDefault(); dz.classList.remove('mx-drag');
-                                if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
-                                    try { fin.files = e.dataTransfer.files; } catch(_){ }
-                                    fin.dispatchEvent(new Event('change', {bubbles:true}));
+                            // прибираємо висячу двокрапку в підписі (підказку показуємо в зоні)
+                            if(capEl){
+                                var cn = capEl.childNodes;
+                                for(var ci = cn.length - 1; ci >= 0; ci--){
+                                    var nd = cn[ci];
+                                    if(nd.nodeType === 3){
+                                        var tv = nd.nodeValue.replace(/\s*:\s*$/, '');
+                                        if(tv !== nd.nodeValue){ nd.nodeValue = tv; break; }
+                                        if(nd.nodeValue.trim() === ''){ continue; }
+                                        break;
+                                    } else if(nd.nodeType === 1){
+                                        var cs2 = window.getComputedStyle ? window.getComputedStyle(nd) : null;
+                                        if(cs2 && cs2.display === 'none'){ continue; }
+                                        break;
+                                    }
                                 }
-                            });
-                            fin.addEventListener('change', function(){
-                                if(fin.files && fin.files.length){ renderFile(fin.files[0].name); }
-                                else { renderEmpty(); }
-                            });
-                            if(fin.files && fin.files.length){ renderFile(fin.files[0].name); } else { renderEmpty(); }
-                            fin.parentNode.insertBefore(dz, fin.nextSibling);
+                            }
+                            if(btn){
+                                btn.classList.add('mx-dz-btn');
+                                btn.innerHTML =
+                                    '<span class="mx-dz-ico">' + DZ_ICO + '</span>' +
+                                    '<span class="mx-dz-main">Перетягніть файл сюди або <span class="mx-dz-link">оберіть</span></span>' +
+                                    (hint ? '<span class="mx-dz-hint">' + hint + '</span>' : '');
+                            }
+                            // drag-візуал на зоні (сам аплоад робить DropUploader OneBox)
+                            attach.addEventListener('dragenter', function(){ attach.classList.add('mx-drag'); });
+                            attach.addEventListener('dragover',  function(){ attach.classList.add('mx-drag'); });
+                            attach.addEventListener('dragleave', function(){ attach.classList.remove('mx-drag'); });
+                            attach.addEventListener('drop',      function(){ attach.classList.remove('mx-drag'); });
+                            // стан «файл прикріплено»: OneBox додає лінк/прев'ю після аплоаду
+                            var mark = function(){
+                                var has = false;
+                                var dv = el.querySelector('.data-view');
+                                if(dv){ var a = dv.querySelector('a[href]'); if(a && a.getAttribute('href')){ has = true; } }
+                                if(!has && attach.querySelector('a[href]:not(.ob-button-attach), img, .ob-attach-file, .js-file-preview')){ has = true; }
+                                el.classList.toggle('mx-has-file', has);
+                            };
+                            if(window.MutationObserver){
+                                var mo = new MutationObserver(mark);
+                                mo.observe(el, { childList:true, subtree:true, attributes:true, attributeFilter:['href','src','style','class'] });
+                            }
+                            mark();
                         });
                     }
                     applyFileZones();
