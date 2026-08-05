@@ -43,18 +43,39 @@
 .mx-col-form .mx-form-head .mx-fh-h1{ font-size:calc(26 * var(--u)); font-weight:700; color:#0F172A; letter-spacing:-0.5px; line-height:1.15; margin:0 0 calc(7 * var(--u)); }
 .mx-col-form .mx-form-head .mx-fh-sub{ font-size:calc(13.5 * var(--u)); color:#64748B; line-height:1.5; }
 .mx-col-form .mx-form-head .mx-fh-sub b{ color:#0F172A; font-weight:600; }
-/* візуальний маршрут кроку 2: «КТ → скани (якщо є) → ми зв'яжемось» — читається як картинка */
-.mx-col-form .mx-form-head .mx-fh-flow{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(6 * var(--u)); margin-top:calc(12 * var(--u)); }
-.mx-flow-step{ display:inline-flex; align-items:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E7ECF3; border-radius:calc(999 * var(--u)); padding:calc(7 * var(--u)) calc(15 * var(--u)) calc(7 * var(--u)) calc(8 * var(--u)); box-shadow:0 1px 2px rgba(15,23,42,0.04); }
-.mx-flow-ic{ flex:0 0 auto; width:calc(26 * var(--u)); height:calc(26 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; }
-.mx-flow-ic svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
-.mx-flow-ic.f1{ background:#EEF2FF; color:#2c3bff; }
-.mx-flow-ic.f2{ background:#F1F5F9; color:#64748B; }
-.mx-flow-ic.f3{ background:#ECFDF5; color:#059669; }
-.mx-flow-t{ font-size:calc(12.5 * var(--u)); font-weight:700; color:#0F172A; white-space:nowrap; line-height:1.2; }
-.mx-flow-t small{ display:block; font-size:calc(10.5 * var(--u)); font-weight:500; color:#94A3B8; letter-spacing:.01em; }
-.mx-flow-sep{ flex:0 0 auto; color:#CBD5E1; display:inline-flex; }
-.mx-flow-sep svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
+/* ===== оверлей завантаження: пофайловий прогрес (перекриває стилі з global.html) ===== */
+#mxUploadOverlay{ position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,0.35); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); opacity:0; transition:opacity .22s ease; }
+#mxUploadOverlay.mxul-show{ opacity:1; }
+#mxUploadOverlay .mxul-card{ width:min(440px, calc(100vw - 40px)); box-sizing:border-box; background:#FFFFFF; border-radius:calc(16 * var(--u)); padding:calc(16 * var(--u)) calc(18 * var(--u)) calc(14 * var(--u)); box-shadow:0 24px 64px rgba(15,23,42,0.22); }
+#mxUploadOverlay .mxul-head{ display:flex; align-items:center; gap:calc(9 * var(--u)); }
+#mxUploadOverlay .mxul-ttl{ font-size:calc(14 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; }
+#mxUploadOverlay .mxul-cnt{ font-size:calc(12 * var(--u)); font-weight:600; color:#94A3B8; }
+#mxUploadOverlay .mxul-hide{ margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(28 * var(--u)); height:calc(28 * var(--u)); padding:0; background:transparent; border:none; border-radius:calc(8 * var(--u)); color:#94A3B8; cursor:pointer; transition:background .14s ease, color .14s ease; }
+#mxUploadOverlay .mxul-hide:hover{ background:#F1F5F9; color:#475569; }
+#mxUploadOverlay .mxul-hide svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
+#mxUploadOverlay .mxul-rows{ margin-top:calc(12 * var(--u)); display:flex; flex-direction:column; gap:calc(11 * var(--u)); max-height:44vh; overflow-y:auto; }
+#mxUploadOverlay .mxul-r1{ display:flex; align-items:center; gap:calc(10 * var(--u)); }
+#mxUploadOverlay .mxul-nm{ flex:1 1 auto; min-width:0; font-size:calc(12.5 * var(--u)); font-weight:600; color:#0F172A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#mxUploadOverlay .mxul-st{ flex:0 0 auto; font-size:calc(12 * var(--u)); font-weight:700; color:#2c3bff; font-variant-numeric:tabular-nums; }
+#mxUploadOverlay .mxul-x{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(24 * var(--u)); height:calc(24 * var(--u)); padding:0; background:transparent; border:none; border-radius:calc(7 * var(--u)); color:#CBD5E1; cursor:pointer; transition:background .14s ease, color .14s ease; }
+#mxUploadOverlay .mxul-x:hover{ background:#FEF2F2; color:#DC2626; }
+#mxUploadOverlay .mxul-x svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); }
+#mxUploadOverlay .mxul-bar{ height:calc(4 * var(--u)); margin-top:calc(6 * var(--u)); background:#EEF2F7; border-radius:calc(999 * var(--u)); overflow:hidden; }
+#mxUploadOverlay .mxul-bar i{ display:block; height:100%; width:0; background:#2c3bff; border-radius:inherit; transition:width .2s linear; }
+#mxUploadOverlay .mxul-row.mxul-ok .mxul-bar i{ background:#22C55E; }
+#mxUploadOverlay .mxul-okic{ display:inline-flex; width:calc(15 * var(--u)); height:calc(15 * var(--u)); color:#16A34A; }
+#mxUploadOverlay .mxul-okic svg{ width:100%; height:100%; }
+#mxUploadOverlay .mxul-row.mxul-err .mxul-bar i{ background:#DC2626; }
+#mxUploadOverlay .mxul-row.mxul-err .mxul-st{ color:#DC2626; }
+#mxUploadOverlay .mxul-row.mxul-cnl{ opacity:.55; }
+#mxUploadOverlay .mxul-row.mxul-cnl .mxul-st{ color:#94A3B8; }
+#mxUploadOverlay .mxul-foot{ margin-top:calc(14 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; text-align:center; }
+/* фінал історії всередині картки: «Далі — за нами» */
+#mxProcGrid .mx-next-note{ display:flex; align-items:center; gap:calc(11 * var(--u)); margin-top:calc(18 * var(--u)); padding:calc(12 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(12 * var(--u)); }
+#mxProcGrid .mx-nn-ic{ flex:0 0 auto; width:calc(28 * var(--u)); height:calc(28 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#ECFDF5; color:#059669; }
+#mxProcGrid .mx-nn-ic svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
+#mxProcGrid .mx-nn-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.45; }
+#mxProcGrid .mx-nn-t b{ color:#0F172A; font-weight:700; }
 /* кнопка «Далі» — у ширину колонки форми */
 #mxProcGrid .mx-col-form .nc-block-change-status.js-button-fixed{ max-width:100% !important; margin:calc(16 * var(--u)) 0 0 !important; }
 /* права панель «Що ви отримаєте» */
@@ -395,29 +416,26 @@
                     top.innerHTML =
                         '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + backSvg + 'Назад</a>' +
                         '<span class="mx-fsafe">' + safeSvg + 'Дані захищені</span></div>';
-                    var subHTML, subCls = 'mx-fh-sub';
-                    if(stepN === 2){
-                        subCls = 'mx-fh-sub mx-fh-flow';
-                        var fUp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V5"/><path d="m6 11 6-6 6 6"/><path d="M4 21h16"/></svg>';
-                        var fPl = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>';
-                        var fMs = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1-5.7a8.5 8.5 0 1 1 17-2.8z"/></svg>';
-                        var fSep = '<span class="mx-flow-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>';
-                        subHTML =
-                            '<span class="mx-flow-step"><span class="mx-flow-ic f1">' + fUp + '</span><span class="mx-flow-t">Завантажте КТ</span></span>' + fSep +
-                            '<span class="mx-flow-step"><span class="mx-flow-ic f2">' + fPl + '</span><span class="mx-flow-t">Скани<small>якщо вже є</small></span></span>' + fSep +
-                            '<span class="mx-flow-step"><span class="mx-flow-ic f3">' + fMs + '</span><span class="mx-flow-t">Ми зв’яжемось<small>уточнимо деталі</small></span></span>';
-                    } else {
-                        subHTML = 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
-                    }
+                    var subHTML = (stepN === 2)
+                        ? 'Залишилось додати знімки пацієнта — і кейс у роботі.'
+                        : 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
                     var headHTML =
                         '<div class="mx-form-head">' +
                         '<div class="mx-fill"><span class="mx-fill-badge">Крок ' + stepN + ' з ' + STEP_LBL.length + '</span>' +
                         '<span class="mx-fill-dots">' + dots + '</span>' +
                         '<span class="mx-fill-name">' + STEP_LBL[stepN-1] + '</span></div>' +
                         '<div class="mx-fh-h1">Хірургічний шаблон</div>' +
-                        '<div class="' + subCls + '">' + subHTML + '</div></div>';
+                        '<div class="mx-fh-sub">' + subHTML + '</div></div>';
                     // контекст тепер у лівому заголовку (form-head), у картці шапку не додаємо
                     var card = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element.js-section-01');
+                    // фінал історії ВСЕРЕДИНІ картки: «що буде далі» — знімає сумнів у момент рішення
+                    if(stepN === 2 && card && !document.getElementById('mxNextNote')){
+                        var nnIc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1-5.7a8.5 8.5 0 1 1 17-2.8z"/></svg>';
+                        var nn = document.createElement('div');
+                        nn.id = 'mxNextNote'; nn.className = 'mx-next-note';
+                        nn.innerHTML = '<span class="mx-nn-ic">' + nnIc + '</span><span class="mx-nn-t"><b>Далі — за нами.</b> Ознайомимось із кейсом і зв’яжемось для уточнення деталей.</span>';
+                        card.appendChild(nn);
+                    }
                     // пруф-рядок ВНИЗУ (під кнопкою переходу)
                     var btnWrap = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status');
                     if(btnWrap && !document.getElementById('mxProofRow')){
@@ -489,30 +507,77 @@
                     var DZ_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>';
                     var DZ_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
                     var DZ_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>';
-                    // ---- оверлей завантаження (стилі #mxUploadOverlay живуть у global.html) ----
-                    var mxUpT = null, mxUpSafety = null;
+                    // ---- оверлей завантаження: реальний прогрес КОЖНОГО файлу (Dropzone uploadprogress) ----
+                    var mxUpSafety = null, mxUpRows = {}, mxUpSeq = 0;
+                    function mxUpEl(){ return document.getElementById('mxUploadOverlay'); }
+                    function mxUpEnsure(){
+                        var ov = mxUpEl();
+                        if(!ov){
+                            ov = document.createElement('div'); ov.id = 'mxUploadOverlay';
+                            ov.innerHTML = '<div class="mxul-card">'
+                                + '<div class="mxul-head"><span class="mxul-ttl">Завантаження</span><span class="mxul-cnt"></span>'
+                                + '<button type="button" class="mxul-hide" title="Сховати — завантаження триватиме у фоні">' + DZ_X + '</button></div>'
+                                + '<div class="mxul-rows"></div>'
+                                + '<div class="mxul-foot">Не закривайте сторінку, поки триває завантаження</div></div>';
+                            document.body.appendChild(ov);
+                            ov.querySelector('.mxul-hide').addEventListener('click', function(){ mxUpHide(); });
+                            requestAnimationFrame(function(){ ov.classList.add('mxul-show'); });
+                        }
+                        return ov;
+                    }
+                    function mxUpCount(){
+                        var ov = mxUpEl(); if(!ov) return;
+                        var ks = Object.keys(mxUpRows), done = 0;
+                        ks.forEach(function(k){ if(mxUpRows[k].done) done++; });
+                        var c = ov.querySelector('.mxul-cnt'); if(c) c.textContent = ks.length > 1 ? (done + ' із ' + ks.length) : '';
+                    }
+                    function mxUpAdd(dz, file){
+                        var ov = mxUpEnsure();
+                        var k = 'f' + (++mxUpSeq); file.__mxK = k;
+                        var row = document.createElement('div'); row.className = 'mxul-row';
+                        row.innerHTML = '<div class="mxul-r1"><span class="mxul-nm">' + mxEsc((file && file.name) || 'Файл') + '</span>'
+                            + '<span class="mxul-st">0%</span>'
+                            + '<button type="button" class="mxul-x" title="Скасувати">' + DZ_X + '</button></div>'
+                            + '<div class="mxul-bar"><i></i></div>';
+                        row.querySelector('.mxul-x').addEventListener('click', function(){
+                            try{ if(dz && dz.removeFile) dz.removeFile(file); }catch(_){ }
+                            mxUpDone(file, 'cancel');
+                        });
+                        ov.querySelector('.mxul-rows').appendChild(row);
+                        mxUpRows[k] = { row: row, done: false };
+                        mxUpCount();
+                        if(mxUpSafety) clearTimeout(mxUpSafety);
+                        mxUpSafety = setTimeout(mxUpHide, 180000);
+                    }
+                    function mxUpProg(file, pct){
+                        var r = file && file.__mxK && mxUpRows[file.__mxK]; if(!r || r.done) return;
+                        var p = Math.max(0, Math.min(100, Math.round(pct || 0)));
+                        r.row.querySelector('.mxul-bar i').style.width = p + '%';
+                        r.row.querySelector('.mxul-st').textContent = p + '%';
+                    }
+                    function mxUpDone(file, mode){ // 'ok' | 'err' | 'cancel'
+                        var r = file && file.__mxK && mxUpRows[file.__mxK]; if(!r || r.done) return;
+                        r.done = true;
+                        var st = r.row.querySelector('.mxul-st'), x = r.row.querySelector('.mxul-x'), bar = r.row.querySelector('.mxul-bar i');
+                        if(x) x.style.display = 'none';
+                        if(mode === 'ok'){ r.row.classList.add('mxul-ok'); bar.style.width = '100%'; st.innerHTML = '<span class="mxul-okic">' + DZ_CHECK + '</span>'; }
+                        else if(mode === 'err'){ r.row.classList.add('mxul-err'); st.textContent = 'Помилка'; }
+                        else { r.row.classList.add('mxul-cnl'); st.textContent = 'Скасовано'; }
+                        mxUpCount();
+                        var all = Object.keys(mxUpRows).every(function(k){ return mxUpRows[k].done; });
+                        if(all){ setTimeout(mxUpMaybeClose, 700); }   // дати оку побачити фінальні галочки
+                    }
+                    function mxUpMaybeClose(){
+                        var ks = Object.keys(mxUpRows);
+                        if(ks.length && ks.every(function(k){ return mxUpRows[k].done; })) mxUpHide();
+                    }
                     function mxUpHide(){
-                        if(mxUpT){ clearInterval(mxUpT); mxUpT = null; }
                         if(mxUpSafety){ clearTimeout(mxUpSafety); mxUpSafety = null; }
-                        var ov = document.getElementById('mxUploadOverlay');
-                        if(!ov) return;
-                        var bar = ov.querySelector('.mxul-bar-i'), pctEl = ov.querySelector('.mxul-pct');
-                        if(bar) bar.style.width = '100%'; if(pctEl) pctEl.textContent = '100%';
+                        var ov = mxUpEl(); if(!ov) return;
                         ov.classList.remove('mxul-show');
-                        setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 260);
+                        setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); mxUpRows = {}; }, 260);
                     }
-                    function mxUpShow(){
-                        if(document.getElementById('mxUploadOverlay')) return;
-                        var ov = document.createElement('div'); ov.id = 'mxUploadOverlay';
-                        ov.innerHTML = '<div class="mxul-box"><div class="mxul-title">Завантаження файлу…</div>'
-                            + '<div class="mxul-bar"><span class="mxul-bar-i"></span></div><div class="mxul-pct">0%</div>'
-                            + '<div class="mxul-sub">Великі файли (КТ) можуть вантажитись до хвилини.<br>Будь ласка, не закривайте сторінку.</div></div>';
-                        document.body.appendChild(ov);
-                        var bar = ov.querySelector('.mxul-bar-i'), pctEl = ov.querySelector('.mxul-pct'), pct = 0, cap = 94;
-                        requestAnimationFrame(function(){ ov.classList.add('mxul-show'); });
-                        mxUpT = setInterval(function(){ pct += Math.max(0.25, (cap - pct) * 0.05); if(pct > cap) pct = cap; if(bar) bar.style.width = pct + '%'; if(pctEl) pctEl.textContent = Math.round(pct) + '%'; }, 200);
-                    }
-                    function mxUpBusy(){ mxUpShow(); if(mxUpSafety) clearTimeout(mxUpSafety); mxUpSafety = setTimeout(mxUpHide, 120000); }
+                    function mxUpBusy(){ mxUpEnsure(); if(mxUpSafety) clearTimeout(mxUpSafety); mxUpSafety = setTimeout(mxUpHide, 180000); }
                     // ---- спільні хелпери: список завантажених файлів у полі (1..N) ----
                     function mxEsc(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
                     function mxFileNameOf(uf){ var t = (uf.textContent || '').replace(/\s+/g, ' ').trim(); return t || 'Файл'; }
@@ -585,13 +650,14 @@
                                     if(_dzi){
                                         el.__mxDzBound = true;
                                         if(_dzi.options && _dzi.options.maxFiles > 1){ el.classList.add('mx-multi'); }
-                                        var _upOn = function(){ el.classList.add('mx-uploading'); mxUpBusy(); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); } el.__mxUpTimer = setTimeout(function(){ el.classList.remove('mx-uploading'); }, 120000); };
-                                        var _upOff = function(){ el.classList.remove('mx-uploading'); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); el.__mxUpTimer = null; } mxUpHide(); mxSyncFiles(el); };
-                                        _dzi.on('addedfile', _upOn);
-                                        _dzi.on('success', function(){ mxSyncFiles(el); });
+                                        var _upOn = function(){ el.classList.add('mx-uploading'); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); } el.__mxUpTimer = setTimeout(function(){ el.classList.remove('mx-uploading'); }, 180000); };
+                                        var _upOff = function(){ el.classList.remove('mx-uploading'); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); el.__mxUpTimer = null; } mxUpMaybeClose(); mxSyncFiles(el); };
+                                        _dzi.on('addedfile', function(f){ _upOn(); mxUpAdd(_dzi, f); });
+                                        _dzi.on('uploadprogress', function(f, p){ mxUpProg(f, p); });
+                                        _dzi.on('success', function(f){ mxUpDone(f, 'ok'); mxSyncFiles(el); });
+                                        _dzi.on('error', function(f){ mxUpDone(f, 'err'); mxSyncFiles(el); });
                                         _dzi.on('complete', function(){ mxSyncFiles(el); });
                                         _dzi.on('queuecomplete', _upOff);
-                                        _dzi.on('error', _upOff);
                                     }
                                 }catch(_e){ }
                             }
