@@ -56,6 +56,7 @@
 #mxProcGrid .os-block-form .element textarea::placeholder{ color:#94A3B8; font-size:calc(13 * var(--u)); }
 /* зірочки обовʼязковості ховаємо — статус показують пилюлі, як на кроці 2 */
 #mxProcGrid .os-block-form .element .title .req,
+#mxProcGrid .os-block-form .element .title .mx-req,
 #mxProcGrid .os-block-form .element .title sup{ display:none !important; }
 #mxProcGrid .mx-col-form{ flex:1 1 calc(600 * var(--u)); min-width:0; max-width:calc(600 * var(--u)); display:flex; flex-direction:column; }
 #mxProcGrid .mx-col-side{ flex:0 0 calc(300 * var(--u)); display:flex; flex-direction:column; }
@@ -1014,7 +1015,8 @@
                 var badge = document.createElement('span'); badge.className = 'mx-fnum'; badge.textContent = num;
                 title.insertBefore(badge, title.firstChild);
                 // статус поля — пилюлі, як на кроці 2 (зірочку прибираємо)
-                var isReq = /\*/.test(title.textContent) || !!el.querySelector('.req, [required]');
+                // обовʼязковість у OneBox позначає клас js-required на інпуті (зірочка може домальовуватись пізніше)
+                var isReq = !!el.querySelector('.js-required, [required], .required-message') || /\*/.test(title.textContent);
                 Array.prototype.forEach.call(title.childNodes, function(n){
                     if(n.nodeType === 3 && n.textContent.indexOf('*') !== -1){ n.textContent = n.textContent.replace(/\s*\*\s*/g, ' ').replace(/\s+$/,''); }
                 });
