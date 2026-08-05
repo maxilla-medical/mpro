@@ -30,7 +30,14 @@
 .mx-proof-row .mx-pr:hover .mx-tip{ opacity:1; transform:translateX(-50%) translateY(0); }
 .mx-proof-row .mx-pr-dot{ color:#CBD5E1; }
 /* ДВОКОЛОНКОВИЙ layout (варіант A: ліва вісь) */
-#mxProcGrid{ display:flex; align-items:stretch; justify-content:center; gap:calc(28 * var(--u)); max-width:calc(1000 * var(--u)); margin:0 auto; }
+#mxProcGrid{ display:flex; align-items:stretch; justify-content:center; gap:calc(28 * var(--u)); max-width:calc(1000 * var(--u)); margin:0 auto; width:100%; box-sizing:border-box; }
+/* однакова ширина блоків на кроках 1 і 2: картка заповнює свою колонку на обох сторінках
+   (без цього грід на сторінці форми стискався, і блоки виглядали меншими, ніж на кроці 2) */
+#mxProcGrid .mx-col-form .os-block-form,
+#mxProcGrid .mx-col-form .os-block-element.js-section-01{ width:100%; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; box-sizing:border-box; }
+/* підписи полів кроку 1 = стиль кроку 2 (номер · назва, flex з тим самим відступом) */
+#mxProcGrid .os-block-form .element .title{ display:flex !important; align-items:center; gap:calc(8 * var(--u)); font-size:calc(14.5 * var(--u)) !important; font-weight:700 !important; color:#0F172A !important; letter-spacing:-0.2px; }
+#mxProcGrid .os-block-form .element .title .mx-fnum{ margin-right:0 !important; }
 #mxProcGrid .mx-col-form{ flex:1 1 calc(600 * var(--u)); min-width:0; max-width:calc(600 * var(--u)); display:flex; flex-direction:column; }
 #mxProcGrid .mx-col-side{ flex:0 0 calc(300 * var(--u)); display:flex; flex-direction:column; }
 /* панель вирівнюється по верхній межі картки форми (відступ = висота заголовка) */
