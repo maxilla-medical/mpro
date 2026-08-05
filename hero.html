@@ -147,6 +147,24 @@
 #mxProcGrid .mx-col-form > .mx-next-proxy{ display:flex !important; align-items:center; justify-content:center; width:100%; height:calc(46 * var(--u)); box-sizing:border-box; margin:calc(16 * var(--u)) 0 0; background:#0F172A; color:#FFFFFF; -webkit-text-fill-color:#FFFFFF; font-family:'Manrope',sans-serif; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(12 * var(--u)); text-decoration:none; box-shadow:0 1px 3px rgba(15,23,42,0.10); cursor:pointer; transition:background .15s ease, transform .06s ease; }
 #mxProcGrid .mx-col-form > .mx-next-proxy:hover{ background:#1E293B; }
 #mxProcGrid .mx-col-form > .mx-next-proxy:active{ transform:translateY(1px); }
+/* ===== F2: drag&drop зони для файлів ===== */
+#mxProcGrid .js-data-element.mx-hasfile .data-edit input[type="file"]{ position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:0 !important; opacity:0 !important; overflow:hidden !important; pointer-events:none !important; clip:rect(0 0 0 0) !important; }
+.mx-dropzone{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(8 * var(--u)); text-align:center; width:100%; box-sizing:border-box; min-height:calc(120 * var(--u)); padding:calc(20 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:calc(14 * var(--u)); cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+.mx-dropzone:hover{ border-color:#2c3bff; background:#F4F6FF; }
+.mx-dropzone.mx-drag{ border-color:#2c3bff; background:#EEF2FF; }
+.mx-dropzone .mx-dz-ico{ width:calc(34 * var(--u)); height:calc(34 * var(--u)); color:#94A3B8; transition:color .15s ease; }
+.mx-dropzone:hover .mx-dz-ico{ color:#2c3bff; }
+.mx-dropzone .mx-dz-ico svg{ width:100%; height:100%; display:block; }
+.mx-dropzone .mx-dz-main{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#475569; line-height:1.35; }
+.mx-dropzone .mx-dz-link{ color:#2c3bff; text-decoration:underline; text-underline-offset:2px; }
+.mx-dropzone .mx-dz-hint{ font-size:calc(12 * var(--u)); font-weight:500; color:#94A3B8; }
+.mx-dropzone.mx-has{ flex-direction:row; justify-content:flex-start; gap:calc(12 * var(--u)); min-height:0; padding:calc(14 * var(--u)) calc(16 * var(--u)); text-align:left; border-style:solid; border-color:#BBF7D0; background:#F0FDF4; cursor:default; }
+.mx-dropzone.mx-has:hover{ border-color:#BBF7D0; background:#F0FDF4; }
+.mx-dropzone.mx-has .mx-dz-ico-file{ width:calc(22 * var(--u)); height:calc(22 * var(--u)); color:#22C55E; flex:0 0 auto; }
+.mx-dropzone.mx-has .mx-dz-fname{ flex:1 1 auto; min-width:0; font-size:calc(13.5 * var(--u)); font-weight:600; color:#0F172A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mx-dropzone .mx-dz-x{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(26 * var(--u)); height:calc(26 * var(--u)); padding:0; border:none; background:transparent; color:#94A3B8; border-radius:calc(8 * var(--u)); cursor:pointer; transition:background .14s ease, color .14s ease; }
+.mx-dropzone .mx-dz-x:hover{ background:#FEE2E2; color:#DC2626; }
+.mx-dropzone .mx-dz-x svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -318,13 +336,16 @@
                     top.innerHTML =
                         '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + backSvg + 'Назад</a>' +
                         '<span class="mx-fsafe">' + safeSvg + 'Дані захищені</span></div>';
+                    var subHTML = (stepN === 2)
+                        ? 'Дані замовлення отримано. Тепер завантажте знімки — за ними ми опрацюємо клінічну ситуацію та підготуємо план лікування. Обов’язково додайте <b>КТ</b>; скани щелеп — якщо вже готові.'
+                        : 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
                     var headHTML =
                         '<div class="mx-form-head">' +
                         '<div class="mx-fill"><span class="mx-fill-badge">Крок ' + stepN + ' з ' + STEP_LBL.length + '</span>' +
                         '<span class="mx-fill-dots">' + dots + '</span>' +
                         '<span class="mx-fill-name">' + STEP_LBL[stepN-1] + '</span></div>' +
                         '<div class="mx-fh-h1">Хірургічний шаблон</div>' +
-                        '<div class="mx-fh-sub">Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b></div></div>';
+                        '<div class="mx-fh-sub">' + subHTML + '</div></div>';
                     // контекст тепер у лівому заголовку (form-head), у картці шапку не додаємо
                     var card = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element.js-section-01');
                     // пруф-рядок ВНИЗУ (під кнопкою переходу)
@@ -372,6 +393,67 @@
                     }
                     applyPH();
                     setTimeout(applyPH, 400); setTimeout(applyPH, 900); setTimeout(applyPH, 1600);
+                    // F2: перетворюємо file-інпути на drag&drop зони
+                    function fileHint(capText){
+                        var t = (capText || '').toLowerCase();
+                        if(t.indexOf('томограм') !== -1) return 'У форматі DICOM';
+                        if(t.indexOf('кани') !== -1) return 'У форматі STL';
+                        return '';
+                    }
+                    var DZ_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>';
+                    var DZ_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+                    var DZ_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>';
+                    function applyFileZones(){
+                        Array.prototype.forEach.call(col.querySelectorAll('.js-data-element'), function(el){
+                            var fin = el.querySelector('.data-edit input[type="file"]');
+                            if(!fin) return;
+                            if(el.querySelector('.mx-dropzone')) return;   // вже зроблено
+                            el.classList.add('mx-hasfile');
+                            var capEl = el.querySelector('.flex-caption .js-text');
+                            var hint = fileHint(capEl ? capEl.textContent : '');
+                            var dz = document.createElement('div');
+                            dz.className = 'mx-dropzone';
+                            function renderEmpty(){
+                                dz.classList.remove('mx-has');
+                                dz.innerHTML =
+                                    '<div class="mx-dz-ico">' + DZ_ICO + '</div>' +
+                                    '<div class="mx-dz-main">Перетягніть файл сюди або <span class="mx-dz-link">оберіть</span></div>' +
+                                    (hint ? '<div class="mx-dz-hint">' + hint + '</div>' : '');
+                            }
+                            function renderFile(name){
+                                dz.classList.add('mx-has');
+                                dz.innerHTML =
+                                    '<div class="mx-dz-ico mx-dz-ico-file">' + DZ_FILE + '</div>' +
+                                    '<div class="mx-dz-fname">' + name + '</div>' +
+                                    '<button type="button" class="mx-dz-x" aria-label="Прибрати">' + DZ_X + '</button>';
+                                var x = dz.querySelector('.mx-dz-x');
+                                if(x) x.addEventListener('click', function(e){
+                                    e.stopPropagation(); e.preventDefault();
+                                    try { fin.value = ''; } catch(_){ }
+                                    fin.dispatchEvent(new Event('change', {bubbles:true}));
+                                    renderEmpty();
+                                });
+                            }
+                            dz.addEventListener('click', function(){ fin.click(); });
+                            dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('mx-drag'); });
+                            dz.addEventListener('dragleave', function(){ dz.classList.remove('mx-drag'); });
+                            dz.addEventListener('drop', function(e){
+                                e.preventDefault(); dz.classList.remove('mx-drag');
+                                if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
+                                    try { fin.files = e.dataTransfer.files; } catch(_){ }
+                                    fin.dispatchEvent(new Event('change', {bubbles:true}));
+                                }
+                            });
+                            fin.addEventListener('change', function(){
+                                if(fin.files && fin.files.length){ renderFile(fin.files[0].name); }
+                                else { renderEmpty(); }
+                            });
+                            if(fin.files && fin.files.length){ renderFile(fin.files[0].name); } else { renderEmpty(); }
+                            fin.parentNode.insertBefore(dz, fin.nextSibling);
+                        });
+                    }
+                    applyFileZones();
+                    setTimeout(applyFileZones, 400); setTimeout(applyFileZones, 900); setTimeout(applyFileZones, 1600);
                     // кнопка переходу → наша «Далі →» / «Надіслати →» на останньому кроці
                     var nextBtn = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status');
                     if(nextBtn){
