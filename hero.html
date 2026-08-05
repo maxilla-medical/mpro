@@ -86,6 +86,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 .mx-col-form .mx-form-head .mx-fill{ justify-content:flex-start; margin:0 0 calc(16 * var(--u)); }
 .mx-col-form .mx-form-head .mx-fh-h1{ font-size:calc(26 * var(--u)); font-weight:700; color:#0F172A; letter-spacing:-0.5px; line-height:1.15; margin:0 0 calc(7 * var(--u)); }
 .mx-col-form .mx-form-head .mx-fh-sub{ font-size:calc(13.5 * var(--u)); color:#64748B; line-height:1.5; }
+.mx-col-form .mx-form-head .mx-fh-sub:empty{ display:none; }   /* немає опису в налаштуваннях форми → рядка просто немає */
 .mx-col-form .mx-form-head .mx-fh-sub b{ color:#0F172A; font-weight:600; }
 /* ===== оверлей завантаження: пофайловий прогрес (перекриває стилі з global.html) ===== */
 #mxUploadOverlay{ position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,0.35); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); opacity:0; transition:opacity .22s ease; }
@@ -1005,8 +1006,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 '<div class="mx-fill"><span class="mx-fill-badge">Крок 1 з ' + STEP_LBL_F.length + '</span>' +
                 '<span class="mx-fill-dots">' + dots + '</span>' +
                 '<span class="mx-fill-name">' + STEP_LBL_F[0] + '</span></div>' +
-                '<div class="mx-fh-h1">' + (fName || 'Хірургічний шаблон') + '</div>' +
-                '<div class="mx-fh-sub">' + (fDesc || 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>') + '</div></div>';
+                '<div class="mx-fh-h1">' + (fName || (document.title || '').replace(/\s+/g, ' ').trim()) + '</div>' +
+                '<div class="mx-fh-sub">' + (fDesc || '') + '</div></div>';
 
             var grid = document.createElement('div'); grid.id = 'mxProcGrid';
             var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
