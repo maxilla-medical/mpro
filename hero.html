@@ -141,6 +141,12 @@
 #mxProcGrid .os-block-form:not(.params-form) > h2,
 #mxProcGrid .os-block-form:not(.params-form) .mx-form-intro{ display:none !important; }
 #mxProcGrid .os-block-form:not(.params-form) .element.mx-section{ display:none !important; }
+/* «Далі» окремою полосою ПІД карткою (як F1): ховаємо справжній сабміт, клікаємо його через проксі */
+#mxProcGrid .os-block-form:not(.params-form) input[type="submit"].mx-realsubmit,
+#mxProcGrid .os-block-form:not(.params-form) button[type="submit"].mx-realsubmit{ position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:0 !important; opacity:0 !important; overflow:hidden !important; pointer-events:none !important; }
+#mxProcGrid .mx-col-form > .mx-next-proxy{ display:flex !important; align-items:center; justify-content:center; width:100%; height:calc(46 * var(--u)); box-sizing:border-box; margin:calc(16 * var(--u)) 0 0; background:#0F172A; color:#FFFFFF; -webkit-text-fill-color:#FFFFFF; font-family:'Manrope',sans-serif; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(12 * var(--u)); text-decoration:none; box-shadow:0 1px 3px rgba(15,23,42,0.10); cursor:pointer; transition:background .15s ease, transform .06s ease; }
+#mxProcGrid .mx-col-form > .mx-next-proxy:hover{ background:#1E293B; }
+#mxProcGrid .mx-col-form > .mx-next-proxy:active{ transform:translateY(1px); }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -517,9 +523,17 @@
                 title.insertBefore(badge, title.firstChild);
             });
 
-            // кнопка → «Далі →»
+            // «Далі →» окремою пілюлею ПІД карткою (як у F1). Справжній сабміт лишаємо у формі
+            // (щоб відправка працювала), ховаємо його і клікаємо через проксі-кнопку.
             var sb = card.querySelector('input[type="submit"], button[type="submit"]');
-            if(sb){ if(sb.tagName === 'INPUT'){ sb.value = 'Далі \u2192'; } else { sb.innerHTML = 'Далі <span style="margin-left:calc(4 * var(--u))">\u2192</span>'; } }
+            if(sb && !document.getElementById('mxNextProxy')){
+                sb.classList.add('mx-realsubmit');
+                var proxy = document.createElement('a');
+                proxy.id = 'mxNextProxy'; proxy.className = 'mx-next-proxy'; proxy.href = 'javascript:void(0)';
+                proxy.innerHTML = 'Далі <span style="margin-left:calc(4 * var(--u))">\u2192</span>';
+                proxy.addEventListener('click', function(e){ e.preventDefault(); sb.click(); });
+                lcol.appendChild(proxy);
+            }
 
             // вирівнюємо панель (верх по картці, низи зводить flex)
             var alignFormSide = function(){
