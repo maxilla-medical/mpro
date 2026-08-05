@@ -38,6 +38,8 @@
 /* ===== крок 1 = крок 2: однакова геометрія картки, підписів і полів (звірено замірами) ===== */
 /* картка: ті самі внутрішні відступи, що в картки кроку 2 (26u зверху, 28u з боків) */
 #mxProcGrid .mx-col-form .os-block-form{ padding:calc(26 * var(--u)) calc(28 * var(--u)) calc(28 * var(--u)) !important; }
+/* рідні назва/опис форми всередині картки не показуємо — вони вже витягнуті в наш заголовок зліва */
+#mxProcGrid .mx-col-form .os-block-form > *:not(form){ display:none !important; }
 /* підпис поля: той самий кегль (13.5u, як реально рендериться на кроці 2), flex 8u від номера */
 #mxProcGrid .os-block-form .element .title{ display:flex !important; align-items:center; gap:calc(8 * var(--u)); margin:0 0 calc(9 * var(--u)) !important; font-size:calc(13.5 * var(--u)) !important; font-weight:700 !important; color:#0F172A !important; letter-spacing:-0.2px; }
 #mxProcGrid .os-block-form .element .title .mx-fnum{ margin-right:0 !important; }
@@ -986,13 +988,25 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 
             var dots = '';
             for(var di=1; di<=STEP_LBL_F.length; di++){ dots += '<span class="mx-fd' + (di===1?' mx-on':'') + '"></span>'; }
+            // заголовок/підзаголовок тягнемо з налаштувань форми OneBox:
+            // «Название формы» → прихований <h2> у картці; «Описание» → текстовий блок картки до <form>.
+            // Якщо в налаштуваннях порожньо — фолбек на стандартні тексти.
+            var fName = '', fDesc = '';
+            var fH2 = card.querySelector('h2');
+            if(fH2){ fName = (fH2.textContent || '').replace(/\s+/g, ' ').trim(); }
+            Array.prototype.forEach.call(card.children, function(c){
+                if(fDesc || !c.tagName) return;
+                var tg = c.tagName.toLowerCase();
+                if(tg === 'h2' || tg === 'form' || tg === 'style' || tg === 'script') return;
+                if((c.textContent || '').replace(/\s+/g, ' ').trim()){ fDesc = c.innerHTML; }
+            });
             var headHTML =
                 '<div class="mx-form-head">' +
                 '<div class="mx-fill"><span class="mx-fill-badge">Крок 1 з ' + STEP_LBL_F.length + '</span>' +
                 '<span class="mx-fill-dots">' + dots + '</span>' +
                 '<span class="mx-fill-name">' + STEP_LBL_F[0] + '</span></div>' +
-                '<div class="mx-fh-h1">Хірургічний шаблон</div>' +
-                '<div class="mx-fh-sub">Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b></div></div>';
+                '<div class="mx-fh-h1">' + (fName || 'Хірургічний шаблон') + '</div>' +
+                '<div class="mx-fh-sub">' + (fDesc || 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>') + '</div></div>';
 
             var grid = document.createElement('div'); grid.id = 'mxProcGrid';
             var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
