@@ -158,12 +158,17 @@
 })();
 
 (function(){
-    var path=location.pathname.replace(/\/+$/,'');
-    document.querySelectorAll('#mxMenu .mxm-item').forEach(function(a){
-        var href=a.getAttribute('href');
-        if(!href||href.indexOf('#')!==-1) return;
-        var ap=new URL(href,location.origin).pathname.replace(/\/+$/,'');
-        if(ap && ap===path) a.classList.add('mxm-active');
-    });
+    // активний пункт меню: знімаємо з усіх і ставимо поточному.
+    // повторюємо на кожній частковій навігації (mx:navigated), бо меню не перезавантажується.
+    function setActive(){
+        var path=location.pathname.replace(/\/+$/,'');
+        document.querySelectorAll('#mxMenu .mxm-item').forEach(function(a){
+            var href=a.getAttribute('href'); var ap='';
+            try{ ap=new URL(href,location.origin).pathname.replace(/\/+$/,''); }catch(_){}
+            a.classList.toggle('mxm-active', !!(href && href.indexOf('#')===-1 && ap && ap===path));
+        });
+    }
+    setActive();
+    window.addEventListener('mx:navigated', setActive);
 })();
 </script>
