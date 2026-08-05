@@ -155,44 +155,44 @@
 #mxProcGrid .js-data-element.mx-filefield .data-edit{ padding:0 !important; margin:0 !important; display:block !important; }
 #mxProcGrid .mx-filefield .flex-caption a.ob-link-info{ display:none !important; }
 #mxProcGrid .mx-filefield .flex-caption div[class*="js-universal-block-order"]{ display:none !important; }
-/* бейджі обов'язковості */
-#mxProcGrid .mx-filefield .mx-req-star{ color:#DC2626; font-size:calc(15 * var(--u)); font-weight:700; line-height:1; }
-#mxProcGrid .mx-filefield .mx-req-opt{ font-size:calc(11 * var(--u)); font-weight:600; color:#64748B; background:#F1F5F9; border-radius:calc(999 * var(--u)); padding:calc(2 * var(--u)) calc(9 * var(--u)); letter-spacing:.01em; }
-/* зона */
+/* бейджі: обов'язкове (червоне) / опційне (сіре) — головний сигнал з півпогляду */
+#mxProcGrid .mx-filefield .mx-req-badge{ flex:0 0 auto; font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:.01em; border-radius:calc(999 * var(--u)); padding:calc(3 * var(--u)) calc(10 * var(--u)); line-height:1.35; }
+#mxProcGrid .mx-filefield .mx-req-star{ color:#E11D48; background:#FEF2F2; }
+#mxProcGrid .mx-filefield .mx-req-opt{ color:#64748B; background:#F1F5F9; }
+/* зона завантаження: іконка · двострічковий текст (дія + формат/кілька) · «Обрати» */
 #mxProcGrid .mx-filefield .ob-block-attach{ display:block; width:100%; box-sizing:border-box; margin:0; }
-#mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn{ display:flex; flex-direction:row; align-items:center; gap:calc(12 * var(--u)); width:100%; box-sizing:border-box; min-height:calc(56 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1.5px dashed #C3CDDA; border-radius:calc(12 * var(--u)); color:#475569; text-decoration:none; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+#mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn{ display:flex; align-items:center; gap:calc(14 * var(--u)); width:100%; box-sizing:border-box; min-height:calc(66 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:calc(14 * var(--u)); color:#475569; text-decoration:none; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
 #mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn:hover{ border-color:#2c3bff; background:#F4F6FF; }
 #mxProcGrid .mx-filefield .ob-block-attach.mx-drag a.ob-button-attach.mx-dz-btn{ border-color:#2c3bff; background:#EEF2FF; border-style:solid; }
-#mxProcGrid .mx-filefield .mx-dz-ico{ width:calc(22 * var(--u)); height:calc(22 * var(--u)); flex:0 0 auto; color:#64748B; transition:color .15s ease; }
+#mxProcGrid .mx-filefield .mx-dz-ico{ width:calc(26 * var(--u)); height:calc(26 * var(--u)); flex:0 0 auto; color:#94A3B8; transition:color .15s ease; }
 #mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn:hover .mx-dz-ico{ color:#2c3bff; }
 #mxProcGrid .mx-filefield .mx-dz-ico svg{ width:100%; height:100%; display:block; }
-#mxProcGrid .mx-filefield .mx-dz-main{ flex:1 1 auto; min-width:0; font-size:calc(12.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.25; }
-#mxProcGrid .mx-filefield .mx-dz-fmt{ flex:0 0 auto; font-size:calc(11 * var(--u)); font-weight:700; color:#475569; letter-spacing:.04em; background:#EEF2F7; border-radius:calc(6 * var(--u)); padding:calc(3 * var(--u)) calc(9 * var(--u)); }
-/* CTA «Обрати» — ВТОРИННА кнопка (світла), щоб не конкурувати з єдиною головною «Надіслати» */
-#mxProcGrid .mx-filefield .mx-dz-cta{ flex:0 0 auto; display:inline-flex; align-items:center; height:calc(30 * var(--u)); padding:0 calc(16 * var(--u)); background:#FFFFFF; border:1px solid #CBD5E1; border-radius:calc(9 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; color:#0F172A; -webkit-text-fill-color:#0F172A; box-shadow:0 1px 2px rgba(15,23,42,0.05); transition:background .15s ease, border-color .15s ease, color .15s ease; }
+#mxProcGrid .mx-filefield .mx-dz-txt{ display:flex; flex-direction:column; gap:calc(2 * var(--u)); flex:1 1 auto; min-width:0; }
+#mxProcGrid .mx-filefield .mx-dz-main{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#334155; line-height:1.25; }
+#mxProcGrid .mx-filefield .mx-dz-sub{ font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; line-height:1.2; }
+#mxProcGrid .mx-filefield .mx-dz-more{ display:none; font-size:calc(13.5 * var(--u)); font-weight:600; color:#2c3bff; }
+#mxProcGrid .mx-filefield .mx-dz-cta{ flex:0 0 auto; display:inline-flex; align-items:center; height:calc(34 * var(--u)); padding:0 calc(18 * var(--u)); background:#FFFFFF; border:1px solid #CBD5E1; border-radius:calc(9 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; color:#0F172A; -webkit-text-fill-color:#0F172A; box-shadow:0 1px 2px rgba(15,23,42,0.05); transition:background .15s ease, border-color .15s ease, color .15s ease; }
 #mxProcGrid .mx-filefield a.ob-button-attach.mx-dz-btn:hover .mx-dz-cta{ background:#F4F6FF; border-color:#2c3bff; color:#2c3bff; -webkit-text-fill-color:#2c3bff; }
-/* службові якорі OneBox (скасувати/прийняти редагування) — ховаємо */
+/* ОБОВ'ЯЗКОВЕ поле (КТ) — легкий синій акцент «почни звідси» */
+#mxProcGrid .mx-filefield.mx-req-field a.ob-button-attach.mx-dz-btn{ background:#F5F7FF; border-color:#C7D2FE; }
+#mxProcGrid .mx-filefield.mx-req-field a.ob-button-attach.mx-dz-btn .mx-dz-ico{ color:#2c3bff; }
+#mxProcGrid .mx-filefield.mx-req-field a.ob-button-attach.mx-dz-btn:hover{ border-color:#2c3bff; }
+/* службові елементи OneBox ховаємо */
 #mxProcGrid .mx-filefield .ob-link-delete, #mxProcGrid .mx-filefield .ob-link-accept{ display:none !important; }
-/* «сирі» представлення файлу від OneBox ховаємо — показуємо свій зелений стан.
-   .js-uploaded-file лишається в DOM: усередині input name="...[]" сабмиться */
 #mxProcGrid .mx-obfile-hide{ display:none !important; }
 #mxProcGrid .mx-filefield .js-uploaded-file{ display:none !important; }
 #mxProcGrid .mx-filefield .data-view{ display:none !important; }
-/* службовий прогрес/прев'ю Dropzone (бліда «загрузка…») ховаємо — показуємо свій стан */
 #mxProcGrid .mx-filefield .ob-block-attach > *:not(.ob-button-attach):not(.mx-dz-remove){ display:none !important; }
 #mxProcGrid .mx-filefield .dz-preview, #mxProcGrid .mx-filefield .dz-default, #mxProcGrid .mx-filefield .dz-message, #mxProcGrid .mx-filefield .dz-preview-container{ display:none !important; }
-/* ---- інлайн-стан «Завантаження…» ---- */
+/* стан «Завантаження…» */
 @keyframes mxfzspin{ to{ transform:rotate(360deg); } }
 #mxProcGrid .mx-filefield .mx-dz-loading{ display:none; align-items:center; gap:calc(9 * var(--u)); flex:1 1 auto; min-width:0; font-size:calc(13 * var(--u)); font-weight:600; color:#2c3bff; }
 #mxProcGrid .mx-filefield .mx-dz-spin{ flex:0 0 auto; width:calc(16 * var(--u)); height:calc(16 * var(--u)); border-radius:50%; border:2px solid rgba(44,59,255,0.22); border-top-color:#2c3bff; animation:mxfzspin .7s linear infinite; }
-#mxProcGrid .mx-filefield.mx-uploading .mx-dz-ico,
-#mxProcGrid .mx-filefield.mx-uploading .mx-dz-main,
-#mxProcGrid .mx-filefield.mx-uploading .mx-dz-fmt,
+#mxProcGrid .mx-filefield.mx-uploading .mx-dz-txt,
 #mxProcGrid .mx-filefield.mx-uploading .mx-dz-cta{ display:none !important; }
 #mxProcGrid .mx-filefield.mx-uploading .mx-dz-loading{ display:flex; }
-#mxProcGrid .mx-filefield.mx-uploading a.ob-button-attach.mx-dz-btn{ border-style:solid; border-color:#C7D2FE; background:#F5F7FF; }
-/* ---- список завантажених файлів (працює для 1 і для N файлів) ---- */
-#mxProcGrid .mx-filefield .mx-files{ display:none; flex-direction:column; gap:calc(8 * var(--u)); }
+/* список завантажених файлів (1..N) */
+#mxProcGrid .mx-filefield .mx-files{ display:none; flex-direction:column; gap:calc(8 * var(--u)); max-height:calc(232 * var(--u)); overflow-y:auto; }
 #mxProcGrid .mx-filefield.mx-has-file .mx-files{ display:flex; }
 #mxProcGrid .mx-filefield .mx-file-row{ display:flex; align-items:center; gap:calc(11 * var(--u)); box-sizing:border-box; width:100%; padding:calc(11 * var(--u)) calc(12 * var(--u)) calc(11 * var(--u)) calc(14 * var(--u)); background:#F0FDF4; border:1.5px solid #BBF7D0; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-filefield .mx-file-ic{ flex:0 0 auto; width:calc(22 * var(--u)); height:calc(22 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#22C55E; color:#fff; }
@@ -201,20 +201,15 @@
 #mxProcGrid .mx-filefield .mx-file-x{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(30 * var(--u)); height:calc(30 * var(--u)); padding:0; background:transparent; border:none; border-radius:calc(8 * var(--u)); color:#64748B; cursor:pointer; transition:background .14s ease, color .14s ease; }
 #mxProcGrid .mx-filefield .mx-file-x:hover{ background:#FEE2E2; color:#DC2626; }
 #mxProcGrid .mx-filefield .mx-file-x svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
-/* одно-файлове поле з файлом: ховаємо зону (щоб змінити — прибрати ×, зона повернеться).
-   багато-файлове (.mx-multi): зона лишається під списком — можна додати ще файли */
+/* одно-файлове з файлом: зона ховається; мультиполе: зона лишається (додати ще) */
 #mxProcGrid .mx-filefield.mx-has-file:not(.mx-multi) .ob-block-attach{ display:none !important; }
 #mxProcGrid .mx-filefield.mx-multi.mx-has-file .ob-block-attach{ margin-top:calc(8 * var(--u)); }
-#mxProcGrid .mx-filefield.mx-multi.mx-has-file a.ob-button-attach.mx-dz-btn{ min-height:calc(46 * var(--u)); }
-/* довгий список не розриває layout */
-#mxProcGrid .mx-filefield .mx-files{ max-height:calc(232 * var(--u)); overflow-y:auto; }
-/* контекстний текст зони «Додати ще файл» (для мультиполя, коли вже є файли) */
-#mxProcGrid .mx-filefield .mx-dz-more{ display:none; flex:1 1 auto; min-width:0; font-size:calc(12.5 * var(--u)); font-weight:600; color:#2c3bff; }
-#mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-main{ display:none; }
+#mxProcGrid .mx-filefield.mx-multi.mx-has-file a.ob-button-attach.mx-dz-btn{ min-height:calc(48 * var(--u)); }
+#mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-main,
+#mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-sub{ display:none; }
 #mxProcGrid .mx-filefield.mx-multi.mx-has-file .mx-dz-more{ display:block; }
-/* пояснення під підписом поля (багатофайловість / опційність) */
-#mxProcGrid .mx-filefield .mx-field-hint{ margin:calc(-4 * var(--u)) 0 calc(10 * var(--u)); font-size:calc(12 * var(--u)); font-weight:500; color:#64748B; line-height:1.45; }
-#mxProcGrid .mx-filefield .mx-field-hint b{ color:#0F172A; font-weight:600; }
+/* «можна кілька файлів» — у під-рядку зони, коли поле багатофайлове */
+#mxProcGrid .mx-filefield.mx-multi .mx-dz-sub::after{ content:' · можна кілька файлів'; }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -389,7 +384,7 @@
                         '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + backSvg + 'Назад</a>' +
                         '<span class="mx-fsafe">' + safeSvg + 'Дані захищені</span></div>';
                     var subHTML = (stepN === 2)
-                        ? 'Дані замовлення отримано. Додайте знімки — за ними опрацюємо клінічну ситуацію та підготуємо план. Для старту достатньо <b>КТ</b> — це мінімум; скани щелеп можна надіслати пізніше. У кожне поле можна завантажити <b>кілька файлів одразу</b>.'
+                        ? 'Мінімум — завантажте <b>КТ</b>. Скани щелеп можна додати пізніше.'
                         : 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
                     var headHTML =
                         '<div class="mx-form-head">' +
@@ -577,19 +572,6 @@
                                     }
                                 }catch(_e){ }
                             }
-                            // пояснення під підписом (оновлюємо щоразу — mx-multi зʼявляється після ініту Dropzone):
-                            // «мінімум КТ / за бажанням + можна пізніше» та «можна кілька файлів»
-                            (function(){
-                                var capE = el.querySelector('.flex-caption'); if(!capE) return;
-                                var fh = el.querySelector('.mx-field-hint');
-                                if(!fh){ fh = document.createElement('div'); fh.className = 'mx-field-hint'; if(capE.parentNode){ capE.parentNode.insertBefore(fh, capE.nextSibling); } }
-                                var req = isReqCap(capE.textContent);
-                                var multi = el.classList.contains('mx-multi');
-                                var lead = req ? 'Достатньо для старту — це <b>мінімум</b>, щоб ми оцінили ситуацію' : 'За бажанням — можна надіслати пізніше';
-                                var tail = multi ? ' · можна кілька файлів одразу' : '';
-                                var html = lead + tail + '.';
-                                if(fh.innerHTML !== html){ fh.innerHTML = html; }
-                            })();
                             if(el.getAttribute('data-mxfz')){ return; } // решту робимо лише раз
                             el.setAttribute('data-mxfz','1');
                             el.classList.add('mx-filefield');
@@ -605,18 +587,21 @@
                                 capEl.textContent = '';
                                 capEl.appendChild(document.createTextNode(label));
                                 var badge = document.createElement('span');
-                                if(required){ badge.className = 'mx-req-badge mx-req-star'; badge.textContent = '*'; badge.setAttribute('title', 'Обов’язкове'); }
-                                else { badge.className = 'mx-req-badge mx-req-opt'; badge.textContent = 'за бажанням'; }
+                                if(required){ badge.className = 'mx-req-badge mx-req-star'; badge.textContent = 'Обов’язково'; }
+                                else { badge.className = 'mx-req-badge mx-req-opt'; badge.textContent = 'Опційно'; }
                                 capEl.appendChild(badge);
                             }
-                            var instr = MX_TOUCH ? 'Оберіть файл із пристрою' : 'Перетягніть файл сюди';
+                            var instr = MX_TOUCH ? 'Оберіть файли з пристрою' : 'Перетягніть або оберіть файли';
+                            var subMeta = mxEsc(fmt || 'Файл');
                             if(btn){
                                 btn.classList.add('mx-dz-btn');
                                 btn.innerHTML =
                                     '<span class="mx-dz-ico">' + DZ_ICO + '</span>' +
-                                    '<span class="mx-dz-main">' + instr + '</span>' +
-                                    '<span class="mx-dz-more">Додати ще файл</span>' +
-                                    (fmt ? '<span class="mx-dz-fmt">' + fmt + '</span>' : '') +
+                                    '<span class="mx-dz-txt">' +
+                                        '<span class="mx-dz-main">' + instr + '</span>' +
+                                        '<span class="mx-dz-sub">' + subMeta + '</span>' +
+                                        '<span class="mx-dz-more">Додати ще файл</span>' +
+                                    '</span>' +
                                     '<span class="mx-dz-cta">Обрати</span>' +
                                     '<span class="mx-dz-loading"><span class="mx-dz-spin"></span>Завантаження…</span>';
                             }
