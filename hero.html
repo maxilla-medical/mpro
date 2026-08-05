@@ -1040,6 +1040,19 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 if(isReq){ pill.className = 'mx-req-badge mx-req-star'; pill.textContent = 'Обов’язково'; }
                 else { pill.className = 'mx-req-badge mx-req-opt'; pill.textContent = 'Опційно'; }
                 title.appendChild(pill);
+                // плейсхолдер-спонука: «Вкажіть…» — мікро-заклик до дії замість пасивного дубля назви
+                if(fld && (fld.tagName === 'INPUT' || fld.tagName === 'TEXTAREA')){
+                    var lbl = '';
+                    Array.prototype.forEach.call(title.childNodes, function(n){ if(n.nodeType === 3) lbl += n.textContent; });
+                    lbl = lbl.replace(/\s+/g, ' ').trim();
+                    var low = lbl.toLowerCase(), ph = null;
+                    if(low.indexOf('пацієнт') !== -1) ph = 'Вкажіть повне ім’я пацієнта';
+                    else if(low.indexOf('систем') !== -1) ph = 'Вкажіть систему імплантатів';
+                    else if(low.indexOf('позиці') !== -1) ph = 'Вкажіть бажані позиції — напр., 14, 16, 24';
+                    else if(low.indexOf('комент') !== -1) ph = 'Додайте побажання до плану — за бажанням';
+                    else if(lbl) ph = 'Вкажіть: ' + lbl.charAt(0).toLowerCase() + lbl.slice(1);
+                    if(ph) fld.setAttribute('placeholder', ph);
+                }
             });
 
             // «Далі →» окремою пілюлею ПІД карткою (як у F1). Справжній сабміт лишаємо у формі
