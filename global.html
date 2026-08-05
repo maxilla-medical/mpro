@@ -552,36 +552,8 @@ body.custom-body,.custom-body,.nc-client-grid,.client-row-body,.client-row-head,
         if(col){
             var forms = col.querySelectorAll('.os-block-form:not(.params-form)');
             Array.prototype.forEach.call(forms, function(form){
-                // компактна шапка: голий інтро-текст після h2 → стилізований підзаголовок
-                if(!form.getAttribute('data-mxhead')){
-                    form.setAttribute('data-mxhead','1');
-                    var h2 = form.querySelector('h2');
-                    if(h2){
-                        var introTxt = '';
-                        var n = h2.nextSibling;
-                        var toRemove = [];
-                        while(n && !(n.nodeType === 1 && n.tagName === 'FORM')){
-                            if(n.nodeType === 3){ introTxt += n.textContent; }
-                            if(n.nodeType === 1 && n.tagName === 'BR'){ /* skip */ }
-                            var next = n.nextSibling;
-                            if(n.nodeType === 3 || (n.nodeType === 1 && n.tagName === 'BR')) toRemove.push(n);
-                            n = next;
-                        }
-                        introTxt = introTxt.replace(/\s+/g,' ').trim();
-                        toRemove.forEach(function(node){ if(node.parentNode) node.parentNode.removeChild(node); });
-                        if(introTxt){
-                            var sub = document.createElement('div');
-                            sub.className = 'mx-form-intro';
-                            sub.appendChild(document.createTextNode(introTxt + ' '));
-                            var pill = document.createElement('span');
-                            pill.className = 'mx-form-time';
-                            pill.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~2 хвилини';
-                            sub.appendChild(pill);
-                            if(h2.nextSibling){ h2.parentNode.insertBefore(sub, h2.nextSibling); }
-                            else { h2.parentNode.appendChild(sub); }
-                        }
-                    }
-                }
+                // шапку форми (назва + опис із налаштувань) тепер повністю збирає hero.html (renderForm) —
+                // легасі-складач .mx-form-intro з жорстким чипом «~2 хвилини» видалено
                 var els = form.querySelectorAll('.element');
                 Array.prototype.forEach.call(els, function(el){
                     if(el.getAttribute('data-mxel')) return;
