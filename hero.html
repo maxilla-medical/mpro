@@ -420,7 +420,7 @@
                         '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + backSvg + 'Назад</a>' +
                         '<span class="mx-fsafe">' + safeSvg + 'Дані захищені</span></div>';
                     var subHTML = (stepN === 2)
-                        ? 'Залишилось додати знімки пацієнта — і кейс у роботі.'
+                        ? 'Залишилось додати знімки та скани — і кейс у роботі.'
                         : 'Сплануємо та виготовимо під вашого пацієнта · заповнення <b>~2 хвилини</b>';
                     var headHTML =
                         '<div class="mx-form-head">' +
@@ -543,7 +543,10 @@
                             + '<button type="button" class="mxul-x" title="Скасувати">' + DZ_X + '</button></div>'
                             + '<div class="mxul-bar"><i></i></div>';
                         row.querySelector('.mxul-x').addEventListener('click', function(){
-                            try{ if(dz && dz.removeFile) dz.removeFile(file); }catch(_){ }
+                            file.__mxCanceled = true;                              // позначка: цей файл скасовано
+                            try{ if(dz && dz.removeFile) dz.removeFile(file); }catch(_){ }   // обриває запит, якщо ще летить
+                            var fld = (dz && dz.element && dz.element.closest) ? dz.element.closest('.js-data-element') : null;
+                            if(fld){ mxCancelPurge(fld, file); }                    // якщо встиг долетіти — вичищаємо з поля
                             mxUpDone(file, 'cancel');
                             var sw = 0, swT = setInterval(function(){ mxToastSweep(); if(++sw > 8) clearInterval(swT); }, 500);
                         });
@@ -646,6 +649,27 @@
                         }catch(_){ }
                         mxSyncFiles(field);
                     }
+                    // скасований файл, який усе ж долетів на сервер: прибираємо його вузол із поля
+                    // (разом із ним зникає input name="...[]" → на сабміт файл НЕ піде)
+                    function mxCancelPurge(field, file){
+                        var nm = (file && file.name) || '';
+                        if(!nm || !field) return;
+                        var tries = 0;
+                        var t = setInterval(function(){
+                            tries++;
+                            var hit = null;
+                            Array.prototype.forEach.call(field.querySelectorAll('.js-uploaded-file'), function(u){
+                                if(!hit && (u.textContent || '').indexOf(nm) !== -1) hit = u;
+                            });
+                            if(hit){
+                                if(hit.parentNode) hit.parentNode.removeChild(hit);
+                                var z = field.querySelector('.ob-block-attach');
+                                if(z && !field.querySelector('.js-uploaded-file')) z.classList.remove('dz-max-files-reached');
+                                mxSyncFiles(field);
+                            }
+                            if(hit || tries > 15){ clearInterval(t); }   // чекаємо появи до ~6с
+                        }, 400);
+                    }
                     // прибрати ВСІ файли поля
                     function mxClearField(field){
                         try{ var z = field.querySelector('.ob-block-attach'); var dz = (window.Dropzone && z && Dropzone.forElement) ? Dropzone.forElement(z) : null; if(dz && dz.removeAllFiles){ dz.removeAllFiles(true); } if(z){ z.classList.remove('dz-max-files-reached'); } }catch(_){ }
@@ -681,7 +705,10 @@
                                         var _upOff = function(){ el.classList.remove('mx-uploading'); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); el.__mxUpTimer = null; } mxUpMaybeClose(); mxSyncFiles(el); };
                                         _dzi.on('addedfile', function(f){ _upOn(); mxUpAdd(_dzi, f); });
                                         _dzi.on('uploadprogress', function(f, p){ mxUpProg(f, p); });
-                                        _dzi.on('success', function(f){ mxUpDone(f, 'ok'); mxSyncFiles(el); });
+                                        _dzi.on('success', function(f){
+                                            if(f && f.__mxCanceled){ mxCancelPurge(el, f); mxSyncFiles(el); return; }   // скасований — не зелений
+                                            mxUpDone(f, 'ok'); mxSyncFiles(el);
+                                        });
                                         _dzi.on('error', function(f){ mxUpDone(f, 'err'); mxSyncFiles(el); });
                                         _dzi.on('complete', function(){ mxSyncFiles(el); });
                                         _dzi.on('queuecomplete', _upOff);
