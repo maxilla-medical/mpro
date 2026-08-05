@@ -518,9 +518,14 @@
                             el.__mxHas = false;
                             var mark = function(){
                                 var has = false;
-                                var dv = el.querySelector('.data-view');
-                                if(dv){ var a = dv.querySelector('a[href]'); if(a && a.getAttribute('href')){ has = true; } }
-                                if(!has && attach.querySelector('a[href]:not(.ob-button-attach), img, .ob-attach-file, .js-file-preview')){ has = true; }
+                                // OneBox після аплоаду додає посилання на файл будь-де в полі
+                                var links = el.querySelectorAll('a[href]');
+                                Array.prototype.forEach.call(links, function(a){
+                                    if(a.classList.contains('ob-button-attach') || a.classList.contains('ob-link-info') || a.classList.contains('ob-link-delete') || a.classList.contains('ob-link-accept')) return;
+                                    var h = a.getAttribute('href');
+                                    if(h && h !== '#' && h.indexOf('javascript:') !== 0 && a.textContent.trim()){ has = true; }
+                                });
+                                if(!has && el.querySelector('.ob-block-attach img, .ob-attach-file, .js-file-preview')){ has = true; }
                                 if(has && !el.__mxHas){ mxUpHide(); }   // аплоад завершився → ховаємо оверлей
                                 el.__mxHas = has;
                                 el.classList.toggle('mx-has-file', has);
