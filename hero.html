@@ -178,25 +178,34 @@
 #mxProcGrid .mx-obfile-hide{ display:none !important; }
 #mxProcGrid .mx-filefield .js-uploaded-file{ display:none !important; }
 #mxProcGrid .mx-filefield .data-view{ display:none !important; }
-/* ---- стан «файл завантажено» ---- */
-#mxProcGrid .mx-filefield .mx-dz-done{ display:none; align-items:center; gap:calc(10 * var(--u)); flex:1 1 auto; min-width:0; }
-#mxProcGrid .mx-filefield .mx-dz-done-ic{ flex:0 0 auto; width:calc(22 * var(--u)); height:calc(22 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#22C55E; color:#fff; }
-#mxProcGrid .mx-filefield .mx-dz-done-ic svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); }
-#mxProcGrid .mx-filefield .mx-dz-done-t{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; white-space:nowrap; }
-#mxProcGrid .mx-filefield .mx-dz-again{ margin-left:auto; flex:0 0 auto; font-size:calc(12 * var(--u)); font-weight:600; color:#2c3bff; }
-#mxProcGrid .mx-filefield.mx-has-file a.ob-button-attach.mx-dz-btn{ border-style:solid; border-color:#BBF7D0; background:#F0FDF4; }
-#mxProcGrid .mx-filefield.mx-has-file .mx-dz-ico,
-#mxProcGrid .mx-filefield.mx-has-file .mx-dz-main,
-#mxProcGrid .mx-filefield.mx-has-file .mx-dz-fmt,
-#mxProcGrid .mx-filefield.mx-has-file .mx-dz-cta{ display:none !important; }
-#mxProcGrid .mx-filefield.mx-has-file .mx-dz-done{ display:flex; }
-/* × прибрати файл — окрема кнопка праворуч від зеленої зони */
-#mxProcGrid .mx-filefield .mx-dz-remove{ display:none; }
-#mxProcGrid .mx-filefield.mx-has-file .ob-block-attach{ display:flex; align-items:stretch; gap:calc(8 * var(--u)); }
-#mxProcGrid .mx-filefield.mx-has-file .ob-block-attach > a.ob-button-attach{ flex:1 1 auto; }
-#mxProcGrid .mx-filefield.mx-has-file .mx-dz-remove{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(46 * var(--u)); padding:0; background:#FFFFFF; border:1.5px solid #E3E8EF; border-radius:calc(12 * var(--u)); color:#94A3B8; cursor:pointer; transition:background .14s ease, border-color .14s ease, color .14s ease; }
-#mxProcGrid .mx-filefield.mx-has-file .mx-dz-remove:hover{ background:#FEF2F2; border-color:#FCA5A5; color:#DC2626; }
-#mxProcGrid .mx-filefield .mx-dz-remove svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); }
+/* службовий прогрес/прев'ю Dropzone (бліда «загрузка…») ховаємо — показуємо свій стан */
+#mxProcGrid .mx-filefield .ob-block-attach > *:not(.ob-button-attach):not(.mx-dz-remove){ display:none !important; }
+#mxProcGrid .mx-filefield .dz-preview, #mxProcGrid .mx-filefield .dz-default, #mxProcGrid .mx-filefield .dz-message, #mxProcGrid .mx-filefield .dz-preview-container{ display:none !important; }
+/* ---- інлайн-стан «Завантаження…» ---- */
+@keyframes mxfzspin{ to{ transform:rotate(360deg); } }
+#mxProcGrid .mx-filefield .mx-dz-loading{ display:none; align-items:center; gap:calc(9 * var(--u)); flex:1 1 auto; min-width:0; font-size:calc(13 * var(--u)); font-weight:600; color:#2c3bff; }
+#mxProcGrid .mx-filefield .mx-dz-spin{ flex:0 0 auto; width:calc(16 * var(--u)); height:calc(16 * var(--u)); border-radius:50%; border:2px solid rgba(44,59,255,0.22); border-top-color:#2c3bff; animation:mxfzspin .7s linear infinite; }
+#mxProcGrid .mx-filefield.mx-uploading .mx-dz-ico,
+#mxProcGrid .mx-filefield.mx-uploading .mx-dz-main,
+#mxProcGrid .mx-filefield.mx-uploading .mx-dz-fmt,
+#mxProcGrid .mx-filefield.mx-uploading .mx-dz-cta{ display:none !important; }
+#mxProcGrid .mx-filefield.mx-uploading .mx-dz-loading{ display:flex; }
+#mxProcGrid .mx-filefield.mx-uploading a.ob-button-attach.mx-dz-btn{ border-style:solid; border-color:#C7D2FE; background:#F5F7FF; }
+/* ---- список завантажених файлів (працює для 1 і для N файлів) ---- */
+#mxProcGrid .mx-filefield .mx-files{ display:none; flex-direction:column; gap:calc(8 * var(--u)); }
+#mxProcGrid .mx-filefield.mx-has-file .mx-files{ display:flex; }
+#mxProcGrid .mx-filefield .mx-file-row{ display:flex; align-items:center; gap:calc(11 * var(--u)); box-sizing:border-box; width:100%; padding:calc(11 * var(--u)) calc(12 * var(--u)) calc(11 * var(--u)) calc(14 * var(--u)); background:#F0FDF4; border:1.5px solid #BBF7D0; border-radius:calc(12 * var(--u)); }
+#mxProcGrid .mx-filefield .mx-file-ic{ flex:0 0 auto; width:calc(22 * var(--u)); height:calc(22 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#22C55E; color:#fff; }
+#mxProcGrid .mx-filefield .mx-file-ic svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); }
+#mxProcGrid .mx-filefield .mx-file-nm{ flex:1 1 auto; min-width:0; font-size:calc(13 * var(--u)); font-weight:600; color:#0F172A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#mxProcGrid .mx-filefield .mx-file-x{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(30 * var(--u)); height:calc(30 * var(--u)); padding:0; background:transparent; border:none; border-radius:calc(8 * var(--u)); color:#64748B; cursor:pointer; transition:background .14s ease, color .14s ease; }
+#mxProcGrid .mx-filefield .mx-file-x:hover{ background:#FEE2E2; color:#DC2626; }
+#mxProcGrid .mx-filefield .mx-file-x svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
+/* одно-файлове поле з файлом: ховаємо зону (щоб змінити — прибрати ×, зона повернеться).
+   багато-файлове (.mx-multi): зона лишається під списком — можна додати ще файли */
+#mxProcGrid .mx-filefield.mx-has-file:not(.mx-multi) .ob-block-attach{ display:none !important; }
+#mxProcGrid .mx-filefield.mx-multi.mx-has-file .ob-block-attach{ margin-top:calc(8 * var(--u)); }
+#mxProcGrid .mx-filefield.mx-multi.mx-has-file a.ob-button-attach.mx-dz-btn{ min-height:calc(46 * var(--u)); }
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -477,90 +486,54 @@
                         mxUpT = setInterval(function(){ pct += Math.max(0.25, (cap - pct) * 0.05); if(pct > cap) pct = cap; if(bar) bar.style.width = pct + '%'; if(pctEl) pctEl.textContent = Math.round(pct) + '%'; }, 200);
                     }
                     function mxUpBusy(){ mxUpShow(); if(mxUpSafety) clearTimeout(mxUpSafety); mxUpSafety = setTimeout(mxUpHide, 120000); }
-                    // ---- спільні хелпери стану «файл прикріплено» (для поля) ----
-                    function mxFieldScope(field){
-                        var arr = [field], s = field.nextElementSibling;
-                        while(s && !(s.classList && s.classList.contains('js-data-element'))){ arr.push(s); s = s.nextElementSibling; }
-                        return arr;
-                    }
-                    function mxFileLink(field){
-                        var found = null;
-                        mxFieldScope(field).forEach(function(root){
-                            if(found || !root.querySelectorAll) return;
-                            Array.prototype.forEach.call(root.querySelectorAll('a[href]'), function(a){
-                                if(found) return;
-                                if(a.classList.contains('ob-button-attach') || a.classList.contains('ob-link-info') || a.classList.contains('ob-link-delete') || a.classList.contains('ob-link-accept') || a.classList.contains('mx-dz-again')) return;
-                                var h = a.getAttribute('href');
-                                if(h && h !== '#' && h.indexOf('javascript:') !== 0 && a.textContent.trim()){ found = a; }
-                            });
-                        });
-                        return found;
-                    }
-                    function mxFileName(field){
-                        var uf = field.querySelector('.js-uploaded-file');
-                        if(uf){ var t = (uf.textContent || '').replace(/\s+/g, ' ').trim(); if(t) return t.slice(0, 64); }
-                        var lk = mxFileLink(field); if(lk){ return (lk.textContent || '').trim().slice(0, 64); }
-                        return '';
-                    }
-                    function mxIsUploaded(field){
-                        // головний сигнал OneBox: контейнер завантаженого файлу
-                        if(field.querySelector('.js-uploaded-file')) return true;
-                        // будь-яке непорожнє приховане значення (аплоадер OneBox кладе у input name="...[]", без data-name)
-                        var ins = field.querySelectorAll('input[type="hidden"]');
-                        for(var i = 0; i < ins.length; i++){ var nm = ins[i].getAttribute('name') || ''; if(nm && nm !== 'ok' && (ins[i].value || '').trim()) return true; }
-                        if(mxFileLink(field)) return true;
-                        var img = null; mxFieldScope(field).forEach(function(r){ if(!img && r.querySelector){ img = r.querySelector('.ob-block-attach img, .ob-attach-file, .js-file-preview'); } });
-                        return !!img;
-                    }
-                    function mxSetUploaded(field, on){
-                        field.__mxHas = !!on;
-                        field.classList.toggle('mx-has-file', !!on);
-                        if(on){
-                            var nm = mxFileName(field);
-                            var t = field.querySelector('.mx-dz-done-t');
-                            if(t){ t.textContent = nm || 'Файл завантажено'; }
+                    // ---- спільні хелпери: список завантажених файлів у полі (1..N) ----
+                    function mxEsc(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                    function mxFileNameOf(uf){ var t = (uf.textContent || '').replace(/\s+/g, ' ').trim(); return t || 'Файл'; }
+                    function mxSyncFiles(field){
+                        var host = field.querySelector('.mx-files');
+                        if(!host){
+                            host = document.createElement('div'); host.className = 'mx-files';
+                            var z0 = field.querySelector('.ob-block-attach');
+                            if(z0 && z0.parentNode){ z0.parentNode.insertBefore(host, z0); }   // список НАД зоною
+                            else { field.appendChild(host); }
                         }
+                        var ufs = field.querySelectorAll('.js-uploaded-file');
+                        if(host.__n !== ufs.length){                   // перебудова лише коли змінилась кількість
+                            host.__n = ufs.length;
+                            host.innerHTML = '';
+                            Array.prototype.forEach.call(ufs, function(uf){
+                                var row = document.createElement('div'); row.className = 'mx-file-row';
+                                row.innerHTML = '<span class="mx-file-ic">' + DZ_CHECK + '</span>' +
+                                    '<span class="mx-file-nm">' + mxEsc(mxFileNameOf(uf)) + '</span>' +
+                                    '<button type="button" class="mx-file-x" aria-label="Прибрати файл">' + DZ_X + '</button>';
+                                row.querySelector('.mx-file-x').addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); mxRemoveOne(field, uf); });
+                                host.appendChild(row);
+                            });
+                        }
+                        var has = ufs.length > 0;
+                        field.__mxHas = has;
+                        field.classList.toggle('mx-has-file', has);
                     }
-                    function mxStartWatch(field){
-                        if(!field) return;
-                        mxUpBusy();                                   // оверлей «Завантаження…»
-                        if(field.__mxWatch){ clearInterval(field.__mxWatch); }
-                        var tries = 0;
-                        field.__mxWatch = setInterval(function(){
-                            tries++;
-                            if(mxIsUploaded(field)){
-                                clearInterval(field.__mxWatch); field.__mxWatch = null;
-                                mxSetUploaded(field, true);           // зелений стан «Файл завантажено»
-                                mxUpHide();
-                            } else if(tries > 300){                   // ~120с страховка
-                                clearInterval(field.__mxWatch); field.__mxWatch = null;
-                                mxUpHide();
+                    // видалити ОДИН файл: прибрати вузол OneBox (разом із input[]) + синхронізувати Dropzone
+                    function mxRemoveOne(field, uf){
+                        var nm = mxFileNameOf(uf);
+                        if(uf && uf.parentNode){ uf.parentNode.removeChild(uf); }
+                        try{
+                            var z = field.querySelector('.ob-block-attach');
+                            var dz = (window.Dropzone && z && Dropzone.forElement) ? Dropzone.forElement(z) : null;
+                            if(dz){
+                                var f = (dz.files || []).filter(function(x){ return x.name && nm.indexOf(x.name) !== -1; })[0];
+                                if(f && dz.removeFile){ dz.removeFile(f); }
                             }
-                        }, 400);
+                            if(z && !field.querySelector('.js-uploaded-file')){ z.classList.remove('dz-max-files-reached'); }
+                        }catch(_){ }
+                        mxSyncFiles(field);
                     }
+                    // прибрати ВСІ файли поля
                     function mxClearField(field){
-                        if(field.__mxWatch){ clearInterval(field.__mxWatch); field.__mxWatch = null; }
-                        var zone = field.querySelector('.ob-block-attach');
-                        // 1) коректно скидаємо Dropzone (лічильник файлів/прев'ю) — щоб знову можна було завантажити
-                        try{ if(window.Dropzone && zone){ var dz = Dropzone.forElement ? Dropzone.forElement(zone) : null; if(dz && dz.removeAllFiles){ dz.removeAllFiles(true); } } }catch(_){ }
-                        // 2) прибираємо контейнер(и) завантаженого файлу разом із input name="...[]" → на сабміт не піде
+                        try{ var z = field.querySelector('.ob-block-attach'); var dz = (window.Dropzone && z && Dropzone.forElement) ? Dropzone.forElement(z) : null; if(dz && dz.removeAllFiles){ dz.removeAllFiles(true); } if(z){ z.classList.remove('dz-max-files-reached'); } }catch(_){ }
                         Array.prototype.forEach.call(field.querySelectorAll('.js-uploaded-file'), function(u){ if(u.parentNode){ u.parentNode.removeChild(u); } });
-                        // запасний варіант: чистимо будь-які непорожні приховані значення (крім службових)
-                        Array.prototype.forEach.call(field.querySelectorAll('input[type="hidden"]'), function(h){ var nm = h.getAttribute('name') || ''; if(nm && nm !== 'ok' && /\[\]$/.test(nm)){ try{ h.value = ''; }catch(_){ } if(h.parentNode){ h.parentNode.removeChild(h); } } });
-                        // 3) знімаємо «досягнуто максимум файлів» зі зони
-                        if(zone){ zone.classList.remove('dz-max-files-reached'); }
-                        mxSetUploaded(field, false);
-                    }
-                    // старт аплоаду через діалог: change будь-якого file-input у центральній колонці
-                    if(!window.__mxUpBound){
-                        window.__mxUpBound = true;
-                        document.addEventListener('change', function(e){
-                            var t = e.target;
-                            if(t && t.tagName === 'INPUT' && t.type === 'file' && t.files && t.files.length && t.closest && t.closest('.client-cell-body:not(.aside-left):not(.aside-right)')){
-                                var fld = (t.closest && t.closest('.js-data-element')) || window.__mxPendingField || null;
-                                if(fld){ mxStartWatch(fld); } else { mxUpBusy(); }
-                            }
-                        }, true);
+                        mxSyncFiles(field);
                     }
                     function applyFileZones(){
                         Array.prototype.forEach.call(col.querySelectorAll('.js-data-element'), function(el){
@@ -575,6 +548,25 @@
                             if(capNoise){
                                 var _ic = capNoise.querySelector('a.ob-link-info'); if(_ic){ _ic.style.display = 'none'; }
                                 Array.prototype.forEach.call(capNoise.querySelectorAll('div[class*="js-universal-block-order"]'), function(d){ d.style.display = 'none'; });
+                            }
+                            // надійний старт індикації: слухаємо подію Dropzone «addedfile» (ловить і вибір через діалог).
+                            // Пробуємо щоразу, поки інстанс Dropzone не проініціалізується (OneBox робить це на jQuery-ready).
+                            if(window.Dropzone && !el.__mxDzBound){
+                                try{
+                                    var _z = el.querySelector('.ob-block-attach');
+                                    var _dzi = (_z && Dropzone.forElement) ? Dropzone.forElement(_z) : null;
+                                    if(_dzi){
+                                        el.__mxDzBound = true;
+                                        if(_dzi.options && _dzi.options.maxFiles > 1){ el.classList.add('mx-multi'); }
+                                        var _upOn = function(){ el.classList.add('mx-uploading'); mxUpBusy(); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); } el.__mxUpTimer = setTimeout(function(){ el.classList.remove('mx-uploading'); }, 120000); };
+                                        var _upOff = function(){ el.classList.remove('mx-uploading'); if(el.__mxUpTimer){ clearTimeout(el.__mxUpTimer); el.__mxUpTimer = null; } mxUpHide(); mxSyncFiles(el); };
+                                        _dzi.on('addedfile', _upOn);
+                                        _dzi.on('success', function(){ mxSyncFiles(el); });
+                                        _dzi.on('complete', function(){ mxSyncFiles(el); });
+                                        _dzi.on('queuecomplete', _upOff);
+                                        _dzi.on('error', _upOff);
+                                    }
+                                }catch(_e){ }
                             }
                             if(el.getAttribute('data-mxfz')){ return; } // решту робимо лише раз
                             el.setAttribute('data-mxfz','1');
@@ -603,45 +595,20 @@
                                     '<span class="mx-dz-main">' + instr + '</span>' +
                                     (fmt ? '<span class="mx-dz-fmt">' + fmt + '</span>' : '') +
                                     '<span class="mx-dz-cta">Обрати</span>' +
-                                    '<span class="mx-dz-done"><span class="mx-dz-done-ic">' + DZ_CHECK + '</span>' +
-                                        '<span class="mx-dz-done-t">Файл завантажено</span>' +
-                                        '<span class="mx-dz-again">Змінити</span></span>';
+                                    '<span class="mx-dz-loading"><span class="mx-dz-spin"></span>Завантаження…</span>';
                             }
-                            // клік по зоні → запам'ятовуємо поле, що чекає файл (мапінг для change-події діалогу)
-                            if(btn){ btn.addEventListener('click', function(){ window.__mxPendingField = el; }); }
-                            // «Змінити» (у зеленому стані): прибрати поточний → відкрити діалог вибору знову
-                            var again = btn ? btn.querySelector('.mx-dz-again') : null;
-                            if(again){ again.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); mxClearField(el); window.__mxPendingField = el; setTimeout(function(){ var b = el.querySelector('.ob-button-attach'); if(b){ b.click(); } }, 130); }); }
-                            // × прибрати файл — окрема кнопка-сусід зони (поза <a>, тож не тригерить діалог)
-                            var rm = document.createElement('button');
-                            rm.type = 'button'; rm.className = 'mx-dz-remove'; rm.setAttribute('aria-label', 'Прибрати файл');
-                            rm.innerHTML = DZ_X;
-                            rm.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); mxClearField(el); });
-                            attach.appendChild(rm);
-                            // drag-візуал + старт спостереження за завантаженням при drop
+                            // drag-візуал
                             attach.addEventListener('dragenter', function(){ attach.classList.add('mx-drag'); });
                             attach.addEventListener('dragover',  function(){ attach.classList.add('mx-drag'); });
                             attach.addEventListener('dragleave', function(){ attach.classList.remove('mx-drag'); });
-                            attach.addEventListener('drop',      function(){ attach.classList.remove('mx-drag'); window.__mxPendingField = el; mxStartWatch(el); });
-                            // якщо OneBox сам дорендерив файл (напр. збережений раніше) — фіксуємо зелений.
-                            // Зелений «липкий»: знімає лише × (не мигає від асинхронного дорендеру OneBox).
-                            el.__mxHas = false;
-                            var moRoot = (el.closest && el.closest('.os-block-element')) || el.parentNode || el;
-                            var MO_OPTS = { childList:true, subtree:true, attributes:true, attributeFilter:['href','src'] };
+                            attach.addEventListener('drop',      function(){ attach.classList.remove('mx-drag'); });
+                            // спостерігач за появою/зникненням .js-uploaded-file усередині зони → синхронізуємо список
                             var mo = null;
-                            var mark = function(){
-                                if(el.__mxHas) return;
-                                if(!mxIsUploaded(el)) return;
-                                if(mo) mo.disconnect();
-                                mxSetUploaded(el, true);
-                                mxUpHide();
-                                if(mo) mo.observe(moRoot, MO_OPTS);
-                            };
-                            if(window.MutationObserver){
-                                mo = new MutationObserver(mark);
-                                mo.observe(moRoot, MO_OPTS);
-                            }
-                            mark();
+                            var moRoot = attach;                       // .js-uploaded-file живуть усередині .ob-block-attach
+                            var MO_OPTS = { childList:true, subtree:true };
+                            var sync = function(){ if(mo){ mo.disconnect(); } mxSyncFiles(el); if(mo){ mo.observe(moRoot, MO_OPTS); } };
+                            if(window.MutationObserver){ mo = new MutationObserver(sync); mo.observe(moRoot, MO_OPTS); }
+                            mxSyncFiles(el);                           // початковий стан (напр. збережені файли)
                         });
                     }
                     applyFileZones();
