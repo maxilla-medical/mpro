@@ -70,8 +70,17 @@
 #mxUploadOverlay .mxul-row.mxul-cnl{ opacity:.55; }
 #mxUploadOverlay .mxul-row.mxul-cnl .mxul-st{ color:#94A3B8; }
 #mxUploadOverlay .mxul-foot{ margin-top:calc(14 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; text-align:center; }
+/* гейт «Надіслати без КТ»: червона зона + повідомлення + легкий струс */
+@keyframes mxshake{ 20%{ transform:translateX(-3px); } 40%{ transform:translateX(3px); } 60%{ transform:translateX(-2px); } 80%{ transform:translateX(2px); } }
+#mxProcGrid .mx-filefield.mx-field-alert .ob-block-attach{ animation:mxshake .45s ease; }
+#mxProcGrid .mx-filefield.mx-field-alert a.ob-button-attach.mx-dz-btn{ border-color:#F87171 !important; background:#FEF2F2 !important; }
+#mxProcGrid .mx-filefield.mx-field-alert a.ob-button-attach.mx-dz-btn .mx-dz-ico{ color:#DC2626; }
+#mxProcGrid .mx-req-warn{ display:flex; align-items:center; gap:calc(7 * var(--u)); margin:0 0 calc(8 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; color:#DC2626; }
+#mxProcGrid .mx-req-warn svg{ flex:0 0 auto; width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
+/* порожні філери OneBox не розтягують ритм картки */
+#mxProcGrid .os-block-element .flex-element.empty{ display:none !important; }
 /* фінал історії всередині картки: «Далі — за нами» */
-#mxProcGrid .mx-next-note{ display:flex; align-items:center; justify-content:center; gap:calc(11 * var(--u)); margin-top:calc(18 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(12 * var(--u)); }
+#mxProcGrid .mx-next-note{ display:flex; align-items:center; justify-content:center; gap:calc(11 * var(--u)); margin-top:calc(16 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-nn-t{ max-width:calc(420 * var(--u)); text-wrap:balance; }
 #mxProcGrid .mx-nn-ic{ flex:0 0 auto; width:calc(28 * var(--u)); height:calc(28 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#ECFDF5; color:#059669; }
 #mxProcGrid .mx-nn-ic svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
@@ -94,6 +103,18 @@
 .mx-side .mx-side-txt .mx-side-s{ font-size:calc(12 * var(--u)); color:#9AA0B4; line-height:1.4; margin-top:calc(3 * var(--u)); }
 .mx-side .mx-side-foot{ margin-top:auto; padding-top:calc(16 * var(--u)); border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:calc(8 * var(--u)); font-size:calc(12 * var(--u)); color:#9AA0B4; }
 .mx-side .mx-side-foot svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); color:#22C55E; flex-shrink:0; }
+/* ---- таймлайн процесу у правій панелі (крок 2) ---- */
+.mx-side .mx-stp{ display:flex; gap:calc(13 * var(--u)); }
+.mx-side .mx-stp-rail{ display:flex; flex-direction:column; align-items:center; flex:0 0 auto; align-self:stretch; }
+.mx-side .mx-stp-n{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:calc(12.5 * var(--u)); font-weight:700; color:#9AA0B4; border:1.5px solid rgba(255,255,255,0.2); box-sizing:border-box; }
+.mx-side .mx-stp-act .mx-stp-n{ background:#2c3bff; border-color:#2c3bff; color:#fff; }
+.mx-side .mx-stp-line{ flex:1 1 auto; width:1.5px; background:rgba(255,255,255,0.12); margin:calc(5 * var(--u)) 0; min-height:calc(12 * var(--u)); }
+.mx-side .mx-stp-txt{ min-width:0; padding-bottom:calc(20 * var(--u)); }
+.mx-side .mx-stp:last-of-type .mx-stp-txt{ padding-bottom:0; }
+.mx-side .mx-stp-t{ font-size:calc(13.5 * var(--u)); font-weight:700; color:#fff; line-height:1.3; display:flex; align-items:center; gap:calc(8 * var(--u)); flex-wrap:wrap; }
+.mx-side .mx-stp-here{ font-size:calc(9.5 * var(--u)); font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#A5B4FC; background:rgba(99,102,241,0.16); border:1px solid rgba(129,140,248,0.35); border-radius:calc(999 * var(--u)); padding:calc(2 * var(--u)) calc(8 * var(--u)); }
+.mx-side .mx-stp-s{ font-size:calc(12 * var(--u)); color:#9AA0B4; line-height:1.5; margin-top:calc(4 * var(--u)); }
+.mx-side .mx-stp-s b{ color:#4ADE80; font-weight:700; }
 @media (max-width: 900px){ #mxProcGrid{ flex-direction:column; } #mxProcGrid .mx-col-side{ flex-basis:auto; width:100%; max-width:calc(600 * var(--u)); margin:0 auto; } #mxProcGrid .mx-col-form{ max-width:calc(600 * var(--u)); margin:0 auto; } }
 /* степпер заповнення (3 кроки) */
 .mx-steps{ display:flex; align-items:center; max-width:calc(560 * var(--u)); margin:0 auto; }
@@ -633,6 +654,11 @@
                         var has = ufs.length > 0;
                         field.__mxHas = has;
                         field.classList.toggle('mx-has-file', has);
+                        if(has){                                       // файл додано → гасимо попередження гейта
+                            field.classList.remove('mx-field-alert');
+                            var wrn = field.querySelector('.mx-req-warn');
+                            if(wrn && wrn.parentNode) wrn.parentNode.removeChild(wrn);
+                        }
                     }
                     // видалити ОДИН файл: прибрати вузол OneBox (разом із input[]) + синхронізувати Dropzone
                     function mxRemoveOne(field, uf){
@@ -648,6 +674,25 @@
                             if(z && !field.querySelector('.js-uploaded-file')){ z.classList.remove('dz-max-files-reached'); }
                         }catch(_){ }
                         mxSyncFiles(field);
+                    }
+                    // попередження біля поля: скрол + червона зона + коротке повідомлення українською
+                    function mxReqWarn(field, msg){
+                        field.classList.remove('mx-field-alert');                     // перезапуск анімації
+                        void field.offsetWidth;
+                        field.classList.add('mx-field-alert');
+                        var w = field.querySelector('.mx-req-warn');
+                        if(!w){
+                            w = document.createElement('div'); w.className = 'mx-req-warn';
+                            var z = field.querySelector('.ob-block-attach');
+                            if(z && z.parentNode){ z.parentNode.insertBefore(w, z); } else { field.appendChild(w); }
+                        }
+                        w.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>' + mxEsc(msg);
+                        try{ field.scrollIntoView({ behavior:'smooth', block:'center' }); }catch(_){ try{ field.scrollIntoView(); }catch(__){ } }
+                        if(field.__mxWarnT) clearTimeout(field.__mxWarnT);
+                        field.__mxWarnT = setTimeout(function(){
+                            field.classList.remove('mx-field-alert');
+                            if(w.parentNode) w.parentNode.removeChild(w);
+                        }, 7000);
                     }
                     // скасований файл, який усе ж долетів на сервер: прибираємо його вузол із поля
                     // (разом із ним зникає input name="...[]" → на сабміт файл НЕ піде)
@@ -770,6 +815,22 @@
                         nextBtn.setAttribute('data-mxnext','1');
                         nextBtn.innerHTML = (stepN < STEP_LBL.length ? 'Далі' : 'Надіслати') + ' <span style="margin-left:calc(4 * var(--u))">\u2192</span>';
                     }
+                    // ГЕЙТ: без обовʼязкового файлу (КТ) перехід заборонено — ведемо за руку до поля.
+                    // capture-фаза: спрацьовує ДО обробника OneBox і зупиняє його.
+                    if(nextBtn && !nextBtn.__mxGate){
+                        nextBtn.__mxGate = true;
+                        nextBtn.addEventListener('click', function(e){
+                            var uploading = document.querySelector('#mxProcGrid .mx-filefield.mx-uploading');
+                            var missing = null;
+                            Array.prototype.forEach.call(document.querySelectorAll('#mxProcGrid .mx-filefield.mx-req-field'), function(f){
+                                if(!missing && !f.classList.contains('mx-has-file')) missing = f;
+                            });
+                            var target = uploading || missing;
+                            if(!target) return;                                   // все на місці → пропускаємо перехід
+                            e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();
+                            mxReqWarn(target, uploading ? 'Зачекайте — файли ще завантажуються' : 'Додайте КТ, щоб надіслати заявку');
+                        }, true);
+                    }
                     // ДВОКОЛОНКОВИЙ layout: форма ліворуч, контекст-панель праворуч
                     if(!document.getElementById('mxProcGrid')){
                         var grid = document.createElement('div'); grid.id = 'mxProcGrid';
@@ -780,13 +841,20 @@
                         var i3 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="14" width="12" height="8" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/><path d="M6 9V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v5"/></svg>';
                         var iCheck = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
                         var iGrid = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+                        // крок 2: замість маркетингових буллетів — таймлайн процесу «де я і що далі»
+                        // (яскравий синій чип прибрано: єдиний кольоровий магніт екрана — кнопка «Надіслати»)
                         rcol.innerHTML =
                             '<div class="mx-side">' +
-                                '<div class="mx-side-hero">' + i1 + '<div><div class="mx-sh-t">Точна навігація</div><div class="mx-sh-s">3D-планування імплантації</div></div></div>' +
-                                '<div class="mx-side-eyebrow">Що ви отримаєте</div>' +
-                                '<div class="mx-side-item"><div class="mx-side-ico">' + i2 + '</div><div class="mx-side-txt"><div class="mx-side-t">48 годин</div><div class="mx-side-s">Виготовлення після затвердження плану</div></div></div>' +
-                                '<div class="mx-side-item"><div class="mx-side-ico">' + i3 + '</div><div class="mx-side-txt"><div class="mx-side-t">Гарантований друк</div><div class="mx-side-s">Друк на вашому принтері за нашим профілем</div></div></div>' +
-                                '<div class="mx-side-item"><div class="mx-side-ico">' + iGrid + '</div><div class="mx-side-txt"><div class="mx-side-t">100+ систем</div><div class="mx-side-s">Плануємо під усі системи імплантатів</div></div></div>' +
+                                '<div class="mx-side-eyebrow">Як це працює</div>' +
+                                '<div class="mx-stp mx-stp-act"><div class="mx-stp-rail"><span class="mx-stp-n">1</span><span class="mx-stp-line"></span></div>' +
+                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Спочатку — оцінка<span class="mx-stp-here">Ви тут</span></div>' +
+                                    '<div class="mx-stp-s">Надсилаєте КТ і скани — ми аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b></div></div></div>' +
+                                '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">2</span><span class="mx-stp-line"></span></div>' +
+                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Оплата після погодження</div>' +
+                                    '<div class="mx-stp-s">Вносите оплату лише тоді, коли запропонований план Вас влаштовує.</div></div></div>' +
+                                '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">3</span></div>' +
+                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Шаблон у клініці за 48 годин</div>' +
+                                    '<div class="mx-stp-s">Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.</div></div></div>' +
                                 '<div class="mx-side-foot">' + iCheck + 'Дані пацієнта захищені та зашифровані</div>' +
                             '</div>';
                         grid.appendChild(lcol); grid.appendChild(rcol);
