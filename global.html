@@ -393,7 +393,10 @@ body.custom-body,.custom-body,.nc-client-grid,.client-row-body,.client-row-head,
 </style>
 <!-- ==================== Глобал: JS (part 2) ==================== -->
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+(function(){
+  window.__mxGlobalGen = (window.__mxGlobalGen || 0);
+  function mxGlobalInit(){
+    var __gen = ++window.__mxGlobalGen;
     function pageKey(){
         var p = location.pathname;
         if(p.indexOf('custompage/40') !== -1) return 'patients';
@@ -485,6 +488,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 tr.classList.add('mx-rowlink');
                 tr.addEventListener('click', function(e){
                     if(e.target.closest('a')) return;
+                    if(window.__mxGo){ window.__mxGo(href); return; }
                     if(window.__mxPreShow) window.__mxPreShow();
                     window.location.href = href;
                 });
@@ -493,12 +497,13 @@ document.addEventListener('DOMContentLoaded', function(){
         if(window.lucide) lucide.createIcons();
         return true;
     }
-    function boot(){ tries = tries + 1; if(apply()) return; if(tries > 40) return; setTimeout(boot, 300); }
+    function boot(){ if(__gen!==window.__mxGlobalGen) return; tries = tries + 1; if(apply()) return; if(tries > 40) return; setTimeout(boot, 300); }
     boot();
 
     var OB_TITLES = ['Група Описи Досілджень','Група GuideFlow','Група Пацієнти','Група 3D-Ceph','Група Суперімпозиція','Група Суперпозиція'];
     var htries = 0;
     function hideObTitles(){
+        if(__gen!==window.__mxGlobalGen) return;
         htries = htries + 1;
         var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
         if(col){
@@ -541,6 +546,7 @@ document.addEventListener('DOMContentLoaded', function(){
     // ===== преміум-стани форм: placeholder, обовʼязкові, помилки =====
     var rtries = 0;
     function markRequired(){
+        if(__gen!==window.__mxGlobalGen) return;
         rtries = rtries + 1;
         var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
         if(col){
@@ -707,5 +713,9 @@ document.addEventListener('DOMContentLoaded', function(){
         setTimeout(markRequired, 300);
     }
     markRequired();
-});
+  }
+  if(document.readyState !== 'loading') mxGlobalInit();
+  else document.addEventListener('DOMContentLoaded', mxGlobalInit);
+  window.addEventListener('mx:navigated', mxGlobalInit);
+})();
 </script>
