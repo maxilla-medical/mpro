@@ -1034,11 +1034,14 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             // права панель «Як це працює» — контент залежить від форми (id з URL /client/form/N/).
             // Немає запису в MX_FORM_STEPS → стандартний сценарій хірургічного шаблону.
             var MX_FORM_STEPS = {
-                '2': [   // Замовити направлення
+                '2': [   // Замовити направлення (готові бланки — лише доставка)
                     { t:'Заповніть заявку', s:'Вкажіть адресу доставки та контактну особу на місці — цього достатньо.', here:true },
-                    { t:'Готуємо направлення', s:'Формуємо направлення одразу після отримання заявки.' },
-                    { t:'Швидка доставка', s:'Надсилаємо направлення за вказаною адресою <b>максимально швидко</b>.' }
+                    { t:'Передаємо в доставку', s:'Готові бланки направлень одразу вирушають до вас.' },
+                    { t:'Направлення у клініці', s:'Отримуєте бланки за вказаною адресою <b>максимально швидко</b>.' }
                 ]
+            };
+            var MX_FORM_FOOT = {
+                '2': 'Готові бланки — доставка просто у клініку'
             };
             var MX_STEPS_DEFAULT = [
                 { t:'Спочатку — оцінка', s:'Заповнюєте заявку, надсилаєте КТ — ми аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b>', here:true },
@@ -1058,7 +1061,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             rcol.innerHTML =
                 '<div class="mx-side">' +
                     '<div class="mx-side-eyebrow">Як це працює</div>' + mxStepsHtml +
-                    '<div class="mx-side-foot">' + fICheck + 'Дані пацієнта захищені</div>' +
+                    '<div class="mx-side-foot">' + fICheck + (MX_FORM_FOOT[mxFid] || 'Дані пацієнта захищені') + '</div>' +
                 '</div>';
             grid.appendChild(lcol); grid.appendChild(rcol);
             top.parentNode.insertBefore(grid, top.nextSibling);
