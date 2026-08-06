@@ -177,6 +177,18 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-offer-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-oc-body{ margin-top:calc(12 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F5F7FF; border-left:3px solid #2c3bff; border-radius:calc(4 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)) calc(4 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.65; color:#1E293B; white-space:pre-wrap; }
 #mxProcGrid .mx-oc-foot{ margin-top:calc(11 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.5; }
+/* вартість: рядки-квитанція + «Разом» — цифра рішення, найпомітніша у картці */
+#mxProcGrid .mx-oc-price{ margin-top:calc(12 * var(--u)); }
+#mxProcGrid .mx-ocp-row{ display:flex; justify-content:space-between; align-items:baseline; gap:calc(14 * var(--u)); padding:calc(8 * var(--u)) 0; }
+#mxProcGrid .mx-ocp-row + .mx-ocp-row{ border-top:1px solid #F4F6FA; }
+#mxProcGrid .mx-ocp-name{ font-size:calc(13 * var(--u)); font-weight:600; color:#334155; }
+#mxProcGrid .mx-ocp-qty{ font-size:calc(11.5 * var(--u)); font-weight:600; color:#94A3B8; margin-left:calc(6 * var(--u)); }
+#mxProcGrid .mx-ocp-sum{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; white-space:nowrap; }
+#mxProcGrid .mx-ocp-tlbl{ font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
+#mxProcGrid .mx-ocp-total{ border-top:1px solid #E8ECF1 !important; }
+#mxProcGrid .mx-ocp-tsum{ font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; white-space:nowrap; }
+#mxProcGrid .mx-ocp-psum{ font-size:calc(13 * var(--u)); font-weight:700; color:#16A34A; white-space:nowrap; }
+#mxProcGrid .mx-ocp-dsum{ font-size:calc(15 * var(--u)); font-weight:800; color:#2c3bff; white-space:nowrap; }
 #mxProcGrid .mx-fsec{ margin-top:calc(14 * var(--u)); padding:calc(2 * var(--u)) calc(14 * var(--u)); background:#FAFBFD; border:1px solid #F1F5F9; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(10 * var(--u)) 0; }
 #mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #EDF1F7; }
@@ -802,8 +814,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 '<div class="mx-hbar-labels">' + lbls + '</div>';
             lcol.insertBefore(hero, lcol.firstChild);
             // --- картка «Пропозиція»: одразу під hero, ПЕРЕД квитанцією — головний контент етапу ---
+            var icoProp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>';
+            var ocCard = null;
             if(mxOfferTxt){
-                var icoProp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>';
                 var oc = document.createElement('div'); oc.className = 'mx-card mx-offer-card';
                 oc.innerHTML =
                     '<div class="mx-card-h"><span class="mx-card-ico">' + icoProp + '</span><span class="mx-card-t">Пропозиція</span></div>' +
@@ -811,6 +824,67 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     '<div class="mx-oc-foot">Якщо все влаштовує — повідомте нас, і ми виставимо рахунок. Оплата запускає збір проєкту та планування.</div>';
                 oc.querySelector('.mx-oc-body').textContent = mxOfferTxt;   // textContent + pre-wrap: абзаци збережено, розмітка безпечна
                 lcol.insertBefore(oc, hero.nextSibling);
+                ocCard = oc;
+            }
+            // --- вартість із таблиці продуктів OneBox (js-block-product-list): рядки-квитанція + «Разом» ---
+            function mxMoney(n){
+                var frac = Math.abs(n % 1) > 0.004 ? 2 : 0;
+                return n.toLocaleString('uk-UA', { minimumFractionDigits: frac, maximumFractionDigits: 2 }) + ' ₴';
+            }
+            function mxRenderPrice(){
+                if(document.getElementById('mxPriceSec')) return true;
+                var pl = col.querySelector('.js-block-product-list') || document.querySelector('.js-block-product-list');
+                if(!pl) return false;
+                var tb = pl.querySelector('table'); if(!tb) return false;
+                var items = [], total = null, paid = null;
+                Array.prototype.forEach.call(tb.querySelectorAll('tr'), function(tr){
+                    var c = tr.querySelectorAll('td,th'); if(!c.length) return;
+                    var t0 = c[0].textContent.trim();
+                    if(c.length >= 4 && /^\d+$/.test(t0)){
+                        var q = parseFloat(c[2].textContent.replace(/[^\d.]/g, '')) || 1;
+                        var s = parseFloat(c[3].textContent.replace(/,/g, '').replace(/[^\d.-]/g, '')) || 0;
+                        items.push({ n: c[1].textContent.trim(), q: q, s: s });
+                    } else if(c.length >= 2){
+                        var lab = t0.toLowerCase();
+                        var v = parseFloat(c[1].textContent.replace(/,/g, '').replace(/[^\d.-]/g, ''));
+                        if(isNaN(v)) return;
+                        if(lab.indexOf('итого') !== -1 || lab.indexOf('разом') !== -1){ total = v; }
+                        else if(lab.indexOf('оплачено') !== -1 || lab.indexOf('сплачено') !== -1){ paid = v; }
+                        // «Баланс» свідомо не показуємо: червоний мінус читається як борг — це внутрішня бухгалтерія
+                    }
+                });
+                // рідну таблицю ховаємо разом із самотніми обгортками
+                var hideEl = pl;
+                while(hideEl.parentElement && hideEl.parentElement !== col && hideEl.parentElement.children.length === 1){ hideEl = hideEl.parentElement; }
+                hideEl.style.display = 'none';
+                if(!items.length && total == null) return true;
+                if(total == null){ total = items.reduce(function(a, b){ return a + b.s; }, 0); }
+                var sec = document.createElement('div'); sec.id = 'mxPriceSec'; sec.className = 'mx-oc-price';
+                var h = '';
+                items.forEach(function(it){
+                    h += '<div class="mx-ocp-row"><span class="mx-ocp-name">' + esc(it.n)
+                       + (it.q > 1 ? '<span class="mx-ocp-qty">× ' + it.q + '</span>' : '')
+                       + '</span><span class="mx-ocp-sum">' + mxMoney(it.s) + '</span></div>';
+                });
+                h += '<div class="mx-ocp-row mx-ocp-total"><span class="mx-ocp-tlbl">Разом</span><span class="mx-ocp-tsum">' + mxMoney(total) + '</span></div>';
+                if(paid && paid > 0){
+                    h += '<div class="mx-ocp-row"><span class="mx-ocp-tlbl">Сплачено</span><span class="mx-ocp-psum">' + mxMoney(paid) + '</span></div>';
+                    var due = total - paid;
+                    if(due > 0.004){ h += '<div class="mx-ocp-row"><span class="mx-ocp-tlbl">До сплати</span><span class="mx-ocp-dsum">' + mxMoney(due) + '</span></div>'; }
+                }
+                sec.innerHTML = h;
+                if(ocCard){ ocCard.insertBefore(sec, ocCard.querySelector('.mx-oc-foot') || null); }
+                else {
+                    var pc = document.createElement('div'); pc.className = 'mx-card mx-offer-card';
+                    pc.innerHTML = '<div class="mx-card-h"><span class="mx-card-ico">' + icoProp + '</span><span class="mx-card-t">Вартість</span></div>';
+                    pc.appendChild(sec);
+                    lcol.insertBefore(pc, hero.nextSibling);
+                }
+                return true;
+            }
+            if(!mxRenderPrice()){
+                var prTries = 0;
+                var prT = setInterval(function(){ prTries++; if(mxRenderPrice() || prTries > 16){ clearInterval(prT); } }, 250);
             }
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
