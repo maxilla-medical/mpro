@@ -154,23 +154,32 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-hst-row .mx-ts-badge{ flex:0 0 auto; }
 /* прогрес-бар усередині hero (замість «точок-вайрфрейму») */
 #mxProcGrid .mx-hbar-row{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin-top:calc(14 * var(--u)); padding-top:calc(13 * var(--u)); border-top:1px solid #F1F5F9; }
-#mxProcGrid .mx-hbar-lbl{ flex:0 0 auto; font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; white-space:nowrap; }
+#mxProcGrid .mx-hbar-labels{ display:flex; margin-top:calc(7 * var(--u)); }
+#mxProcGrid .mx-hbar-labels span{ flex:1 1 0; text-align:center; font-size:calc(10 * var(--u)); font-weight:600; color:#B6BFCC; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#mxProcGrid .mx-hbar-labels span.mx-on{ color:#0F172A; font-weight:700; }
+#mxProcGrid .mx-hbar-labels span.mx-done{ color:#64748B; }
 #mxProcGrid .mx-hbar{ position:relative; flex:1 1 auto; height:calc(6 * var(--u)); background:#EEF2F7; border-radius:calc(999 * var(--u)); overflow:hidden; }
 #mxProcGrid .mx-hbar-fill{ position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,#2c3bff,#4B39EF); border-radius:calc(999 * var(--u)); transition:width .4s ease; }
 #mxProcGrid .mx-hbar i{ position:absolute; top:0; bottom:0; width:2px; background:#FFFFFF; }
 /* приховані файлові поля (ними керують компактні рядки) */
 #mxProcGrid .mx-ff-hidden{ display:none !important; }
-/* секція файлів усередині картки «Замовлення» */
-#mxProcGrid .mx-fsec{ margin-top:calc(13 * var(--u)); padding-top:calc(4 * var(--u)); border-top:1px solid #F1F5F9; }
+/* номер замовлення в заголовку картки */
+#mxProcGrid .mx-card-num{ color:#94A3B8; font-weight:700; font-size:calc(12.5 * var(--u)); margin-left:calc(2 * var(--u)); }
+/* мʼякий розділювач груп квитанції (пацієнт / параметри) */
+#mxProcGrid .mx-rc-div{ height:1px; background:#F1F5F9; margin:calc(2 * var(--u)) 0 calc(13 * var(--u)); }
+/* порожнє значення поля */
+#mxProcGrid .mx-rc-dash .mx-rc-val{ color:#C3CCD9; font-weight:600; }
+/* секція файлів — тихий інсет-блок, відділений від квитанції */
+#mxProcGrid .mx-fsec{ margin-top:calc(14 * var(--u)); padding:calc(2 * var(--u)) calc(14 * var(--u)); background:#FAFBFD; border:1px solid #F1F5F9; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(8 * var(--u)) 0; }
 #mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #F8FAFC; }
 #mxProcGrid .mx-frow-lbl{ flex:0 0 auto; min-width:calc(52 * var(--u)); padding-top:calc(5 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
 #mxProcGrid .mx-frow-body{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)); flex:1 1 auto; min-width:0; }
 #mxProcGrid .mx-frow .mx-files{ display:contents; }
-#mxProcGrid .mx-frow .mx-file-row{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); padding:calc(4 * var(--u)) calc(11 * var(--u)); background:#F8FAFC; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); }
-#mxProcGrid .mx-frow .mx-file-ic{ display:inline-flex; width:calc(13 * var(--u)); height:calc(13 * var(--u)); color:#94A3B8; }
+#mxProcGrid .mx-frow .mx-file-row{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); padding:calc(3.5 * var(--u)) calc(10 * var(--u)); background:#FFFFFF; border:1px solid #E7ECF3; border-radius:calc(999 * var(--u)); }
+#mxProcGrid .mx-frow .mx-file-ic{ display:inline-flex; width:calc(12 * var(--u)); height:calc(12 * var(--u)); color:#94A3B8; }
 #mxProcGrid .mx-frow .mx-file-ic svg{ width:100%; height:100%; }
-#mxProcGrid .mx-frow .mx-file-nm{ font-size:calc(11.5 * var(--u)); font-weight:600; color:#0F172A; max-width:calc(230 * var(--u)); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#mxProcGrid .mx-frow .mx-file-nm{ font-size:calc(11 * var(--u)); font-weight:600; color:#334155; max-width:calc(210 * var(--u)); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 #mxProcGrid .mx-frow .mx-file-nm a{ color:#0F172A; text-decoration:none; }
 #mxProcGrid .mx-frow .mx-file-nm a:hover{ color:#2c3bff; text-decoration:underline; }
 #mxProcGrid .mx-frow .mx-file-row.mx-file-new{ background:#F0FDF4; border-color:#BBF7D0; }
@@ -574,8 +583,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             if(topNote){ topNote.style.display = 'none'; }
             var phase = m.s <= 2 ? 1 : (m.s === 3 ? 2 : 3);
             var PH = [
-                { t:'Спочатку — оцінка', s:'Аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b>' },
-                { t:'Оплата після погодження', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
+                { t:'Спочатку — оцінка', s:'Аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>' },
+                { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
                 { t:'Шаблон у клініці за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою після погодження планування.' }
             ];
             var sh = '';
@@ -693,9 +702,16 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var val = '';
                 var dv = el.querySelector('.data-view'); if(dv){ val = (dv.textContent || '').replace(/\s+/g, ' ').trim(); }
                 if(!val){ var vi = el.querySelector('.data-edit input, .data-edit textarea, .data-edit select'); if(vi){ val = (vi.value || '').trim(); } }
-                if(!val){ el.classList.add('mx-rc-empty'); return; }        // порожнє поле не показуємо
-                if(low.indexOf('пропозиц') !== -1){ el.classList.add('mx-offer'); }          // текстова пропозиція (оцінка кейса)
-                else if(low.indexOf('рахунок') !== -1 || low.indexOf('оплат') !== -1){ el.classList.add('mx-pay'); }   // блок оплати
+                var isOffer = low.indexOf('пропозиц') !== -1;
+                var isPay = low.indexOf('рахунок') !== -1 || low.indexOf('оплат') !== -1;
+                if(!val){
+                    // спец-модулі без значення не показуємо (пропозиція/рахунок зʼявляться на своїх етапах);
+                    // звичайні поля показуємо з «—», щоб виведене Джорджем поле не зникало безслідно
+                    if(isOffer || isPay){ el.classList.add('mx-rc-empty'); return; }
+                    val = '—'; el.classList.add('mx-rc-dash');
+                }
+                if(isOffer){ el.classList.add('mx-offer'); }
+                else if(isPay){ el.classList.add('mx-pay'); }
                 var vd = document.createElement('div'); vd.className = 'mx-rc-val'; vd.textContent = val;
                 el.appendChild(vd);
             });
@@ -703,11 +719,19 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var icoDoc  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
             var cardData = document.createElement('div'); cardData.className = 'mx-card';
             var cdh = document.createElement('div'); cdh.className = 'mx-card-h';
-            cdh.innerHTML = '<span class="mx-card-ico">' + icoDoc + '</span><span class="mx-card-t">Замовлення</span>';
+            var ordNum = (location.pathname.match(/\/client\/order\/(\d+)/) || [])[1] || '';
+            cdh.innerHTML = '<span class="mx-card-ico">' + icoDoc + '</span><span class="mx-card-t">Замовлення' + (ordNum ? ' <span class="mx-card-num">#' + ordNum + '</span>' : '') + '</span>';
             cardData.appendChild(cdh);
-            var nData = 0;
+            var nData = 0, seenPatient = false, divIns = false;
             Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element.mx-rc-el'), function(e){
                 if(e.classList.contains('mx-rc-empty')) return;
+                var cp = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+                if(cp.indexOf('пацієнт') !== -1){ seenPatient = true; }
+                else if(seenPatient && !divIns && !e.classList.contains('mx-filefield')){
+                    // мʼякий розділювач: дані пацієнта / параметри планування
+                    var dvd = document.createElement('div'); dvd.className = 'mx-rc-div';
+                    cardData.appendChild(dvd); divIns = true;
+                }
                 cardData.appendChild(e); nData++;                    // файлові теж сюди (вони приховані, керують рядками)
             });
             Array.prototype.forEach.call(lcol.querySelectorAll('.os-block-element'), function(card){ card.style.display = 'none'; });
@@ -737,12 +761,17 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             hero.className = 'mx-card mx-hero-st' + (isAct ? ' mx-hst-act' : '');
             var pct = Math.round((m.s / 5) * 100);
             var ticks = '<i style="left:20%"></i><i style="left:40%"></i><i style="left:60%"></i><i style="left:80%"></i>';
+            var SHORT_ST = ['Прийнято', 'Планування', 'Підтвердження', 'Виробництво', 'Відправлено'];
+            var lbls = '';
+            SHORT_ST.forEach(function(nm, i){
+                lbls += '<span class="' + (i + 1 === m.s ? 'mx-on' : (i + 1 < m.s ? 'mx-done' : '')) + '">' + nm + '</span>';
+            });
             hero.innerHTML =
                 '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isAct ? icoBell : icoClock) + '</span>' +
                 '<span class="mx-hst-tt"><span class="mx-hst-t">' + hcfg[0] + '</span><span class="mx-hst-s">' + hcfg[1] + '</span></span>' +
                 '<span class="mx-ts-badge">' + (m.c || status) + '</span></div>' +
-                '<div class="mx-hbar-row"><span class="mx-hbar-lbl">Етап ' + m.s + ' з 5</span>' +
-                '<span class="mx-hbar"><span class="mx-hbar-fill" style="width:' + pct + '%"></span>' + ticks + '</span></div>';
+                '<div class="mx-hbar-row"><span class="mx-hbar"><span class="mx-hbar-fill" style="width:' + pct + '%"></span>' + ticks + '</span></div>' +
+                '<div class="mx-hbar-labels">' + lbls + '</div>';
             lcol.insertBefore(hero, lcol.firstChild);
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
@@ -1191,10 +1220,10 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                                 '<div class="mx-side-eyebrow">Як це працює</div>' +
                                 '<div class="mx-stp mx-stp-act"><div class="mx-stp-rail"><span class="mx-stp-n">1</span><span class="mx-stp-line"></span></div>' +
                                     '<div class="mx-stp-txt"><div class="mx-stp-t">Спочатку — оцінка<span class="mx-stp-here">Ви тут</span></div>' +
-                                    '<div class="mx-stp-s">Надсилаєте КТ і скани — ми аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b></div></div></div>' +
+                                    '<div class="mx-stp-s">Надсилаєте КТ і скани — ми аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b></div></div></div>' +
                                 '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">2</span><span class="mx-stp-line"></span></div>' +
-                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Оплата після погодження</div>' +
-                                    '<div class="mx-stp-s">Вносите оплату лише тоді, коли запропонований план Вас влаштовує.</div></div></div>' +
+                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Оплата після оцінки</div>' +
+                                    '<div class="mx-stp-s">Вносите оплату лише тоді, коли пропозиція Вас влаштовує.</div></div></div>' +
                                 '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">3</span></div>' +
                                     '<div class="mx-stp-txt"><div class="mx-stp-t">Шаблон у клініці за 48 годин</div>' +
                                     '<div class="mx-stp-s">Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.</div></div></div>' +
@@ -1343,8 +1372,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 '2': 'Готові бланки — доставка у клініку'
             };
             var MX_STEPS_DEFAULT = [
-                { t:'Спочатку — оцінка', s:'Заповнюєте заявку, надсилаєте КТ — ми аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b>', here:true },
-                { t:'Оплата після погодження', s:'Вносите оплату лише тоді, коли запропонований план Вас влаштовує.' },
+                { t:'Спочатку — оцінка', s:'Заповнюєте заявку, надсилаєте КТ — ми аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>', here:true },
+                { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
                 { t:'Шаблон у клініці за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.' }
             ];
             var mxFid = (location.pathname.match(/\/client\/form\/(\d+)/) || [])[1] || '';
