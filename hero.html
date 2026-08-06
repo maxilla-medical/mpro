@@ -140,6 +140,12 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid.mx-grid-track{ align-items:flex-start; }
 /* однакові внутрішні відступи всіх карток-квитанцій (як у картки кроку 2) */
 #mxProcGrid.mx-grid-track .mx-col-form .os-block-element{ padding:calc(24 * var(--u)) calc(28 * var(--u)) calc(26 * var(--u)) !important; }
+/* заголовок картки: іконка + назва секції */
+#mxProcGrid .mx-card-h{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin:0 0 calc(16 * var(--u)); padding:0 0 calc(14 * var(--u)); border-bottom:1px solid #F1F5F9; }
+#mxProcGrid .mx-card-ico{ flex:0 0 auto; width:calc(36 * var(--u)); height:calc(36 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:calc(11 * var(--u)); background:#F4F6FA; color:#475569; }
+#mxProcGrid .mx-card-ico svg{ width:calc(17 * var(--u)); height:calc(17 * var(--u)); }
+#mxProcGrid .mx-card-t{ display:block; font-size:calc(14.5 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; line-height:1.25; }
+#mxProcGrid .mx-card-s{ display:block; margin-top:calc(1 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; }
 #mxProcGrid.mx-grid-track .mx-col-side{ position:sticky; top:calc(18 * var(--u)); }
 #mxProcGrid.mx-grid-track .mx-col-side .mx-side{ margin-top:0; flex:0 0 auto; }
 /* підказка про скани — помітна, зникає щойно зʼявився файл */
@@ -216,19 +222,20 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 .mx-steps .mx-step-line{ flex:1 1 auto; height:2px; background:#E3E8EF; margin:0 calc(8 * var(--u)); margin-bottom:calc(24 * var(--u)); transition:background .2s ease; }
 .mx-steps .mx-step-line.mx-done{ background:#0F172A; }
 /* трекер прогресу (5 етапів) */
-.mx-track{ max-width:calc(720 * var(--u)); margin:0 auto; }
+/* трекер — біла картка на ширину гріда, точки з номерами */
+.mx-track{ max-width:calc(1000 * var(--u)); margin:0 auto calc(20 * var(--u)); background:#FFFFFF; border-radius:calc(18 * var(--u)); padding:calc(20 * var(--u)) calc(30 * var(--u)) calc(18 * var(--u)); box-shadow:0 6px 24px rgba(15,23,42,0.06); box-sizing:border-box; }
 .mx-track-row{ display:flex; align-items:center; }
-.mx-track .mx-tstage{ display:flex; flex-direction:column; align-items:center; gap:calc(8 * var(--u)); flex:0 0 auto; width:calc(96 * var(--u)); }
-.mx-track .mx-tdot{ width:calc(28 * var(--u)); height:calc(28 * var(--u)); border-radius:50%; display:flex; align-items:center; justify-content:center; background:#EEF2F7; border:1.5px solid #E3E8EF; color:#94A3B8; transition:all .2s ease; }
+.mx-track .mx-tstage{ display:flex; flex-direction:column; align-items:center; gap:calc(8 * var(--u)); flex:0 0 auto; width:calc(104 * var(--u)); }
+.mx-track .mx-tdot{ width:calc(30 * var(--u)); height:calc(30 * var(--u)); border-radius:50%; display:flex; align-items:center; justify-content:center; background:#FFFFFF; border:1.5px solid #E2E8F0; color:#94A3B8; font-size:calc(12.5 * var(--u)); font-weight:700; transition:all .2s ease; }
 .mx-track .mx-tdot svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
 .mx-track .mx-tlbl{ font-size:calc(11.5 * var(--u)); font-weight:600; color:#94A3B8; text-align:center; line-height:1.25; }
 .mx-track .mx-tstage.mx-done .mx-tdot{ background:#22C55E; border-color:#22C55E; color:#fff; }
 .mx-track .mx-tstage.mx-done .mx-tlbl{ color:#475569; }
-.mx-track .mx-tstage.mx-active .mx-tdot{ background:#2c3bff; border-color:#2c3bff; color:#fff; box-shadow:0 0 0 calc(4 * var(--u)) rgba(44,59,255,0.12); }
+.mx-track .mx-tstage.mx-active .mx-tdot{ background:#2c3bff; border-color:#2c3bff; color:#fff; box-shadow:0 0 0 calc(4 * var(--u)) rgba(44,59,255,0.14); }
 .mx-track .mx-tstage.mx-active .mx-tlbl{ color:#0F172A; font-weight:700; }
-.mx-track .mx-tline{ flex:1 1 auto; height:2px; background:#E3E8EF; margin-bottom:calc(26 * var(--u)); transition:background .2s ease; }
+.mx-track .mx-tline{ flex:1 1 auto; height:2px; border-radius:2px; background:#E9EEF5; margin-bottom:calc(26 * var(--u)); transition:background .2s ease; }
 .mx-track .mx-tline.mx-done{ background:#22C55E; }
-.mx-track-status{ text-align:center; margin-top:calc(18 * var(--u)); }
+.mx-track-status{ text-align:center; margin-top:calc(14 * var(--u)); padding-top:calc(14 * var(--u)); border-top:1px solid #F1F5F9; }
 .mx-track-status .mx-ts-badge{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(7 * var(--u)) calc(16 * var(--u)); background:#EEF2FF; border:1px solid #DDE3FF; border-radius:calc(999 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:700; color:#2c3bff; }
 .mx-track-status .mx-ts-note{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); color:#64748B; line-height:1.5; max-width:calc(440 * var(--u)); margin-left:auto; margin-right:auto; }
 /* підпис кроку заповнення під єдиним трекером */
@@ -477,7 +484,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var h = '<div class="mx-track"><div class="mx-track-row">';
             for(var i=1;i<=5;i++){
                 var cls = i < stage ? 'mx-done' : (i === stage ? 'mx-active' : '');
-                var inner = i < stage ? CHECK : '';
+                var inner = i < stage ? CHECK : String(i);
                 h += '<div class="mx-tstage ' + cls + '"><div class="mx-tdot">' + inner + '</div><div class="mx-tlbl">' + STAGES[i-1] + '</div></div>';
                 if(i < 5){ h += '<div class="mx-tline ' + (i < stage ? 'mx-done' : '') + '"></div>'; }
             }
@@ -529,6 +536,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             // --- файлове поле на етапі: зона активна, файли (чернетки + збережені) — зеленими рядками ---
             function trackFileField(el, capTxt){
                 el.classList.add('mx-filefield');
+                // відкриваємо РІДНУ сесію редагування OneBox — без неї «прийняти» не зберігає поле
+                var jtv = el.querySelector('.flex-value .js-text') || el.querySelector('.js-text');
+                if(jtv){ try{ jtv.click(); }catch(_){ } }
                 var attach = el.querySelector('.ob-block-attach');
                 var btn = attach ? attach.querySelector('.ob-button-attach') : null;
                 var low = capTxt.toLowerCase();
@@ -593,7 +603,17 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                         try{ dz.options.parallelUploads = 1; }catch(_){ }
                         if(dz.options && dz.options.maxFiles > 1) el.classList.add('mx-multi');
                         dz.on('addedfile', function(){ el.classList.add('mx-uploading'); });
-                        dz.on('queuecomplete', function(){ el.classList.remove('mx-uploading'); sync(); });
+                        dz.on('queuecomplete', function(){
+                            el.classList.remove('mx-uploading'); sync();
+                            // КОМІТ у OneBox: тиснемо рідний «прийняти» — поле зберігається в процесі
+                            // (сторінка перезавантажиться вже зі збереженими файлами)
+                            if(el.querySelector('.js-uploaded-file')){
+                                setTimeout(function(){
+                                    var acc = el.querySelector('.ob-link-accept');
+                                    if(acc){ try{ acc.click(); }catch(_){ } }
+                                }, 400);
+                            }
+                        });
                         dz.on('error', function(){ el.classList.remove('mx-uploading'); sync(); });
                         dz.on('success', function(){ sync(); });
                     }catch(_){ }
@@ -622,7 +642,10 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var vd = document.createElement('div'); vd.className = 'mx-rc-val'; vd.textContent = val;
                 el.appendChild(vd);
             });
-            // повітря внизу карток: нуль-відступ останньому ВИДИМОМУ полю; повністю порожні картки ховаємо
+            // заголовки карток (іконка + назва секції) + повітря внизу + порожні картки
+            var icoUser = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+            var icoSet  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>';
+            var icoFold = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
             Array.prototype.forEach.call(lcol.querySelectorAll('.os-block-element'), function(card){
                 var vis = [];
                 Array.prototype.forEach.call(card.querySelectorAll('.js-data-element.mx-rc-el'), function(e){
@@ -630,6 +653,18 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 });
                 if(!vis.length){ card.style.display = 'none'; return; }
                 vis[vis.length - 1].classList.add('mx-rc-last');
+                if(!card.querySelector('.mx-card-h')){
+                    var txt = card.textContent.toLowerCase();
+                    var cfg = null;
+                    if(card.querySelector('.mx-filefield'))                      cfg = { i:icoFold, t:'Файли замовлення', s:'КТ та скани щелеп' };
+                    else if(txt.indexOf('систем') !== -1 || txt.indexOf('позиці') !== -1) cfg = { i:icoSet, t:'Параметри планування', s:'Система та позиції імплантатів' };
+                    else if(txt.indexOf('пацієнт') !== -1)                       cfg = { i:icoUser, t:'Дані пацієнта', s:'Кого ми плануємо' };
+                    if(cfg){
+                        var hd = document.createElement('div'); hd.className = 'mx-card-h';
+                        hd.innerHTML = '<span class="mx-card-ico">' + cfg.i + '</span><span class="mx-card-tt"><span class="mx-card-t">' + cfg.t + '</span><span class="mx-card-s">' + cfg.s + '</span></span>';
+                        card.insertBefore(hd, card.firstChild);
+                    }
+                }
             });
             // TODO майбутнє: статус «Погодження проекту» — PDF планування + кнопки «Приймаю / Є правки»
             // (правки = текстове поле + завантаження скрінів). Потрібні поля процесу — додамо, щойно зʼявляться.
