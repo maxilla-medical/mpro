@@ -951,6 +951,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var _ph = payForm.previousElementSibling;
                     if(_ph && (_ph.textContent || '').indexOf('Онлайн оплата') !== -1){ payH2 = _ph; payH2.style.display = 'none'; }
                 }
+                var mxHrpBound = false;   // постійний прибиральник панелі з кодом — бінд після оголошення hideRawPanel
                 function payBtn1(){
                     var b = null;
                     if(payForm){
@@ -1030,6 +1031,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         var t = d.innerText || '';
                         if(t.indexOf('merchantSignature') !== -1 || (t.indexOf('Wayforpay') !== -1 && t.indexOf('оплате') !== -1)){ d.style.display = 'none'; }
                     });
+                }
+                // OneBox після перезавантаження може знову дорисувати панель із сирим кодом —
+                // прибираємо її ЗАВЖДИ: одразу, за таймером і на кожну зміну DOM
+                if(payForm && !mxHrpBound){
+                    mxHrpBound = true;
+                    hideRawPanel();
+                    var hrpN = 0;
+                    var hrpT = setInterval(function(){ hrpN++; hideRawPanel(); if(hrpN > 20){ clearInterval(hrpT); } }, 500);
+                    if(window.MutationObserver){
+                        var hrpMo = new MutationObserver(function(){ hideRawPanel(); });
+                        hrpMo.observe(document.body, { childList: true });
+                    }
                 }
                 var mxPayFnCalled = false;
                 function tryPayFn(){
