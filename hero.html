@@ -56,6 +56,7 @@
 #mxProcGrid .os-block-form .element textarea:focus{ border-color:#2c3bff !important; box-shadow:0 0 0 3px rgba(44,59,255,0.12); }
 #mxProcGrid .os-block-form .element input::placeholder,
 #mxProcGrid .os-block-form .element textarea::placeholder{ color:#94A3B8; font-size:calc(13 * var(--u)); }
+#mxProcGrid .os-block-form .element span.description{ display:none !important; } /* опис поля йде у placeholder, дубль ховаємо */
 /* зірочки обовʼязковості ховаємо — статус показують пилюлі, як на кроці 2 */
 #mxProcGrid .os-block-form .element .title .req,
 #mxProcGrid .os-block-form .element .title .mx-req,
@@ -1435,17 +1436,23 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 if(isReq){ pill.className = 'mx-req-badge mx-req-star'; pill.textContent = 'Обов’язково'; }
                 else { pill.className = 'mx-req-badge mx-req-opt'; pill.textContent = 'Опційно'; }
                 title.appendChild(pill);
-                // плейсхолдер-спонука: «Вкажіть…» — мікро-заклик до дії замість пасивного дубля назви
+                // плейсхолдер-спонука: спершу текст з налаштувань OneBox («Описание» поля) —
+                // правиться у формах OneBox без зміни коду; fallback — вбудована мапа
                 if(fld && (fld.tagName === 'INPUT' || fld.tagName === 'TEXTAREA')){
                     var lbl = '';
                     Array.prototype.forEach.call(title.childNodes, function(n){ if(n.nodeType === 3) lbl += n.textContent; });
                     lbl = lbl.replace(/\s+/g, ' ').trim();
-                    var low = lbl.toLowerCase(), ph = null;
-                    if(low.indexOf('пацієнт') !== -1) ph = 'Вкажіть повне ім’я пацієнта';
-                    else if(low.indexOf('систем') !== -1) ph = 'Вкажіть систему імплантатів';
-                    else if(low.indexOf('позиці') !== -1) ph = 'Вкажіть бажані позиції — напр., 14, 16, 24';
-                    else if(low.indexOf('комент') !== -1) ph = 'Додайте побажання до плану — за бажанням';
-                    else if(lbl) ph = 'Вкажіть: ' + lbl.charAt(0).toLowerCase() + lbl.slice(1);
+                    var ph = null;
+                    var dTxt = d ? d.textContent.replace(/\s+/g, ' ').trim() : '';
+                    if(dTxt && dTxt.indexOf('heading_filed:') !== 0){ ph = dTxt; }
+                    if(!ph){
+                        var low = lbl.toLowerCase();
+                        if(low.indexOf('пацієнт') !== -1) ph = 'Вкажіть повне ім’я пацієнта';
+                        else if(low.indexOf('систем') !== -1) ph = 'Вкажіть систему імплантатів';
+                        else if(low.indexOf('позиці') !== -1) ph = 'Вкажіть бажані позиції — напр., 14, 16, 24';
+                        else if(low.indexOf('комент') !== -1) ph = 'Додайте побажання до плану — за бажанням';
+                        else if(lbl) ph = 'Вкажіть: ' + lbl.charAt(0).toLowerCase() + lbl.slice(1);
+                    }
                     if(ph) fld.setAttribute('placeholder', ph);
                 }
             });
