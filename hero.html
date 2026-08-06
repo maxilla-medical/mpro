@@ -138,13 +138,16 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-rc-el.mx-filefield .flex-caption{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; }
 /* трекер-грід: панель НЕ розтягується (без «чорної діри») і липне при скролі */
 #mxProcGrid.mx-grid-track{ align-items:flex-start; }
+/* однакові внутрішні відступи всіх карток-квитанцій (як у картки кроку 2) */
+#mxProcGrid.mx-grid-track .mx-col-form .os-block-element{ padding:calc(24 * var(--u)) calc(28 * var(--u)) calc(26 * var(--u)) !important; }
 #mxProcGrid.mx-grid-track .mx-col-side{ position:sticky; top:calc(18 * var(--u)); }
 #mxProcGrid.mx-grid-track .mx-col-side .mx-side{ margin-top:0; flex:0 0 auto; }
 /* підказка про скани — помітна, зникає щойно зʼявився файл */
 #mxProcGrid .mx-scans-hint{ display:block; margin:0 0 calc(9 * var(--u)); padding:calc(10 * var(--u)) calc(13 * var(--u)); background:#FFFBEB; border:1px solid #FDE68A; border-radius:calc(10 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#92400E; line-height:1.55; }
 #mxProcGrid .mx-scans-hint b{ font-weight:700; }
 /* без зайвого повітря внизу карток; однакова вага імен файлів */
-#mxProcGrid .mx-col-form .os-block-element .js-data-element.mx-rc-el:last-child{ margin-bottom:0 !important; }
+#mxProcGrid .mx-col-form .os-block-element .js-data-element.mx-rc-el:last-child,
+#mxProcGrid .js-data-element.mx-rc-el.mx-rc-last{ margin-bottom:0 !important; }
 #mxProcGrid .mx-file-nm, #mxProcGrid .mx-file-nm a{ font-weight:600; }
 #mxProcGrid .mx-filefield.mx-has-file .mx-scans-hint{ display:none; }
 /* збережений файл-рядок: імʼя-посилання */
@@ -618,6 +621,15 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 else if(low.indexOf('рахунок') !== -1 || low.indexOf('оплат') !== -1){ el.classList.add('mx-pay'); }   // блок оплати
                 var vd = document.createElement('div'); vd.className = 'mx-rc-val'; vd.textContent = val;
                 el.appendChild(vd);
+            });
+            // повітря внизу карток: нуль-відступ останньому ВИДИМОМУ полю; повністю порожні картки ховаємо
+            Array.prototype.forEach.call(lcol.querySelectorAll('.os-block-element'), function(card){
+                var vis = [];
+                Array.prototype.forEach.call(card.querySelectorAll('.js-data-element.mx-rc-el'), function(e){
+                    if(!e.classList.contains('mx-rc-empty')) vis.push(e);
+                });
+                if(!vis.length){ card.style.display = 'none'; return; }
+                vis[vis.length - 1].classList.add('mx-rc-last');
             });
             // TODO майбутнє: статус «Погодження проекту» — PDF планування + кнопки «Приймаю / Є правки»
             // (правки = текстове поле + завантаження скрінів). Потрібні поля процесу — додамо, щойно зʼявляться.
