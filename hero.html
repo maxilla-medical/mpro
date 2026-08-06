@@ -127,9 +127,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* ===== екран етапу (трекер): квитанція + жива панель ===== */
 #mxProcGrid .mx-col-form .os-block-element{ width:100%; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; box-sizing:border-box; }
 #mxProcGrid .mx-col-form .os-block-element + .os-block-element{ margin-top:calc(14 * var(--u)) !important; }
-#mxProcGrid .js-data-element.mx-rc-el{ margin:0 0 calc(16 * var(--u)) !important; padding:0 !important; }
+#mxProcGrid .js-data-element.mx-rc-el{ margin:0 0 calc(13 * var(--u)) !important; padding:0 !important; }
 #mxProcGrid .mx-rc-el .flex-wrap{ margin:0 !important; padding:0 !important; }
-#mxProcGrid .mx-rc-el .flex-caption{ display:flex; align-items:center; gap:calc(8 * var(--u)); margin:0 0 calc(7 * var(--u)) !important; padding:0 !important; font-size:calc(12 * var(--u)); font-weight:600; color:#64748B; letter-spacing:.02em; }
+/* лейбл-квитанція: дрібний сірий КАПС — максимальний контраст зі значенням (стиль Stripe) */
+#mxProcGrid .mx-rc-el:not(.mx-filefield) .flex-caption{ display:block !important; margin:0 0 calc(4 * var(--u)) !important; padding:0 !important; font-size:calc(10.5 * var(--u)) !important; font-weight:700 !important; color:#94A3B8 !important; letter-spacing:.07em !important; text-transform:uppercase !important; line-height:1.3 !important; }
+#mxProcGrid .mx-rc-el.mx-filefield .flex-caption{ display:flex; align-items:center; gap:calc(8 * var(--u)); margin:0 0 calc(8 * var(--u)) !important; padding:0 !important; }
 #mxProcGrid .mx-rc-el:not(.mx-filefield) .data-view,
 #mxProcGrid .mx-rc-el:not(.mx-filefield) .data-edit{ display:none !important; }
 #mxProcGrid .mx-rc-empty{ display:none !important; }
@@ -138,14 +140,26 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-rc-el.mx-filefield .flex-caption{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; }
 /* трекер-грід: панель НЕ розтягується (без «чорної діри») і липне при скролі */
 #mxProcGrid.mx-grid-track{ align-items:flex-start; }
-/* однакові внутрішні відступи всіх карток-квитанцій (як у картки кроку 2) */
-#mxProcGrid.mx-grid-track .mx-col-form .os-block-element{ padding:calc(24 * var(--u)) calc(28 * var(--u)) calc(26 * var(--u)) !important; }
+/* компактні картки-квитанції */
+#mxProcGrid.mx-grid-track .mx-col-form .os-block-element{ padding:calc(18 * var(--u)) calc(24 * var(--u)) calc(20 * var(--u)) !important; }
+#mxProcGrid.mx-grid-track .mx-col-form .os-block-element + .os-block-element{ margin-top:calc(12 * var(--u)) !important; }
 /* заголовок картки: іконка + назва секції */
-#mxProcGrid .mx-card-h{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin:0 0 calc(16 * var(--u)); padding:0 0 calc(14 * var(--u)); border-bottom:1px solid #F1F5F9; }
-#mxProcGrid .mx-card-ico{ flex:0 0 auto; width:calc(36 * var(--u)); height:calc(36 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:calc(11 * var(--u)); background:#F4F6FA; color:#475569; }
-#mxProcGrid .mx-card-ico svg{ width:calc(17 * var(--u)); height:calc(17 * var(--u)); }
-#mxProcGrid .mx-card-t{ display:block; font-size:calc(14.5 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; line-height:1.25; }
-#mxProcGrid .mx-card-s{ display:block; margin-top:calc(1 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; }
+#mxProcGrid .mx-card-h{ display:flex; align-items:center; gap:calc(10 * var(--u)); margin:0 0 calc(12 * var(--u)); padding:0 0 calc(11 * var(--u)); border-bottom:1px solid #F1F5F9; }
+#mxProcGrid .mx-card-ico{ flex:0 0 auto; width:calc(30 * var(--u)); height:calc(30 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:calc(9 * var(--u)); background:#F4F6FA; color:#475569; }
+#mxProcGrid .mx-card-ico svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
+#mxProcGrid .mx-card-t{ display:block; font-size:calc(13.5 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; line-height:1.25; }
+#mxProcGrid .mx-card-s{ display:block; margin-top:calc(1 * var(--u)); font-size:calc(11 * var(--u)); font-weight:500; color:#94A3B8; }
+/* файли на етапі — компактні чипи в рядок (збережені нейтральні, свіжі зелені) */
+#mxProcGrid.mx-grid-track .mx-filefield .mx-files{ flex-direction:row; flex-wrap:wrap; gap:calc(7 * var(--u)); max-height:none; overflow:visible; }
+#mxProcGrid.mx-grid-track .mx-filefield .mx-file-row{ width:auto; padding:calc(6 * var(--u)) calc(12 * var(--u)); background:#F8FAFC; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); gap:calc(7 * var(--u)); }
+#mxProcGrid.mx-grid-track .mx-filefield .mx-file-row .mx-file-ic{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); background:transparent; color:#94A3B8; border-radius:0; }
+#mxProcGrid.mx-grid-track .mx-filefield .mx-file-row .mx-file-ic svg{ width:100%; height:100%; }
+#mxProcGrid.mx-grid-track .mx-filefield .mx-file-nm{ font-size:calc(11.5 * var(--u)); font-weight:600; max-width:calc(230 * var(--u)); }
+#mxProcGrid.mx-grid-track .mx-filefield .mx-file-row.mx-file-new{ background:#F0FDF4; border-color:#BBF7D0; }
+#mxProcGrid.mx-grid-track .mx-filefield .mx-file-row.mx-file-new .mx-file-ic{ color:#16A34A; }
+/* компактні зони завантаження на етапі */
+#mxProcGrid.mx-grid-track .mx-filefield a.ob-button-attach.mx-dz-btn{ min-height:calc(44 * var(--u)); padding:calc(8 * var(--u)) calc(13 * var(--u)); }
+#mxProcGrid.mx-grid-track .mx-filefield .mx-dz-cta{ height:calc(28 * var(--u)); padding:0 calc(13 * var(--u)); }
 #mxProcGrid.mx-grid-track .mx-col-side{ position:sticky; top:calc(18 * var(--u)); }
 #mxProcGrid.mx-grid-track .mx-col-side .mx-side{ margin-top:0; flex:0 0 auto; }
 /* підказка про скани — помітна, зникає щойно зʼявився файл */
@@ -222,20 +236,22 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 .mx-steps .mx-step-line{ flex:1 1 auto; height:2px; background:#E3E8EF; margin:0 calc(8 * var(--u)); margin-bottom:calc(24 * var(--u)); transition:background .2s ease; }
 .mx-steps .mx-step-line.mx-done{ background:#0F172A; }
 /* трекер прогресу (5 етапів) */
-/* трекер — біла картка на ширину гріда, точки з номерами */
-.mx-track{ max-width:calc(1000 * var(--u)); margin:0 auto calc(20 * var(--u)); background:#FFFFFF; border-radius:calc(18 * var(--u)); padding:calc(20 * var(--u)) calc(30 * var(--u)) calc(18 * var(--u)); box-shadow:0 6px 24px rgba(15,23,42,0.06); box-sizing:border-box; }
+/* трекер — тонка компактна смуга, без зайвої висоти */
+.mx-track{ max-width:calc(1000 * var(--u)); margin:0 auto calc(18 * var(--u)); background:#FFFFFF; border-radius:calc(14 * var(--u)); padding:calc(13 * var(--u)) calc(22 * var(--u)) calc(11 * var(--u)); box-shadow:0 4px 18px rgba(15,23,42,0.05); box-sizing:border-box; }
 .mx-track-row{ display:flex; align-items:center; }
-.mx-track .mx-tstage{ display:flex; flex-direction:column; align-items:center; gap:calc(8 * var(--u)); flex:0 0 auto; width:calc(104 * var(--u)); }
-.mx-track .mx-tdot{ width:calc(30 * var(--u)); height:calc(30 * var(--u)); border-radius:50%; display:flex; align-items:center; justify-content:center; background:#FFFFFF; border:1.5px solid #E2E8F0; color:#94A3B8; font-size:calc(12.5 * var(--u)); font-weight:700; transition:all .2s ease; }
-.mx-track .mx-tdot svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
-.mx-track .mx-tlbl{ font-size:calc(11.5 * var(--u)); font-weight:600; color:#94A3B8; text-align:center; line-height:1.25; }
+.mx-track .mx-tstage{ display:flex; flex-direction:column; align-items:center; gap:calc(5 * var(--u)); flex:0 0 auto; width:calc(92 * var(--u)); }
+.mx-track .mx-tdot{ width:calc(22 * var(--u)); height:calc(22 * var(--u)); border-radius:50%; display:flex; align-items:center; justify-content:center; background:#FFFFFF; border:1.5px solid #E2E8F0; color:#94A3B8; font-size:calc(10.5 * var(--u)); font-weight:700; transition:all .2s ease; }
+.mx-track .mx-tdot svg{ width:calc(11 * var(--u)); height:calc(11 * var(--u)); }
+.mx-track .mx-tlbl{ font-size:calc(10.5 * var(--u)); font-weight:600; color:#94A3B8; text-align:center; line-height:1.2; white-space:nowrap; }
 .mx-track .mx-tstage.mx-done .mx-tdot{ background:#22C55E; border-color:#22C55E; color:#fff; }
 .mx-track .mx-tstage.mx-done .mx-tlbl{ color:#475569; }
-.mx-track .mx-tstage.mx-active .mx-tdot{ background:#2c3bff; border-color:#2c3bff; color:#fff; box-shadow:0 0 0 calc(4 * var(--u)) rgba(44,59,255,0.14); }
+.mx-track .mx-tstage.mx-active .mx-tdot{ background:#2c3bff; border-color:#2c3bff; color:#fff; box-shadow:0 0 0 calc(3 * var(--u)) rgba(44,59,255,0.14); }
 .mx-track .mx-tstage.mx-active .mx-tlbl{ color:#0F172A; font-weight:700; }
-.mx-track .mx-tline{ flex:1 1 auto; height:2px; border-radius:2px; background:#E9EEF5; margin-bottom:calc(26 * var(--u)); transition:background .2s ease; }
+.mx-track .mx-tline{ flex:1 1 auto; height:2px; border-radius:2px; background:#E9EEF5; margin-bottom:calc(16 * var(--u)); transition:background .2s ease; }
 .mx-track .mx-tline.mx-done{ background:#22C55E; }
-.mx-track-status{ text-align:center; margin-top:calc(14 * var(--u)); padding-top:calc(14 * var(--u)); border-top:1px solid #F1F5F9; }
+/* бейдж статусу — праворуч у тому ж рядку, не окремий поверх */
+.mx-track-status{ flex:0 0 auto; margin-left:calc(18 * var(--u)); margin-bottom:calc(16 * var(--u)); text-align:right; }
+.mx-track-status .mx-ts-badge{ padding:calc(5 * var(--u)) calc(13 * var(--u)) !important; font-size:calc(12 * var(--u)) !important; }
 .mx-track-status .mx-ts-badge{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(7 * var(--u)) calc(16 * var(--u)); background:#EEF2FF; border:1px solid #DDE3FF; border-radius:calc(999 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:700; color:#2c3bff; }
 .mx-track-status .mx-ts-note{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); color:#64748B; line-height:1.5; max-width:calc(440 * var(--u)); margin-left:auto; margin-right:auto; }
 /* підпис кроку заповнення під єдиним трекером */
@@ -488,13 +504,10 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 h += '<div class="mx-tstage ' + cls + '"><div class="mx-tdot">' + inner + '</div><div class="mx-tlbl">' + STAGES[i-1] + '</div></div>';
                 if(i < 5){ h += '<div class="mx-tline ' + (i < stage ? 'mx-done' : '') + '"></div>'; }
             }
-            h += '</div>';
-            if(!hideStatus){
-                h += '<div class="mx-track-status">';
-                if(clientText){ h += '<div class="mx-ts-badge">' + clientText + '</div>'; }
-                h += '<div class="mx-ts-note">' + (STAGE_NOTE[stage-1] || '') + '</div></div>';
+            if(!hideStatus && clientText){
+                h += '<div class="mx-track-status"><div class="mx-ts-badge">' + clientText + '</div></div>';
             }
-            h += '</div>';
+            h += '</div></div>';
             return h;
         }
         // ===== ЕТАЛОН ЕКРАНА ЕТАПУ (трекер-статуси): грід + квитанція + жива панель «Ви тут» =====
@@ -582,12 +595,14 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     Array.prototype.forEach.call(el.querySelectorAll('.js-uploaded-file'), function(u){
                         var t = (u.textContent || '').replace(/\s+/g, ' ').trim(); if(t) addItem(t);
                     });
+                    var tFile = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
                     var key = items.map(function(i){ return i.n; }).join('|');
                     if(host.__k !== key){
                         host.__k = key; host.innerHTML = '';
                         items.forEach(function(it){
-                            var r = document.createElement('div'); r.className = 'mx-file-row';
-                            r.innerHTML = '<span class="mx-file-ic">' + tCheck + '</span><span class="mx-file-nm">'
+                            // збережені раніше — нейтральні чипи; щойно завантажені (чернетки) — зелені
+                            var r = document.createElement('div'); r.className = 'mx-file-row' + (it.href ? '' : ' mx-file-new');
+                            r.innerHTML = '<span class="mx-file-ic">' + (it.href ? tFile : tCheck) + '</span><span class="mx-file-nm">'
                                 + (it.href ? ('<a href="' + it.href + '" target="_blank" rel="noopener">' + esc(it.n) + '</a>') : esc(it.n)) + '</span>';
                             host.appendChild(r);
                         });
@@ -632,6 +647,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var low = capTxt.toLowerCase();
                 var isFile = !!el.querySelector('.ob-block-attach');
                 el.classList.add('mx-rc-el');
+                // підпис начисто: без двокрапки та сторонніх вузлів (інакше зливається зі значенням)
+                if(capEl){ capEl.textContent = capTxt.replace(/\s*:\s*$/, ''); }
                 if(isFile){ trackFileField(el, capTxt); return; }
                 var val = '';
                 var dv = el.querySelector('.data-view'); if(dv){ val = (dv.textContent || '').replace(/\s+/g, ' ').trim(); }
