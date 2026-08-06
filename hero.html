@@ -254,6 +254,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-nn-t b{ color:#0F172A; font-weight:700; }
 /* кнопка «Далі» — у ширину колонки форми */
 #mxProcGrid .mx-col-form .nc-block-change-status.js-button-fixed{ max-width:100% !important; margin:calc(16 * var(--u)) 0 0 !important; }
+/* порожні спейсери під фіксовану панель статусу дають фантомний скрол — ховаємо */
+.nc-block-change-status-place:not(:has(.nc-block-change-status)){ display:none !important; }
 /* права панель «Що ви отримаєте» */
 .mx-side{ background:#0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(24 * var(--u)) calc(22 * var(--u)); color:#fff; font-family:'Manrope',sans-serif; box-shadow:0 10px 34px rgba(15,23,42,0.14); display:flex; flex-direction:column; box-sizing:border-box; }
 .mx-side .mx-side-hero{ background:linear-gradient(135deg,#1B2BFF,#4B39EF); border-radius:calc(14 * var(--u)); padding:calc(16 * var(--u)); margin-bottom:calc(18 * var(--u)); display:flex; align-items:center; gap:calc(11 * var(--u)); }
@@ -609,8 +611,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var fsec = document.createElement('div'); fsec.className = 'mx-fsec';
             function trackFileField(el, capTxt){
                 el.classList.add('mx-filefield', 'mx-ff-hidden');   // саме поле ховаємо, ним керує рядок
+                // догрузка доречна, поки дані ще впливають на результат (оцінка/планування/оплата);
+                // з виробництва (етап 4+) файли read-only — нові вже нічого не змінять
+                var canAdd = m.s < 4;
                 var jtv = el.querySelector('.flex-value .js-text') || el.querySelector('.js-text');
-                if(jtv){ try{ jtv.click(); }catch(_){ } }           // рідна сесія редагування (потрібна для коміту ✓)
+                if(canAdd && jtv){ try{ jtv.click(); }catch(_){ } } // рідна сесія редагування (потрібна для коміту ✓)
                 var attach = el.querySelector('.ob-block-attach');
                 var btn = attach ? attach.querySelector('.ob-button-attach') : null;
                 var low = capTxt.toLowerCase();
@@ -620,17 +625,19 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 row.innerHTML = '<span class="mx-frow-lbl">' + esc(lbl) + '</span><span class="mx-frow-body"></span>';
                 var body = row.querySelector('.mx-frow-body');
                 var host = document.createElement('span'); host.className = 'mx-files'; body.appendChild(host);
-                if(isScan){
+                if(isScan && canAdd){
                     var nt = document.createElement('span'); nt.className = 'mx-frow-note';
                     nt.textContent = 'ще не додано — можна й після нашої оцінки';
                     body.appendChild(nt);
                 }
-                var add = document.createElement('button'); add.type = 'button'; add.className = 'mx-frow-add'; add.textContent = '+ Додати';
-                add.addEventListener('click', function(e){ e.preventDefault(); if(btn){ btn.click(); } });
-                body.appendChild(add);
-                var ld = document.createElement('span'); ld.className = 'mx-frow-load';
-                ld.innerHTML = '<span class="mx-dz-spin"></span>Завантаження…';
-                body.appendChild(ld);
+                if(canAdd){
+                    var add = document.createElement('button'); add.type = 'button'; add.className = 'mx-frow-add'; add.textContent = '+ Додати';
+                    add.addEventListener('click', function(e){ e.preventDefault(); if(btn){ btn.click(); } });
+                    body.appendChild(add);
+                    var ld = document.createElement('span'); ld.className = 'mx-frow-load';
+                    ld.innerHTML = '<span class="mx-dz-spin"></span>Завантаження…';
+                    body.appendChild(ld);
+                }
                 fsec.appendChild(row);
                 function sync(){
                     var items = [], seen = {};
@@ -1285,6 +1292,10 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     // на трекері клієнт не рухає статус сам — ховаємо стандартний перехід
                     var cs = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status');
                     if(cs){ cs.setAttribute('data-mxhidebar','1'); }
+                    // JS-дубль CSS-правила (:has): порожній спейсер панелі статусу = фантомний скрол
+                    Array.prototype.forEach.call(document.querySelectorAll('.nc-block-change-status-place'), function(p){
+                        if(!p.querySelector('.nc-block-change-status')){ p.style.display = 'none'; }
+                    });
                     mxTrackLayout(col, m, status);   // еталон екрана етапу: квитанція + жива панель
                 }
                 return;
