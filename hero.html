@@ -172,6 +172,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* порожнє значення поля */
 #mxProcGrid .mx-rc-dash .mx-rc-val{ color:#C3CCD9; font-weight:600; }
 /* секція файлів — тихий інсет-блок, відділений від квитанції */
+/* картка «Пропозиція» — головний контент свого етапу: мʼякий акцент рамкою, текст висновку як документ */
+#mxProcGrid .mx-offer-card{ border-color:#DDE3FF; box-shadow:0 1px 3px rgba(44,59,255,.07); }
+#mxProcGrid .mx-offer-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
+#mxProcGrid .mx-oc-body{ margin-top:calc(12 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F5F7FF; border-left:3px solid #2c3bff; border-radius:calc(4 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)) calc(4 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.65; color:#1E293B; white-space:pre-wrap; }
+#mxProcGrid .mx-oc-foot{ margin-top:calc(11 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.5; }
 #mxProcGrid .mx-fsec{ margin-top:calc(14 * var(--u)); padding:calc(2 * var(--u)) calc(14 * var(--u)); background:#FAFBFD; border:1px solid #F1F5F9; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(10 * var(--u)) 0; }
 #mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #EDF1F7; }
@@ -699,6 +704,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 sync();
             }
             // --- поля-квитанція + спец-модулі майбутніх етапів ---
+            var mxOfferTxt = null;   // текст пропозиції — центральний елемент свого етапу, живе ОКРЕМОЮ карткою
             Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(el){
                 var capEl = el.querySelector('.flex-caption');
                 var capTxt = capEl ? capEl.textContent.replace(/\s+/g, ' ').trim() : '';
@@ -713,14 +719,27 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 if(!val){ var vi = el.querySelector('.data-edit input, .data-edit textarea, .data-edit select'); if(vi){ val = (vi.value || '').trim(); } }
                 var isOffer = low.indexOf('пропозиц') !== -1;
                 var isPay = low.indexOf('рахунок') !== -1 || low.indexOf('оплат') !== -1;
+                if(isOffer){
+                    // пропозицію забираємо з квитанції; <br>/абзаци переводимо у \n вручну
+                    // (innerText на прихованому вузлі втрачає переноси)
+                    var raw = '';
+                    if(dv){
+                        var tmpD = document.createElement('div');
+                        tmpD.innerHTML = dv.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li)>/gi, '\n');
+                        raw = (tmpD.textContent || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+                    }
+                    if(!raw){ var ovi = el.querySelector('.data-edit textarea, .data-edit input'); if(ovi){ raw = (ovi.value || '').trim(); } }
+                    if(raw){ mxOfferTxt = raw; }
+                    el.classList.add('mx-rc-empty');
+                    return;
+                }
                 if(!val){
-                    // спец-модулі без значення не показуємо (пропозиція/рахунок зʼявляться на своїх етапах);
+                    // рахунок без значення не показуємо (зʼявиться на своєму етапі);
                     // звичайні поля показуємо з «—», щоб виведене Джорджем поле не зникало безслідно
-                    if(isOffer || isPay){ el.classList.add('mx-rc-empty'); return; }
+                    if(isPay){ el.classList.add('mx-rc-empty'); return; }
                     val = '—'; el.classList.add('mx-rc-dash');
                 }
-                if(isOffer){ el.classList.add('mx-offer'); }
-                else if(isPay){ el.classList.add('mx-pay'); }
+                if(isPay){ el.classList.add('mx-pay'); }
                 var vd = document.createElement('div'); vd.className = 'mx-rc-val'; vd.textContent = val;
                 el.appendChild(vd);
             });
@@ -782,6 +801,17 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 '<div class="mx-hbar-row"><span class="mx-hbar"><span class="mx-hbar-fill" style="width:' + pct + '%"></span>' + ticks + '</span></div>' +
                 '<div class="mx-hbar-labels">' + lbls + '</div>';
             lcol.insertBefore(hero, lcol.firstChild);
+            // --- картка «Пропозиція»: одразу під hero, ПЕРЕД квитанцією — головний контент етапу ---
+            if(mxOfferTxt){
+                var icoProp = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>';
+                var oc = document.createElement('div'); oc.className = 'mx-card mx-offer-card';
+                oc.innerHTML =
+                    '<div class="mx-card-h"><span class="mx-card-ico">' + icoProp + '</span><span class="mx-card-t">Пропозиція</span></div>' +
+                    '<div class="mx-oc-body"></div>' +
+                    '<div class="mx-oc-foot">Якщо все влаштовує — повідомте нас, і ми виставимо рахунок. Оплата запускає збір проєкту та планування.</div>';
+                oc.querySelector('.mx-oc-body').textContent = mxOfferTxt;   // textContent + pre-wrap: абзаци збережено, розмітка безпечна
+                lcol.insertBefore(oc, hero.nextSibling);
+            }
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
         var ptries = 0;
