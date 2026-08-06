@@ -140,15 +140,28 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-rc-el.mx-filefield .flex-caption{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; }
 /* трекер-грід: панель НЕ розтягується (без «чорної діри») і липне при скролі */
 #mxProcGrid.mx-grid-track{ align-items:flex-start; }
-/* компактні картки-квитанції */
-#mxProcGrid.mx-grid-track .mx-col-form .os-block-element{ padding:calc(18 * var(--u)) calc(24 * var(--u)) calc(20 * var(--u)) !important; }
-#mxProcGrid.mx-grid-track .mx-col-form .os-block-element + .os-block-element{ margin-top:calc(12 * var(--u)) !important; }
-/* заголовок картки: іконка + назва секції */
+/* трекер усередині лівої колонки: «повітряний», без картки-борду.
+   Підпис — лише під активним етапом (решту називати не потрібно — точки з номерами кажуть самі) */
+#mxProcGrid.mx-grid-track .mx-col-form .mx-track{ background:transparent; box-shadow:none; border-radius:0; padding:calc(2 * var(--u)) 0 calc(20 * var(--u)); margin:0 0 calc(10 * var(--u)); max-width:none; }
+#mxProcGrid.mx-grid-track .mx-track .mx-tstage{ position:relative; width:auto; }
+#mxProcGrid.mx-grid-track .mx-track .mx-tlbl{ display:none; }
+#mxProcGrid.mx-grid-track .mx-track .mx-tstage.mx-active .mx-tlbl{ display:block; position:absolute; top:calc(27 * var(--u)); left:50%; transform:translateX(-50%); white-space:nowrap; }
+#mxProcGrid.mx-grid-track .mx-track .mx-tline{ margin-bottom:0; }
+#mxProcGrid.mx-grid-track .mx-track .mx-track-status{ margin-bottom:0; }
+/* наші секції-картки */
+#mxProcGrid .mx-card{ background:#FFFFFF; border-radius:calc(18 * var(--u)); padding:calc(16 * var(--u)) calc(24 * var(--u)) calc(18 * var(--u)); box-shadow:0 6px 24px rgba(15,23,42,0.05); box-sizing:border-box; }
+#mxProcGrid .mx-card + .mx-card{ margin-top:calc(12 * var(--u)); }
+#mxProcGrid.mx-grid-track .mx-next-note{ margin:0 0 calc(12 * var(--u)); }
+/* заголовок секції: іконка + назва (без води-сабтайтлів) */
 #mxProcGrid .mx-card-h{ display:flex; align-items:center; gap:calc(10 * var(--u)); margin:0 0 calc(12 * var(--u)); padding:0 0 calc(11 * var(--u)); border-bottom:1px solid #F1F5F9; }
-#mxProcGrid .mx-card-ico{ flex:0 0 auto; width:calc(30 * var(--u)); height:calc(30 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:calc(9 * var(--u)); background:#F4F6FA; color:#475569; }
-#mxProcGrid .mx-card-ico svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
+#mxProcGrid .mx-card-ico{ flex:0 0 auto; width:calc(28 * var(--u)); height:calc(28 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:calc(8 * var(--u)); background:#F4F6FA; color:#64748B; }
+#mxProcGrid .mx-card-ico svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }
 #mxProcGrid .mx-card-t{ display:block; font-size:calc(13.5 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; line-height:1.25; }
-#mxProcGrid .mx-card-s{ display:block; margin-top:calc(1 * var(--u)); font-size:calc(11 * var(--u)); font-weight:500; color:#94A3B8; }
+/* тихі зони дозавантаження на етапі: без ядерного синього — це другорядна дія */
+#mxProcGrid.mx-grid-track .mx-filefield .mx-dz-more{ color:#64748B; font-weight:600; }
+#mxProcGrid.mx-grid-track .mx-filefield a.ob-button-attach.mx-dz-btn{ background:#FBFCFE; }
+#mxProcGrid.mx-grid-track .mx-filefield.mx-req-field a.ob-button-attach.mx-dz-btn{ background:#FBFCFE; border-color:#CBD5E1; }
+#mxProcGrid.mx-grid-track .mx-filefield.mx-req-field a.ob-button-attach.mx-dz-btn .mx-dz-ico{ color:#94A3B8; }
 /* файли на етапі — компактні чипи в рядок (збережені нейтральні, свіжі зелені) */
 #mxProcGrid.mx-grid-track .mx-filefield .mx-files{ flex-direction:row; flex-wrap:wrap; gap:calc(7 * var(--u)); max-height:none; overflow:visible; }
 #mxProcGrid.mx-grid-track .mx-filefield .mx-file-row{ width:auto; padding:calc(6 * var(--u)) calc(12 * var(--u)); background:#F8FAFC; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); gap:calc(7 * var(--u)); }
@@ -659,30 +672,31 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var vd = document.createElement('div'); vd.className = 'mx-rc-val'; vd.textContent = val;
                 el.appendChild(vd);
             });
-            // заголовки карток (іконка + назва секції) + повітря внизу + порожні картки
-            var icoUser = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
-            var icoSet  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>';
+            // ДВІ секції за суттю (а не за розкладкою блоків OneBox): «Замовлення» + «Файли».
+            // Поля переносимо у наші картки, порожні оригінальні блоки ховаємо.
+            var icoDoc  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
             var icoFold = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
-            Array.prototype.forEach.call(lcol.querySelectorAll('.os-block-element'), function(card){
-                var vis = [];
-                Array.prototype.forEach.call(card.querySelectorAll('.js-data-element.mx-rc-el'), function(e){
-                    if(!e.classList.contains('mx-rc-empty')) vis.push(e);
-                });
-                if(!vis.length){ card.style.display = 'none'; return; }
-                vis[vis.length - 1].classList.add('mx-rc-last');
-                if(!card.querySelector('.mx-card-h')){
-                    var txt = card.textContent.toLowerCase();
-                    var cfg = null;
-                    if(card.querySelector('.mx-filefield'))                      cfg = { i:icoFold, t:'Файли замовлення', s:'КТ та скани щелеп' };
-                    else if(txt.indexOf('систем') !== -1 || txt.indexOf('позиці') !== -1) cfg = { i:icoSet, t:'Параметри планування', s:'Система та позиції імплантатів' };
-                    else if(txt.indexOf('пацієнт') !== -1)                       cfg = { i:icoUser, t:'Дані пацієнта', s:'Кого ми плануємо' };
-                    if(cfg){
-                        var hd = document.createElement('div'); hd.className = 'mx-card-h';
-                        hd.innerHTML = '<span class="mx-card-ico">' + cfg.i + '</span><span class="mx-card-tt"><span class="mx-card-t">' + cfg.t + '</span><span class="mx-card-s">' + cfg.s + '</span></span>';
-                        card.insertBefore(hd, card.firstChild);
-                    }
-                }
+            function mkCard(ico, title){
+                var c = document.createElement('div'); c.className = 'mx-card';
+                var hd = document.createElement('div'); hd.className = 'mx-card-h';
+                hd.innerHTML = '<span class="mx-card-ico">' + ico + '</span><span class="mx-card-t">' + title + '</span>';
+                c.appendChild(hd);
+                return c;
+            }
+            var cardData = mkCard(icoDoc, 'Замовлення');
+            var cardFiles = mkCard(icoFold, 'Файли');
+            var nData = 0, nFiles = 0;
+            Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element.mx-rc-el'), function(e){
+                if(e.classList.contains('mx-rc-empty')) return;
+                if(e.classList.contains('mx-filefield')){ cardFiles.appendChild(e); nFiles++; }
+                else { cardData.appendChild(e); nData++; }
             });
+            Array.prototype.forEach.call(lcol.querySelectorAll('.os-block-element'), function(card){ card.style.display = 'none'; });
+            if(nData){ lcol.appendChild(cardData); var lv1 = cardData.querySelectorAll('.mx-rc-el'); lv1[lv1.length - 1].classList.add('mx-rc-last'); }
+            if(nFiles){ lcol.appendChild(cardFiles); var lv2 = cardFiles.querySelectorAll('.mx-rc-el'); lv2[lv2.length - 1].classList.add('mx-rc-last'); }
+            // трекер — «повітряний», всередині лівої колонки (одна сітка, без білого борду на дві ширини)
+            var trackEl = document.querySelector('#mxProcTop .mx-track');
+            if(trackEl){ lcol.insertBefore(trackEl, lcol.firstChild); }
             // TODO майбутнє: статус «Погодження проекту» — PDF планування + кнопки «Приймаю / Є правки»
             // (правки = текстове поле + завантаження скрінів). Потрібні поля процесу — додамо, щойно зʼявляться.
             // --- нотатка «чий хід» ---
@@ -703,7 +717,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var note = document.createElement('div');
             note.className = 'mx-next-note' + (ACT_NOTES[status] ? ' mx-note-act' : '');
             note.innerHTML = '<span class="mx-nn-ic">' + tChat + '</span><span class="mx-nn-t">' + noteHtml + '</span>';
-            lcol.appendChild(note);
+            // головна відповідь екрана — ПЕРШОЮ (одразу під трекером), а не в підвалі
+            var afterTrack = trackEl ? trackEl.nextSibling : lcol.firstChild;
+            lcol.insertBefore(note, afterTrack);
         }
         var ptries = 0;
         function renderProc(){
