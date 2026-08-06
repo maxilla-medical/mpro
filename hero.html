@@ -193,6 +193,16 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-ocp-tsum{ font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; white-space:nowrap; }
 #mxProcGrid .mx-ocp-psum{ font-size:calc(13 * var(--u)); font-weight:700; color:#16A34A; white-space:nowrap; }
 #mxProcGrid .mx-ocp-dsum{ font-size:calc(15 * var(--u)); font-weight:800; color:#2c3bff; white-space:nowrap; }
+/* CTA пропозиції: один кольоровий магніт (прийняти) + ghost-канал питань */
+#mxProcGrid .mx-oc-cta{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin-top:calc(15 * var(--u)); }
+#mxProcGrid .mx-cta-main{ display:inline-flex; align-items:center; justify-content:center; padding:calc(11 * var(--u)) calc(24 * var(--u)); background:#2c3bff; color:#FFFFFF !important; border-radius:calc(12 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:700; text-decoration:none !important; cursor:pointer; box-shadow:0 2px 10px rgba(44,59,255,.28); transition:background .15s ease, transform .1s ease, box-shadow .15s ease; }
+#mxProcGrid .mx-cta-main:hover{ background:#1F2CE0; box-shadow:0 4px 14px rgba(44,59,255,.34); }
+#mxProcGrid .mx-cta-main:active{ transform:translateY(1px); }
+#mxProcGrid .mx-cta-main.mx-cta-busy{ opacity:.65; pointer-events:none; }
+#mxProcGrid .mx-cta-sec{ display:inline-flex; align-items:center; padding:calc(11 * var(--u)) calc(18 * var(--u)); background:transparent; color:#475569 !important; border:1px solid #E2E8F0; border-radius:calc(12 * var(--u)); font-size:calc(13 * var(--u)); font-weight:600; text-decoration:none !important; transition:border-color .14s ease, background .14s ease; }
+#mxProcGrid .mx-cta-sec:hover{ border-color:#CBD5E1; background:#F8FAFC; }
+/* рідний блок онлайн-оплати OneBox: керуємо ним із нашої кнопки, тож ховаємо */
+.mx-payform-native{ display:none !important; }
 #mxProcGrid .mx-fsec{ margin-top:calc(14 * var(--u)); padding:calc(2 * var(--u)) calc(14 * var(--u)); background:#FAFBFD; border:1px solid #F1F5F9; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(10 * var(--u)) 0; }
 #mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #EDF1F7; }
@@ -846,6 +856,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var frac = Math.abs(n % 1) > 0.004 ? 2 : 0;
                 return n.toLocaleString('uk-UA', { minimumFractionDigits: frac, maximumFractionDigits: 2 }) + ' ₴';
             }
+            var mxTotalVal = null;   // «Разом» з таблиці продуктів — для суми на кнопці оплати
             function mxRenderPrice(){
                 if(document.getElementById('mxPriceSec')) return true;
                 var pl = col.querySelector('.js-block-product-list') || document.querySelector('.js-block-product-list');
@@ -874,6 +885,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 hideEl.style.display = 'none';
                 if(!items.length && total == null) return true;
                 if(total == null){ total = items.reduce(function(a, b){ return a + b.s; }, 0); }
+                mxTotalVal = total;
+                var payMb = document.querySelector('.mx-cta-main[data-pay]');
+                if(payMb && !payMb.__busy){ payMb.textContent = 'Оплатити ' + mxMoney(total); payMb.setAttribute('data-lbl', 'Оплатити ' + mxMoney(total)); }
                 var sec = document.createElement('div'); sec.id = 'mxPriceSec'; sec.className = 'mx-oc-price';
                 var h = '';
                 items.forEach(function(it){
@@ -888,7 +902,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     if(due > 0.004){ h += '<div class="mx-ocp-row"><span class="mx-ocp-tlbl">До сплати</span><span class="mx-ocp-dsum">' + mxMoney(due) + '</span></div>'; }
                 }
                 sec.innerHTML = h;
-                if(ocCard){ ocCard.insertBefore(sec, ocCard.querySelector('.mx-oc-foot') || null); }
+                if(ocCard){ ocCard.insertBefore(sec, ocCard.querySelector('.mx-oc-cta') || ocCard.querySelector('.mx-oc-foot') || null); }
                 else {
                     var pc = document.createElement('div'); pc.className = 'mx-card mx-offer-card';
                     pc.innerHTML = '<div class="mx-card-h"><span class="mx-card-ico">' + icoProp + '</span><span class="mx-card-t">Вартість</span></div>';
@@ -900,6 +914,114 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             if(!mxRenderPrice()){
                 var prTries = 0;
                 var prT = setInterval(function(){ prTries++; if(mxRenderPrice() || prTries > 16){ clearInterval(prT); } }, 250);
+            }
+            // --- CTA етапу «Пропозиція»: якщо є онлайн-оплата (WayForPay) — платимо В ОДИН КЛІК;
+            //     інакше — погодження через перемикач статусу. Плюс тихий канал питань. ---
+            if(ocCard && status === 'Пропозиція'){
+                // рідний блок оплати: H2 «Онлайн оплата…» + .os-block-form із .js-select-payment — ховаємо, керуємо самі
+                var payForm = null, payH2 = null;
+                Array.prototype.forEach.call(col.querySelectorAll('.os-block-form'), function(f){
+                    if(!payForm && f.querySelector('.js-select-payment')){ payForm = f; }
+                });
+                if(payForm){
+                    payForm.classList.add('mx-payform-native');
+                    var _ph = payForm.previousElementSibling;
+                    if(_ph && (_ph.textContent || '').indexOf('Онлайн оплата') !== -1){ payH2 = _ph; payH2.style.display = 'none'; }
+                }
+                function payBtn1(){
+                    var b = null;
+                    if(payForm){
+                        Array.prototype.forEach.call(payForm.querySelectorAll('input.os-button, .os-button, button'), function(x){
+                            if(!b && /оплат/i.test(x.value || x.textContent || '')){ b = x; }
+                        });
+                    }
+                    return b;
+                }
+                // крок-2 OneBox (проміжне «Сумма к оплате → Оплатить») — знаходимо й тиснемо самі
+                function findStep2(){
+                    var found = null, b1 = payBtn1();
+                    Array.prototype.forEach.call(document.querySelectorAll('a, button, input[type="button"], input[type="submit"]'), function(x){
+                        if(found || x === b1) return;
+                        if(x.classList && (x.classList.contains('mx-cta-main') || x.classList.contains('mx-cta-sec'))) return;
+                        var t = (x.value || x.textContent || '').replace(/\s+/g, ' ').trim();
+                        if(/^оплатит(ь|и)$/i.test(t)){ found = x; }
+                    });
+                    return found;
+                }
+                function wfpOpen(){ return !!document.querySelector('iframe[src*="wayforpay"], [class*="wayforpay"]'); }
+                var natBtn = col.querySelector('.nc-block-change-status .js-change-order-status') || col.querySelector('.js-change-order-status');
+                var supHref = null;
+                Array.prototype.forEach.call(document.querySelectorAll('.client-cell-body.aside-left a[href]'), function(a){
+                    if(!supHref && (a.textContent || '').toLowerCase().indexOf('підтримк') !== -1){ supHref = a.getAttribute('href'); }
+                });
+                var cta = document.createElement('div'); cta.className = 'mx-oc-cta';
+                var mb = null;
+                function payReset(){
+                    if(mb){ mb.__busy = false; mb.classList.remove('mx-cta-busy'); mb.textContent = mb.getAttribute('data-lbl'); }
+                    try{ sessionStorage.removeItem('mxPayIntent'); }catch(_){ }
+                }
+                function chase(){
+                    var tries = 0;
+                    var t = setInterval(function(){
+                        tries++;
+                        if(wfpOpen()){ clearInterval(t); payReset(); return; }   // вікно оплати відкрилось
+                        var s2 = findStep2();
+                        if(s2){ try{ s2.click(); }catch(_){ } }
+                        if(tries > 16 && !s2){
+                            // страховка: не змогли провести автоматично → показуємо рідний блок
+                            clearInterval(t); payReset();
+                            if(payForm){ payForm.classList.remove('mx-payform-native'); if(payH2){ payH2.style.display = ''; } payForm.scrollIntoView({ behavior:'smooth', block:'center' }); }
+                        }
+                        if(tries > 40){ clearInterval(t); payReset(); }
+                    }, 300);
+                }
+                if(payForm && payBtn1()){
+                    var payLbl = 'Оплатити' + (mxTotalVal != null ? ' ' + mxMoney(mxTotalVal) : '');
+                    mb = document.createElement('a'); mb.href = 'javascript:void(0)'; mb.className = 'mx-cta-main';
+                    mb.setAttribute('data-pay', '1'); mb.setAttribute('data-lbl', payLbl); mb.textContent = payLbl;
+                    mb.addEventListener('click', function(){
+                        if(mb.__busy) return; mb.__busy = true;
+                        mb.classList.add('mx-cta-busy'); mb.textContent = 'Відкриваємо оплату…';
+                        try{ sessionStorage.setItem('mxPayIntent', String(new Date().getTime())); }catch(_){ }
+                        var s2 = findStep2();
+                        if(s2){ try{ s2.click(); }catch(_){ } } else { var b1 = payBtn1(); try{ b1.click(); }catch(_){ } }
+                        chase();
+                        setTimeout(payReset, 15000);
+                    });
+                    cta.appendChild(mb);
+                    // якщо перший клік перезавантажив сторінку — доводимо оплату до вікна автоматично
+                    var _int = 0; try{ _int = parseInt(sessionStorage.getItem('mxPayIntent') || '0', 10); }catch(_){ }
+                    if(_int && (new Date().getTime() - _int) < 180000){
+                        var s2b = findStep2();
+                        if(s2b){
+                            mb.__busy = true; mb.classList.add('mx-cta-busy'); mb.textContent = 'Відкриваємо оплату…';
+                            try{ s2b.click(); }catch(_){ } chase(); setTimeout(payReset, 15000);
+                        } else { try{ sessionStorage.removeItem('mxPayIntent'); }catch(_){ } }
+                    }
+                } else if(natBtn){
+                    mb = document.createElement('a'); mb.href = 'javascript:void(0)'; mb.className = 'mx-cta-main';
+                    mb.setAttribute('data-lbl', 'Влаштовує — виставте рахунок'); mb.textContent = 'Влаштовує — виставте рахунок';
+                    mb.addEventListener('click', function(){
+                        if(mb.__busy) return; mb.__busy = true;
+                        mb.classList.add('mx-cta-busy'); mb.textContent = 'Надсилаємо…';
+                        try{ natBtn.click(); }catch(_){ payReset(); }
+                    });
+                    cta.appendChild(mb);
+                }
+                if(supHref){
+                    var qb = document.createElement('a'); qb.href = supHref; qb.className = 'mx-cta-sec';
+                    qb.textContent = 'Є питання';
+                    cta.appendChild(qb);
+                }
+                if(cta.children.length){
+                    var ocFt = ocCard.querySelector('.mx-oc-foot');
+                    ocCard.insertBefore(cta, ocFt || null);
+                    if(ocFt){
+                        ocFt.textContent = (payForm && payBtn1())
+                            ? 'Оплата захищена — WayForPay: Apple Pay, Google Pay або картка. Після оплати одразу починаємо збір проєкту та планування.'
+                            : (mb ? 'Це ще не оплата — після підтвердження ми надішлемо рахунок.' : ocFt.textContent);
+                    }
+                }
             }
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
