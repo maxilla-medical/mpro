@@ -143,28 +143,29 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* HERO-статус: головний обʼєкт екрана етапу */
 #mxProcGrid .mx-hero-st{ padding:calc(18 * var(--u)) calc(24 * var(--u)) calc(14 * var(--u)); }
 #mxProcGrid .mx-hst-row{ display:flex; align-items:center; gap:calc(13 * var(--u)); }
-#mxProcGrid .mx-hst-ic{ flex:0 0 auto; width:calc(40 * var(--u)); height:calc(40 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#ECFDF5; color:#059669; animation:mxhpulse 2.4s ease-in-out infinite; }
-#mxProcGrid .mx-hst-ic svg{ width:calc(19 * var(--u)); height:calc(19 * var(--u)); }
+#mxProcGrid .mx-hst-ic{ flex:0 0 auto; width:calc(42 * var(--u)); height:calc(42 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#DCFCE7; color:#16A34A; box-shadow:0 0 0 calc(6 * var(--u)) #F0FDF4; animation:mxhpulse 2.4s ease-in-out infinite; }
+#mxProcGrid .mx-hst-ic svg{ width:calc(20 * var(--u)); height:calc(20 * var(--u)); stroke-width:2.2; }
 @keyframes mxhpulse{ 50%{ opacity:.55; } }
-#mxProcGrid .mx-hero-st.mx-hst-act .mx-hst-ic{ background:#EEF2FF; color:#2c3bff; }
+#mxProcGrid .mx-hero-st.mx-hst-act .mx-hst-ic{ background:#E0E7FF; color:#2c3bff; box-shadow:0 0 0 calc(6 * var(--u)) #EEF2FF; }
+#mxProcGrid .mx-card ~ .mx-card{ margin-top:calc(14 * var(--u)) !important; }
 #mxProcGrid .mx-hst-tt{ flex:1 1 auto; min-width:0; }
 #mxProcGrid .mx-hst-t{ display:block; font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.3px; line-height:1.2; }
 #mxProcGrid .mx-hst-s{ display:block; margin-top:calc(3 * var(--u)); font-size:calc(12 * var(--u)); font-weight:500; color:#64748B; line-height:1.45; }
 #mxProcGrid .mx-hst-row .mx-ts-badge{ flex:0 0 auto; }
-/* міні-трекер усередині hero */
-#mxProcGrid .mx-hst-track .mx-track{ background:transparent; box-shadow:none; border-radius:0; max-width:none; margin:calc(13 * var(--u)) 0 0; padding:calc(12 * var(--u)) 0 0; border-top:1px solid #F1F5F9; }
-#mxProcGrid .mx-hst-track .mx-tstage{ width:auto; }
-#mxProcGrid .mx-hst-track .mx-tlbl{ display:none; }
-#mxProcGrid .mx-hst-track .mx-tdot{ width:calc(18 * var(--u)); height:calc(18 * var(--u)); font-size:calc(9 * var(--u)); }
-#mxProcGrid .mx-hst-track .mx-tdot svg{ width:calc(9 * var(--u)); height:calc(9 * var(--u)); }
-#mxProcGrid .mx-hst-track .mx-tline{ margin-bottom:0; }
+/* прогрес-бар усередині hero (замість «точок-вайрфрейму») */
+#mxProcGrid .mx-hbar-row{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin-top:calc(14 * var(--u)); padding-top:calc(13 * var(--u)); border-top:1px solid #F1F5F9; }
+#mxProcGrid .mx-hbar-lbl{ flex:0 0 auto; font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; white-space:nowrap; }
+#mxProcGrid .mx-hbar{ position:relative; flex:1 1 auto; height:calc(6 * var(--u)); background:#EEF2F7; border-radius:calc(999 * var(--u)); overflow:hidden; }
+#mxProcGrid .mx-hbar-fill{ position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,#2c3bff,#4B39EF); border-radius:calc(999 * var(--u)); transition:width .4s ease; }
+#mxProcGrid .mx-hbar i{ position:absolute; top:0; bottom:0; width:2px; background:#FFFFFF; }
 /* приховані файлові поля (ними керують компактні рядки) */
 #mxProcGrid .mx-ff-hidden{ display:none !important; }
 /* секція файлів усередині картки «Замовлення» */
 #mxProcGrid .mx-fsec{ margin-top:calc(13 * var(--u)); padding-top:calc(4 * var(--u)); border-top:1px solid #F1F5F9; }
-#mxProcGrid .mx-frow{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)); padding:calc(8 * var(--u)) 0; }
+#mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(8 * var(--u)) 0; }
 #mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #F8FAFC; }
-#mxProcGrid .mx-frow-lbl{ flex:0 0 auto; min-width:calc(52 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
+#mxProcGrid .mx-frow-lbl{ flex:0 0 auto; min-width:calc(52 * var(--u)); padding-top:calc(5 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
+#mxProcGrid .mx-frow-body{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)); flex:1 1 auto; min-width:0; }
 #mxProcGrid .mx-frow .mx-files{ display:contents; }
 #mxProcGrid .mx-frow .mx-file-row{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); padding:calc(4 * var(--u)) calc(11 * var(--u)); background:#F8FAFC; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); }
 #mxProcGrid .mx-frow .mx-file-ic{ display:inline-flex; width:calc(13 * var(--u)); height:calc(13 * var(--u)); color:#94A3B8; }
@@ -184,7 +185,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-frow.mx-uploading .mx-frow-load{ display:inline-flex; }
 /* наші секції-картки */
 #mxProcGrid .mx-card{ background:#FFFFFF; border-radius:calc(18 * var(--u)); padding:calc(16 * var(--u)) calc(24 * var(--u)) calc(18 * var(--u)); box-shadow:0 6px 24px rgba(15,23,42,0.05); box-sizing:border-box; }
-#mxProcGrid .mx-card + .mx-card{ margin-top:calc(12 * var(--u)); }
+
 #mxProcGrid.mx-grid-track .mx-next-note{ margin:0 0 calc(12 * var(--u)); }
 /* заголовок секції: іконка + назва (без води-сабтайтлів) */
 #mxProcGrid .mx-card-h{ display:flex; align-items:center; gap:calc(10 * var(--u)); margin:0 0 calc(12 * var(--u)); padding:0 0 calc(11 * var(--u)); border-bottom:1px solid #F1F5F9; }
@@ -605,19 +606,20 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var isScan = low.indexOf('скан') !== -1;
                 var lbl = low.indexOf('томограм') !== -1 ? 'КТ' : (isScan ? 'Скани' : capTxt.replace(/\s*:\s*$/, ''));
                 var row = document.createElement('div'); row.className = 'mx-frow';
-                row.innerHTML = '<span class="mx-frow-lbl">' + esc(lbl) + '</span>';
-                var host = document.createElement('span'); host.className = 'mx-files'; row.appendChild(host);
+                row.innerHTML = '<span class="mx-frow-lbl">' + esc(lbl) + '</span><span class="mx-frow-body"></span>';
+                var body = row.querySelector('.mx-frow-body');
+                var host = document.createElement('span'); host.className = 'mx-files'; body.appendChild(host);
                 if(isScan){
                     var nt = document.createElement('span'); nt.className = 'mx-frow-note';
                     nt.textContent = 'ще не додано — можна й після нашої оцінки';
-                    row.appendChild(nt);
+                    body.appendChild(nt);
                 }
                 var add = document.createElement('button'); add.type = 'button'; add.className = 'mx-frow-add'; add.textContent = '+ Додати';
                 add.addEventListener('click', function(e){ e.preventDefault(); if(btn){ btn.click(); } });
-                row.appendChild(add);
+                body.appendChild(add);
                 var ld = document.createElement('span'); ld.className = 'mx-frow-load';
                 ld.innerHTML = '<span class="mx-dz-spin"></span>Завантаження…';
-                row.appendChild(ld);
+                body.appendChild(ld);
                 fsec.appendChild(row);
                 function sync(){
                     var items = [], seen = {};
@@ -733,11 +735,14 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var icoBell  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
             var hero = document.createElement('div');
             hero.className = 'mx-card mx-hero-st' + (isAct ? ' mx-hst-act' : '');
+            var pct = Math.round((m.s / 5) * 100);
+            var ticks = '<i style="left:20%"></i><i style="left:40%"></i><i style="left:60%"></i><i style="left:80%"></i>';
             hero.innerHTML =
                 '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isAct ? icoBell : icoClock) + '</span>' +
                 '<span class="mx-hst-tt"><span class="mx-hst-t">' + hcfg[0] + '</span><span class="mx-hst-s">' + hcfg[1] + '</span></span>' +
                 '<span class="mx-ts-badge">' + (m.c || status) + '</span></div>' +
-                '<div class="mx-hst-track">' + buildTracker(m.s, '', true) + '</div>';
+                '<div class="mx-hbar-row"><span class="mx-hbar-lbl">Етап ' + m.s + ' з 5</span>' +
+                '<span class="mx-hbar"><span class="mx-hbar-fill" style="width:' + pct + '%"></span>' + ticks + '</span></div>';
             lcol.insertBefore(hero, lcol.firstChild);
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
