@@ -937,17 +937,26 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     }
                     return b;
                 }
-                // крок-2 OneBox (проміжне «Сумма к оплате → Оплатить») — знаходимо й тиснемо самі
+                // крок-2 OneBox (проміжне «Сумма к оплате → Оплатить») — знаходимо й тиснемо самі.
+                // СТРОГО: лише кнопка всередині блоку з текстом суми (інакше можна зациклити
+                // перемальовану першу кнопку → нескінченні перезавантаження)
+                var mxPayClicked = [];
                 function findStep2(){
                     var found = null, b1 = payBtn1();
                     Array.prototype.forEach.call(document.querySelectorAll('a, button, input[type="button"], input[type="submit"]'), function(x){
                         if(found || x === b1) return;
+                        if(mxPayClicked.indexOf(x) !== -1) return;                      // кожен вузол тиснемо ОДИН раз
                         if(x.classList && (x.classList.contains('mx-cta-main') || x.classList.contains('mx-cta-sec'))) return;
                         var t = (x.value || x.textContent || '').replace(/\s+/g, ' ').trim();
-                        if(/^оплатит(ь|и)$/i.test(t)){ found = x; }
+                        if(!/^оплатит(ь|и)$/i.test(t)) return;
+                        var ctx = x.closest('div, form, section');                       // контекст: поруч має бути сума
+                        var ctxTxt = ctx ? (ctx.textContent || '') : '';
+                        if(!/сумма к оплате|сума до сплати|до сплати/i.test(ctxTxt)) return;
+                        found = x;
                     });
                     return found;
                 }
+                function step2Click(x){ mxPayClicked.push(x); try{ x.click(); }catch(_){ } }
                 function wfpOpen(){ return !!document.querySelector('iframe[src*="wayforpay"], [class*="wayforpay"]'); }
                 var natBtn = col.querySelector('.nc-block-change-status .js-change-order-status') || col.querySelector('.js-change-order-status');
                 var supHref = null;
@@ -964,16 +973,17 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     var tries = 0;
                     var t = setInterval(function(){
                         tries++;
-                        if(wfpOpen()){ clearInterval(t); payReset(); return; }   // вікно оплати відкрилось
+                        if(wfpOpen() || mxPayClicked.length >= 3){ clearInterval(t); payReset(); return; }   // вікно відкрилось або ліміт кліків
                         var s2 = findStep2();
-                        if(s2){ try{ s2.click(); }catch(_){ } }
-                        if(tries > 16 && !s2){
+                        if(s2){ step2Click(s2); return; }
+                        if(tries > 14 && !mxPayClicked.length){
                             // страховка: не змогли провести автоматично → показуємо рідний блок
                             clearInterval(t); payReset();
                             if(payForm){ payForm.classList.remove('mx-payform-native'); if(payH2){ payH2.style.display = ''; } payForm.scrollIntoView({ behavior:'smooth', block:'center' }); }
+                            return;
                         }
-                        if(tries > 40){ clearInterval(t); payReset(); }
-                    }, 300);
+                        if(tries > 30){ clearInterval(t); payReset(); }
+                    }, 400);
                 }
                 if(payForm && payBtn1()){
                     var payLbl = 'Оплатити' + (mxTotalVal != null ? ' ' + mxMoney(mxTotalVal) : '');
@@ -984,7 +994,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                         mb.classList.add('mx-cta-busy'); mb.textContent = 'Відкриваємо оплату…';
                         try{ sessionStorage.setItem('mxPayIntent', String(new Date().getTime())); }catch(_){ }
                         var s2 = findStep2();
-                        if(s2){ try{ s2.click(); }catch(_){ } } else { var b1 = payBtn1(); try{ b1.click(); }catch(_){ } }
+                        if(s2){ step2Click(s2); } else { var b1 = payBtn1(); try{ b1.click(); }catch(_){ } }
                         chase();
                         setTimeout(payReset, 15000);
                     });
@@ -995,7 +1005,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                         var s2b = findStep2();
                         if(s2b){
                             mb.__busy = true; mb.classList.add('mx-cta-busy'); mb.textContent = 'Відкриваємо оплату…';
-                            try{ s2b.click(); }catch(_){ } chase(); setTimeout(payReset, 15000);
+                            step2Click(s2b); chase(); setTimeout(payReset, 15000);
                         } else { try{ sessionStorage.removeItem('mxPayIntent'); }catch(_){ } }
                     }
                 } else if(natBtn){
