@@ -124,6 +124,38 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-req-warn svg{ flex:0 0 auto; width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
 /* порожні філери OneBox не розтягують ритм картки */
 #mxProcGrid .os-block-element .flex-element.empty{ display:none !important; }
+/* ===== екран етапу (трекер): квитанція + жива панель ===== */
+#mxProcGrid .mx-col-form .os-block-element{ width:100%; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; box-sizing:border-box; }
+#mxProcGrid .mx-col-form .os-block-element + .os-block-element{ margin-top:calc(14 * var(--u)) !important; }
+#mxProcGrid .js-data-element.mx-rc-el{ margin:0 0 calc(16 * var(--u)) !important; padding:0 !important; }
+#mxProcGrid .mx-rc-el .flex-wrap{ margin:0 !important; padding:0 !important; }
+#mxProcGrid .mx-rc-el .flex-caption{ display:flex; align-items:center; gap:calc(8 * var(--u)); margin:0 0 calc(7 * var(--u)) !important; padding:0 !important; font-size:calc(12 * var(--u)); font-weight:600; color:#64748B; letter-spacing:.02em; }
+#mxProcGrid .mx-rc-el:not(.mx-filefield) .data-view,
+#mxProcGrid .mx-rc-el:not(.mx-filefield) .data-edit{ display:none !important; }
+#mxProcGrid .mx-rc-empty{ display:none !important; }
+#mxProcGrid .mx-rc-val{ font-size:calc(14.5 * var(--u)); font-weight:700; color:#0F172A; line-height:1.4; letter-spacing:-0.2px; }
+/* файлове поле на етапі: підпис як у квитанції, зона компактна */
+#mxProcGrid .mx-rc-el.mx-filefield .flex-caption{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; }
+/* підказка про скани — помітна, зникає щойно зʼявився файл */
+#mxProcGrid .mx-scans-hint{ display:flex; align-items:flex-start; gap:calc(8 * var(--u)); margin:0 0 calc(9 * var(--u)); padding:calc(10 * var(--u)) calc(13 * var(--u)); background:#FFFBEB; border:1px solid #FDE68A; border-radius:calc(10 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#92400E; line-height:1.5; }
+#mxProcGrid .mx-scans-hint b{ font-weight:700; }
+#mxProcGrid .mx-filefield.mx-has-file .mx-scans-hint{ display:none; }
+/* збережений файл-рядок: імʼя-посилання */
+#mxProcGrid .mx-file-nm a{ color:#0F172A; text-decoration:none; }
+#mxProcGrid .mx-file-nm a:hover{ color:#2c3bff; text-decoration:underline; }
+/* пройдені фази панелі */
+.mx-side .mx-stp-done .mx-stp-n{ background:#16A34A; border-color:#16A34A; color:#fff; }
+.mx-side .mx-stp-done .mx-stp-n svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); }
+.mx-side .mx-stp-done .mx-stp-t{ color:#9AA0B4; }
+.mx-side .mx-stp-done .mx-stp-s{ color:#6B7280; }
+/* пропозиція (текстова оцінка кейса) — головний обʼєкт екрана */
+#mxProcGrid .mx-offer .mx-rc-val{ background:#F5F7FF; border-left:3px solid #2c3bff; border-radius:calc(10 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.6; letter-spacing:0; white-space:pre-wrap; }
+/* блок оплати (сума/рахунок) */
+#mxProcGrid .mx-pay .mx-rc-val{ font-size:calc(20 * var(--u)); font-weight:800; }
+/* нотатка «потрібна ваша дія» */
+#mxProcGrid .mx-next-note.mx-note-act{ background:#EEF2FF; border-color:#C7D2FE; }
+#mxProcGrid .mx-next-note.mx-note-act .mx-nn-ic{ background:#E0E7FF; color:#2c3bff; }
+#mxProcGrid .mx-next-note.mx-note-act .mx-nn-t b{ color:#2c3bff; }
 /* фінал історії всередині картки: «Далі — за нами» */
 #mxProcGrid .mx-next-note{ display:flex; align-items:center; justify-content:center; gap:calc(11 * var(--u)); margin-top:calc(16 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-nn-t{ max-width:calc(420 * var(--u)); text-wrap:balance; }
@@ -447,6 +479,151 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             }
             h += '</div>';
             return h;
+        }
+        // ===== ЕТАЛОН ЕКРАНА ЕТАПУ (трекер-статуси): грід + квитанція + жива панель «Ви тут» =====
+        function mxTrackLayout(col, m, status){
+            if(document.getElementById('mxProcGrid')) return;
+            function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+            var tCheck = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+            var tIco   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>';
+            var tChat  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1-5.7a8.5 8.5 0 1 1 17-2.8z"/></svg>';
+            // --- грід + панель (фаза: етапи 1-2 → оцінка, 3 → оплата, 4-5 → шаблон) ---
+            var grid = document.createElement('div'); grid.id = 'mxProcGrid';
+            var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
+            var rcol = document.createElement('div'); rcol.className = 'mx-col-side';
+            var phase = m.s <= 2 ? 1 : (m.s === 3 ? 2 : 3);
+            var PH = [
+                { t:'Спочатку — оцінка', s:'Аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b>' },
+                { t:'Оплата після погодження', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
+                { t:'Шаблон у клініці за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою після погодження планування.' }
+            ];
+            var sh = '';
+            PH.forEach(function(p, i){
+                var done = (i + 1) < phase, act = (i + 1) === phase, last = (i === PH.length - 1);
+                sh += '<div class="mx-stp' + (act ? ' mx-stp-act' : '') + (done ? ' mx-stp-done' : '') + '">'
+                    + '<div class="mx-stp-rail"><span class="mx-stp-n">' + (done ? tCheck : (i + 1)) + '</span>' + (last ? '' : '<span class="mx-stp-line"></span>') + '</div>'
+                    + '<div class="mx-stp-txt"><div class="mx-stp-t">' + p.t + (act ? '<span class="mx-stp-here">Ви тут</span>' : '') + '</div>'
+                    + '<div class="mx-stp-s">' + p.s + '</div></div></div>';
+            });
+            rcol.innerHTML = '<div class="mx-side"><div class="mx-side-eyebrow">Як це працює</div>' + sh
+                + '<div class="mx-side-foot">' + tCheck + 'Дані пацієнта захищені</div></div>';
+            var top = document.getElementById('mxProcTop');
+            top.parentNode.insertBefore(grid, top.nextSibling);
+            grid.appendChild(lcol); grid.appendChild(rcol);
+            Array.prototype.forEach.call(col.querySelectorAll('.os-block-element'), function(card){
+                if(card.querySelector('.js-data-element')) lcol.appendChild(card);
+            });
+            // --- файлове поле на етапі: зона активна, файли (чернетки + збережені) — зеленими рядками ---
+            function trackFileField(el, capTxt){
+                el.classList.add('mx-filefield');
+                var attach = el.querySelector('.ob-block-attach');
+                var btn = attach ? attach.querySelector('.ob-button-attach') : null;
+                var low = capTxt.toLowerCase();
+                var fmt = low.indexOf('томограм') !== -1 ? 'DICOM' : (low.indexOf('скан') !== -1 ? 'STL' : 'Файл');
+                if(low.indexOf('скан') !== -1) el.classList.add('mx-scans');
+                if(btn && !btn.classList.contains('mx-dz-btn')){
+                    btn.classList.add('mx-dz-btn');
+                    btn.innerHTML = '<span class="mx-dz-ico">' + tIco + '</span>'
+                        + '<span class="mx-dz-txt"><span class="mx-dz-main">Перетягніть або оберіть файли</span>'
+                        + '<span class="mx-dz-sub">' + fmt + '</span>'
+                        + '<span class="mx-dz-more">Додати ще файл</span></span>'
+                        + '<span class="mx-dz-cta">Обрати</span>'
+                        + '<span class="mx-dz-loading"><span class="mx-dz-spin"></span>Завантаження…</span>';
+                }
+                // помітна підказка про скани: видима, ПОКИ файлів немає (ховає CSS при mx-has-file)
+                if(el.classList.contains('mx-scans') && !el.querySelector('.mx-scans-hint')){
+                    var hint = document.createElement('div'); hint.className = 'mx-scans-hint';
+                    hint.innerHTML = '<b>Скани щелеп ще не додано.</b> Додайте зараз, якщо вже є — або пізніше, після нашої оцінки кейса та пропозиції.';
+                    if(attach && attach.parentNode){ attach.parentNode.insertBefore(hint, attach); }
+                }
+                function sync(){
+                    var host = el.querySelector('.mx-files');
+                    if(!host){
+                        host = document.createElement('div'); host.className = 'mx-files';
+                        if(attach && attach.parentNode){ attach.parentNode.insertBefore(host, attach); } else { el.appendChild(host); }
+                    }
+                    var items = [];
+                    Array.prototype.forEach.call(el.querySelectorAll('.js-uploaded-file'), function(u){
+                        var t = (u.textContent || '').replace(/\s+/g, ' ').trim(); if(t) items.push({ n: t });
+                    });
+                    var dv = el.querySelector('.data-view');
+                    if(dv){
+                        Array.prototype.forEach.call(dv.querySelectorAll('a[href]'), function(a){
+                            var t = (a.textContent || '').trim(); var h = a.getAttribute('href');
+                            if(t && h && h !== '#' && h.indexOf('javascript:') !== 0) items.push({ n: t, href: h });
+                        });
+                    }
+                    var key = items.map(function(i){ return i.n; }).join('|');
+                    if(host.__k !== key){
+                        host.__k = key; host.innerHTML = '';
+                        items.forEach(function(it){
+                            var r = document.createElement('div'); r.className = 'mx-file-row';
+                            r.innerHTML = '<span class="mx-file-ic">' + tCheck + '</span><span class="mx-file-nm">'
+                                + (it.href ? ('<a href="' + it.href + '" target="_blank" rel="noopener">' + esc(it.n) + '</a>') : esc(it.n)) + '</span>';
+                            host.appendChild(r);
+                        });
+                    }
+                    el.classList.toggle('mx-has-file', items.length > 0);
+                }
+                function bindDz(){
+                    if(el.__mxDzB || !attach) return;
+                    try{
+                        var dz = (window.Dropzone && Dropzone.forElement) ? Dropzone.forElement(attach) : null;
+                        if(!dz) return;
+                        el.__mxDzB = true;
+                        try{ dz.options.parallelUploads = 1; }catch(_){ }
+                        if(dz.options && dz.options.maxFiles > 1) el.classList.add('mx-multi');
+                        dz.on('addedfile', function(){ el.classList.add('mx-uploading'); });
+                        dz.on('queuecomplete', function(){ el.classList.remove('mx-uploading'); sync(); });
+                        dz.on('error', function(){ el.classList.remove('mx-uploading'); sync(); });
+                        dz.on('success', function(){ sync(); });
+                    }catch(_){ }
+                }
+                bindDz(); setTimeout(bindDz, 600); setTimeout(bindDz, 1500);
+                if(window.MutationObserver){
+                    var mo = new MutationObserver(function(){ mo.disconnect(); sync(); mo.observe(el, { childList:true, subtree:true }); });
+                    mo.observe(el, { childList:true, subtree:true });
+                }
+                sync();
+            }
+            // --- поля-квитанція + спец-модулі майбутніх етапів ---
+            Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(el){
+                var capEl = el.querySelector('.flex-caption');
+                var capTxt = capEl ? capEl.textContent.replace(/\s+/g, ' ').trim() : '';
+                var low = capTxt.toLowerCase();
+                var isFile = !!el.querySelector('.ob-block-attach');
+                el.classList.add('mx-rc-el');
+                if(isFile){ trackFileField(el, capTxt); return; }
+                var val = '';
+                var dv = el.querySelector('.data-view'); if(dv){ val = (dv.textContent || '').replace(/\s+/g, ' ').trim(); }
+                if(!val){ var vi = el.querySelector('.data-edit input, .data-edit textarea, .data-edit select'); if(vi){ val = (vi.value || '').trim(); } }
+                if(!val){ el.classList.add('mx-rc-empty'); return; }        // порожнє поле не показуємо
+                if(low.indexOf('пропозиц') !== -1){ el.classList.add('mx-offer'); }          // текстова пропозиція (оцінка кейса)
+                else if(low.indexOf('рахунок') !== -1 || low.indexOf('оплат') !== -1){ el.classList.add('mx-pay'); }   // блок оплати
+                var vd = document.createElement('div'); vd.className = 'mx-rc-val'; vd.textContent = val;
+                el.appendChild(vd);
+            });
+            // TODO майбутнє: статус «Погодження проекту» — PDF планування + кнопки «Приймаю / Є правки»
+            // (правки = текстове поле + завантаження скрінів). Потрібні поля процесу — додамо, щойно зʼявляться.
+            // --- нотатка «чий хід» ---
+            var ACT_NOTES = {
+                'Очікує нові дані':   '<b>Потрібна ваша дія.</b> Нам потрібні додаткові дані — додайте файли вище.',
+                'Пропозиція':         '<b>Пропозиція готова.</b> Ознайомтесь з оцінкою кейса вище.',
+                'Погодження проекту': '<b>Потрібна ваша дія.</b> Перегляньте планування та підтвердьте його.',
+                'Рахунок висталено':  '<b>Очікуємо оплату.</b> Оплата запускає виробництво — 48 годин стартують одразу.'
+            };
+            var PASS_NOTES = [
+                '<b>Далі — за нами.</b> Оцінюємо кейс — зазвичай відповідаємо протягом робочого дня.',
+                '<b>Далі — за нами.</b> Готуємо пропозицію та планування.',
+                '<b>Далі — за нами.</b> Після оплати одразу запускаємо виробництво.',
+                '<b>Далі — за нами.</b> Виготовляємо шаблон — відправимо Новою Поштою.',
+                '<b>Замовлення відправлено.</b> Очікуйте посилку Новою Поштою.'
+            ];
+            var noteHtml = ACT_NOTES[status] || PASS_NOTES[m.s - 1] || PASS_NOTES[0];
+            var note = document.createElement('div');
+            note.className = 'mx-next-note' + (ACT_NOTES[status] ? ' mx-note-act' : '');
+            note.innerHTML = '<span class="mx-nn-ic">' + tChat + '</span><span class="mx-nn-t">' + noteHtml + '</span>';
+            lcol.appendChild(note);
         }
         var ptries = 0;
         function renderProc(){
@@ -953,6 +1130,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     // на трекері клієнт не рухає статус сам — ховаємо стандартний перехід
                     var cs = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status');
                     if(cs){ cs.setAttribute('data-mxhidebar','1'); }
+                    mxTrackLayout(col, m, status);   // еталон екрана етапу: квитанція + жива панель
                 }
                 return;
             }
