@@ -154,6 +154,10 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-hst-t{ display:block; font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.3px; line-height:1.2; }
 #mxProcGrid .mx-hst-s{ display:block; margin-top:calc(3 * var(--u)); font-size:calc(12 * var(--u)); font-weight:500; color:#64748B; line-height:1.45; text-wrap:balance; }
 #mxProcGrid .mx-hst-row .mx-ts-badge{ flex:0 0 auto; }
+/* ідентичність кейса у hero: № замовлення (мікро-капс) + пацієнт (жирно) — праворуч, як у Stripe */
+#mxProcGrid .mx-hst-id{ flex:0 0 auto; margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:calc(3 * var(--u)); text-align:right; }
+#mxProcGrid .mx-hid-num{ font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+#mxProcGrid .mx-hid-pat{ font-size:calc(13.5 * var(--u)); font-weight:700; color:#0F172A; white-space:nowrap; max-width:calc(260 * var(--u)); overflow:hidden; text-overflow:ellipsis; }
 /* прогрес-бар усередині hero (замість «точок-вайрфрейму») */
 #mxProcGrid .mx-hbar-row{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin-top:calc(14 * var(--u)); padding-top:calc(13 * var(--u)); border-top:1px solid #F1F5F9; }
 #mxProcGrid .mx-hbar-labels{ display:flex; margin-top:calc(7 * var(--u)); }
@@ -717,6 +721,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             }
             // --- поля-квитанція + спец-модулі майбутніх етапів ---
             var mxOfferTxt = null;   // текст пропозиції — центральний елемент свого етапу, живе ОКРЕМОЮ карткою
+            var mxPatient = null;    // ідентичність кейса — лікар має бачити її вгорі, у hero
             Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(el){
                 var capEl = el.querySelector('.flex-caption');
                 var capTxt = capEl ? capEl.textContent.replace(/\s+/g, ' ').trim() : '';
@@ -729,6 +734,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var val = '';
                 var dv = el.querySelector('.data-view'); if(dv){ val = (dv.textContent || '').replace(/\s+/g, ' ').trim(); }
                 if(!val){ var vi = el.querySelector('.data-edit input, .data-edit textarea, .data-edit select'); if(vi){ val = (vi.value || '').trim(); } }
+                if(low.indexOf('пацієнт') !== -1 && val){ mxPatient = val; }
                 var isOffer = low.indexOf('пропозиц') !== -1;
                 var isPay = low.indexOf('рахунок') !== -1 || low.indexOf('оплат') !== -1;
                 if(isOffer){
@@ -806,10 +812,19 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             SHORT_ST.forEach(function(nm, i){
                 lbls += '<span class="' + (i + 1 === m.s ? 'mx-on' : (i + 1 < m.s ? 'mx-done' : '')) + '">' + nm + '</span>';
             });
+            // праворуч у hero — ідентичність кейса (№ + пацієнт), а не бейдж-дубль статусу:
+            // лікар з півпогляду бачить, ЧИЙ це кейс, не шукаючи в квитанції
+            var heroId = '';
+            if(ordNum || mxPatient){
+                heroId = '<span class="mx-hst-id">'
+                    + (ordNum ? '<span class="mx-hid-num">Замовлення #' + ordNum + '</span>' : '')
+                    + (mxPatient ? '<span class="mx-hid-pat">' + esc(mxPatient) + '</span>' : '')
+                    + '</span>';
+            }
             hero.innerHTML =
                 '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isAct ? icoBell : icoClock) + '</span>' +
                 '<span class="mx-hst-tt"><span class="mx-hst-t">' + hcfg[0] + '</span><span class="mx-hst-s">' + hcfg[1] + '</span></span>' +
-                '<span class="mx-ts-badge">' + (m.c || status) + '</span></div>' +
+                heroId + '</div>' +
                 '<div class="mx-hbar-row"><span class="mx-hbar"><span class="mx-hbar-fill" style="width:' + pct + '%"></span>' + ticks + '</span></div>' +
                 '<div class="mx-hbar-labels">' + lbls + '</div>';
             lcol.insertBefore(hero, lcol.firstChild);
