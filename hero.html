@@ -171,8 +171,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-rc-dash .mx-rc-val{ color:#C3CCD9; font-weight:600; }
 /* секція файлів — тихий інсет-блок, відділений від квитанції */
 #mxProcGrid .mx-fsec{ margin-top:calc(14 * var(--u)); padding:calc(2 * var(--u)) calc(14 * var(--u)); background:#FAFBFD; border:1px solid #F1F5F9; border-radius:calc(12 * var(--u)); }
-#mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(8 * var(--u)) 0; }
-#mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #F8FAFC; }
+#mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(10 * var(--u)) 0; }
+#mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #EDF1F7; }
 #mxProcGrid .mx-frow-lbl{ flex:0 0 auto; min-width:calc(52 * var(--u)); padding-top:calc(5 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
 #mxProcGrid .mx-frow-body{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)); flex:1 1 auto; min-width:0; }
 #mxProcGrid .mx-frow .mx-files{ display:contents; }
@@ -501,16 +501,16 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             if(s.indexOf('F2') === 0) return 2;
             return 0;
         }
-        var STAGES = ['Замовлення прийнято','Планування','Підтвердження','Виробництво','Відправлено'];
+        var STAGES = ['Оцінка','Планування','Підтвердження','Виробництво','Відправлено'];
         var STAGE_NOTE = [
-            'Ми отримали ваше замовлення та перевіряємо дані',
+            'Ми отримали ваше замовлення та оцінюємо кейс',
             'Готуємо план лікування. За потреби — погодимо його з вами',
             'Підтверджуємо деталі замовлення перед запуском виробництва',
             'Виготовляємо ваш хірургічний шаблон',
             'Замовлення відправлено'
         ];
         var STATUS_MAP = {
-            'Заявка на планування':{c:'Замовлення прийнято',s:1},
+            'Заявка на планування':{c:'Оцінка кейса',s:1},
             'Перевірка даних':{c:'Перевірка даних',s:1},
             'Очікує нові дані':{c:'Очікує нові дані',s:1},
             'Планове очікування':{c:'Призупинено',s:1},
@@ -761,7 +761,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             hero.className = 'mx-card mx-hero-st' + (isAct ? ' mx-hst-act' : '');
             var pct = Math.round((m.s / 5) * 100);
             var ticks = '<i style="left:20%"></i><i style="left:40%"></i><i style="left:60%"></i><i style="left:80%"></i>';
-            var SHORT_ST = ['Прийнято', 'Планування', 'Підтвердження', 'Виробництво', 'Відправлено'];
+            var SHORT_ST = ['Оцінка', 'Планування', 'Підтвердження', 'Виробництво', 'Відправлено'];
             var lbls = '';
             SHORT_ST.forEach(function(nm, i){
                 lbls += '<span class="' + (i + 1 === m.s ? 'mx-on' : (i + 1 < m.s ? 'mx-done' : '')) + '">' + nm + '</span>';
