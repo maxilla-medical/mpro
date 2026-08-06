@@ -211,6 +211,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* службова панель кроку-2 OneBox (показує сирий код) — ховаємо БЕЗУМОВНО:
    CSS застосовується до рендера, тож панель не встигає навіть блимнути */
 [class*="product-cabinet-client-info-popup"]{ display:none !important; }
+.js-client-payment-form-block{ display:none !important; }      /* крок-2: «Сумма к оплате» + сирий код */
+.info-message.custom-info-message{ display:none !important; }  /* системний тост праворуч із кодом оплати */
 body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* оверлей «шва» оплати: закриває перезавантаження між кліком і вікном WayForPay */
 #mxPayOvl{ position:fixed; inset:0; z-index:99990; background:rgba(255,255,255,.78); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; }
@@ -1026,7 +1028,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 }
                 // панель OneBox із «сирим» кодом оплати: ховаємо і за класом, і за видимим текстом
                 function hideRawPanel(){
-                    Array.prototype.forEach.call(document.querySelectorAll('[class*="client-info-popup"]'), function(d){ d.style.display = 'none'; });
+                    Array.prototype.forEach.call(document.querySelectorAll('[class*="client-info-popup"], .js-client-payment-form-block, .info-message.custom-info-message'), function(d){ d.style.display = 'none'; });
                     Array.prototype.forEach.call(document.body.children, function(d){
                         if(d.id === 'mxPayOvl' || d.tagName === 'SCRIPT' || d.tagName === 'STYLE') return;
                         if(d.querySelector && (d.querySelector('#mxProcGrid') || d.querySelector('.client-cell-body'))) return;
