@@ -208,7 +208,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-cta-sec:hover{ border-color:#CBD5E1; background:#F8FAFC; }
 /* рідний блок онлайн-оплати OneBox: керуємо ним із нашої кнопки, тож ховаємо */
 .mx-payform-native{ display:none !important; }
-/* службова панель кроку-2 OneBox (показує сирий код) — ховаємо на час нашого флоу оплати */
+/* службова панель кроку-2 OneBox (показує сирий код) — ховаємо БЕЗУМОВНО:
+   CSS застосовується до рендера, тож панель не встигає навіть блимнути */
+[class*="product-cabinet-client-info-popup"]{ display:none !important; }
 body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* оверлей «шва» оплати: закриває перезавантаження між кліком і вікном WayForPay */
 #mxPayOvl{ position:fixed; inset:0; z-index:99990; background:rgba(255,255,255,.78); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; }
