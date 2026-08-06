@@ -966,6 +966,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 // OneBox у кроці-2 визначає глобальні window.pay()/Wayforpay — викликаємо напряму,
                 // а панель із «сирим» кодом ховаємо (клас на body, знімається лише у fallback)
                 // оверлей на час «шва» (перезавантаження між кроком-1 і вікном оплати)
+                // жорстка стеля 20с: оверлей НІКОЛИ не може зависнути назавжди
+                var mxOvlTO = null;
                 function payOvl(on){
                     var o = document.getElementById('mxPayOvl');
                     if(on){
@@ -975,7 +977,27 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             document.body.appendChild(o);
                         }
                         o.style.display = 'flex';
-                    } else if(o){ o.style.display = 'none'; }
+                        if(mxOvlTO){ clearTimeout(mxOvlTO); }
+                        mxOvlTO = setTimeout(function(){ payOvl(false); }, 20000);
+                    } else if(o){ o.style.display = 'none'; if(mxOvlTO){ clearTimeout(mxOvlTO); mxOvlTO = null; } }
+                }
+                // ГОЛОВНИЙ сигнал закриття/результату віджета — офіційні postMessage-події WayForPay
+                // (WfpWidgetEventClose / Approved / Declined / Pending) — не залежить від вёрстки віджета
+                function mxSoftReload(ok){
+                    if(window.__mxWfpDone) return; window.__mxWfpDone = true;
+                    var o = document.getElementById('mxPayOvl');
+                    if(o){ var i2 = o.querySelector('.mx-povl-in'); if(i2){ i2.innerHTML = '<span class="mx-dz-spin"></span>' + (ok ? 'Дякуємо! Оновлюємо замовлення…' : 'Оновлюємо замовлення…'); } }
+                    payOvl(true);
+                    setTimeout(function(){ try{ location.reload(); }catch(_){ } }, ok ? 1600 : 900);
+                }
+                if(!window.__mxWfpMsg){
+                    window.__mxWfpMsg = true;
+                    window.addEventListener('message', function(ev){
+                        var d = ev ? ev.data : null;
+                        var s = (typeof d === 'string') ? d : (d && typeof d === 'object' && typeof d.type === 'string' ? d.type : '');
+                        if(!s || s.indexOf('WfpWidgetEvent') === -1) return;
+                        mxSoftReload(s.indexOf('Approved') !== -1);
+                    });
                 }
                 // панель OneBox із «сирим» кодом оплати: ховаємо і за класом, і за видимим текстом
                 function hideRawPanel(){
@@ -998,7 +1020,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     return false;
                 }
                 function wfpOpen(){
-                    var els = document.querySelectorAll('iframe[src*="wayforpay"], [class*="wayforpay"]');
+                    var els = document.querySelectorAll('iframe[src*="wayforpay"], [class*="wayforpay"], [id*="wayforpay"], [name*="wayforpay"]');
                     for(var i = 0; i < els.length; i++){ if(els[i].offsetWidth || els[i].offsetHeight) return true; }
                     return false;
                 }
@@ -1040,7 +1062,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         hideRawPanel();
                         if(wfpOpen()){ clearInterval(t); payReset(); watchWfp(); return; }   // вікно відкрилось → стежимо за закриттям
                         if(mxPayClicked.length >= 3){ clearInterval(t); payReset(); return; }
-                        if(tryPayFn()) return;                                   // прямий виклик window.pay() — без кліків узагалі
+                        if(tryPayFn()){ clearInterval(t); setTimeout(payReset, 900); return; }   // pay() викликано → віджет відкривається; далі — postMessage-події
                         var s2 = findStep2();
                         if(s2){ step2Click(s2); return; }
                         if(tries > 14 && !mxPayClicked.length && !mxPayFnCalled){
