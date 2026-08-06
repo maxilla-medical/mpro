@@ -195,6 +195,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-ocp-sum{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; white-space:nowrap; }
 #mxProcGrid .mx-ocp-tlbl{ font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
 #mxProcGrid .mx-ocp-total{ border-top:1px solid #E8ECF1 !important; }
+#mxProcGrid .mx-ocp-total.mx-ocp-single{ border-top:none !important; padding-top:calc(4 * var(--u)); }
+#mxProcGrid .mx-ocp-single .mx-ocp-name{ font-weight:700; color:#0F172A; }
 #mxProcGrid .mx-ocp-tsum{ font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; white-space:nowrap; }
 #mxProcGrid .mx-ocp-psum{ font-size:calc(13 * var(--u)); font-weight:700; color:#16A34A; white-space:nowrap; }
 #mxProcGrid .mx-ocp-dsum{ font-size:calc(15 * var(--u)); font-weight:800; color:#2c3bff; white-space:nowrap; }
@@ -917,12 +919,20 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 if(payMb && !payMb.__busy){ payMb.textContent = 'Оплатити ' + mxMoney(total); payMb.setAttribute('data-lbl', 'Оплатити ' + mxMoney(total)); }
                 var sec = document.createElement('div'); sec.id = 'mxPriceSec'; sec.className = 'mx-oc-price';
                 var h = '';
-                items.forEach(function(it){
-                    h += '<div class="mx-ocp-row"><span class="mx-ocp-name">' + esc(it.n)
-                       + (it.q > 1 ? '<span class="mx-ocp-qty">× ' + it.q + '</span>' : '')
-                       + '</span><span class="mx-ocp-sum">' + mxMoney(it.s) + '</span></div>';
-                });
-                h += '<div class="mx-ocp-row mx-ocp-total"><span class="mx-ocp-tlbl">Разом</span><span class="mx-ocp-tsum">' + mxMoney(total) + '</span></div>';
+                if(items.length === 1){
+                    // одна позиція: назва + сума в одному підсумковому рядку — без дубля «Разом»
+                    var it1 = items[0];
+                    h += '<div class="mx-ocp-row mx-ocp-total mx-ocp-single"><span class="mx-ocp-name">' + esc(it1.n)
+                       + (it1.q > 1 ? '<span class="mx-ocp-qty">× ' + it1.q + '</span>' : '')
+                       + '</span><span class="mx-ocp-tsum">' + mxMoney(total) + '</span></div>';
+                } else {
+                    items.forEach(function(it){
+                        h += '<div class="mx-ocp-row"><span class="mx-ocp-name">' + esc(it.n)
+                           + (it.q > 1 ? '<span class="mx-ocp-qty">× ' + it.q + '</span>' : '')
+                           + '</span><span class="mx-ocp-sum">' + mxMoney(it.s) + '</span></div>';
+                    });
+                    h += '<div class="mx-ocp-row mx-ocp-total"><span class="mx-ocp-tlbl">Разом</span><span class="mx-ocp-tsum">' + mxMoney(total) + '</span></div>';
+                }
                 if(paid && paid > 0){
                     h += '<div class="mx-ocp-row"><span class="mx-ocp-tlbl">Сплачено</span><span class="mx-ocp-psum">' + mxMoney(paid) + '</span></div>';
                     var due = total - paid;
@@ -1080,10 +1090,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     }, 500);
                 }
                 var natBtn = col.querySelector('.nc-block-change-status .js-change-order-status') || col.querySelector('.js-change-order-status');
-                var supHref = null;
-                Array.prototype.forEach.call(document.querySelectorAll('.client-cell-body.aside-left a[href]'), function(a){
-                    if(!supHref && (a.textContent || '').toLowerCase().indexOf('підтримк') !== -1){ supHref = a.getAttribute('href'); }
-                });
+                var supHref = 'https://t.me/dlmaxilla';   // канал питань — Telegram
                 var cta = document.createElement('div'); cta.className = 'mx-oc-cta';
                 var mb = null;
                 function payReset(){
@@ -1156,6 +1163,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 }
                 if(supHref){
                     var qb = document.createElement('a'); qb.href = supHref; qb.className = 'mx-cta-sec';
+                    qb.target = '_blank'; qb.rel = 'noopener';
                     qb.textContent = 'Є питання';
                     cta.appendChild(qb);
                 }
@@ -1164,7 +1172,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     ocCard.insertBefore(cta, ocFt || null);
                     if(ocFt){
                         ocFt.textContent = (payForm && payBtn1())
-                            ? 'Оплата захищена — WayForPay: Apple Pay, Google Pay або картка. Після оплати одразу починаємо збір проєкту та планування.'
+                            ? 'Оплата захищена — WayForPay: Apple Pay, Google Pay або картка.'
                             : (mb ? 'Це ще не оплата — після підтвердження ми надішлемо рахунок.' : ocFt.textContent);
                     }
                 }
