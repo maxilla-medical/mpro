@@ -173,6 +173,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-card-num{ color:#94A3B8; font-weight:700; font-size:calc(12.5 * var(--u)); margin-left:calc(2 * var(--u)); }
 /* мʼякий розділювач груп квитанції (пацієнт / параметри) */
 #mxProcGrid .mx-rc-div{ height:1px; background:#F1F5F9; margin:calc(2 * var(--u)) 0 calc(13 * var(--u)); }
+/* metadata grid: короткі параметри планування в один ряд (Stripe-патерн) */
+#mxProcGrid .mx-rc-row{ display:flex; gap:calc(28 * var(--u)); }
+#mxProcGrid .mx-rc-row .mx-rc-el{ flex:1 1 0; min-width:0; }
+#mxProcGrid .mx-rc-row .mx-rc-val{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media (max-width: 900px){ #mxProcGrid .mx-rc-row{ flex-direction:column; gap:0; } }
 /* порожнє значення поля */
 #mxProcGrid .mx-rc-dash .mx-rc-val{ color:#C3CCD9; font-weight:600; }
 /* секція файлів — тихий інсет-блок, відділений від квитанції */
@@ -784,7 +789,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var ordNum = (location.pathname.match(/\/client\/order\/(\d+)/) || [])[1] || '';
             cdh.innerHTML = '<span class="mx-card-ico">' + icoDoc + '</span><span class="mx-card-t">Замовлення' + (ordNum ? ' <span class="mx-card-num">#' + ordNum + '</span>' : '') + '</span>';
             cardData.appendChild(cdh);
-            var nData = 0, seenPatient = false, divIns = false;
+            var nData = 0, seenPatient = false, divIns = false, rowBox = null;
             Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element.mx-rc-el'), function(e){
                 if(e.classList.contains('mx-rc-empty')) return;
                 var cp = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
@@ -794,7 +799,19 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var dvd = document.createElement('div'); dvd.className = 'mx-rc-div';
                     cardData.appendChild(dvd); divIns = true;
                 }
-                cardData.appendChild(e); nData++;                    // файлові теж сюди (вони приховані, керують рядками)
+                // metadata grid (Stripe-патерн): КОРОТКІ значення після пацієнта — в один ряд;
+                // довгі (коментарі тощо) автоматично лишаються на всю ширину
+                var vEl = e.querySelector('.mx-rc-val');
+                var isShort = seenPatient && cp.indexOf('пацієнт') === -1 && !e.classList.contains('mx-filefield')
+                    && vEl && vEl.textContent.trim().length <= 30;
+                if(isShort){
+                    if(!rowBox){ rowBox = document.createElement('div'); rowBox.className = 'mx-rc-row'; cardData.appendChild(rowBox); }
+                    rowBox.appendChild(e);
+                } else {
+                    rowBox = null;
+                    cardData.appendChild(e);                         // файлові теж сюди (вони приховані, керують рядками)
+                }
+                nData++;
             });
             Array.prototype.forEach.call(lcol.querySelectorAll('.os-block-element'), function(card){ card.style.display = 'none'; });
             var recVis = cardData.querySelectorAll('.mx-rc-el:not(.mx-ff-hidden)');
@@ -985,6 +1002,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 // (WfpWidgetEventClose / Approved / Declined / Pending) — не залежить від вёрстки віджета
                 function mxSoftReload(ok){
                     if(window.__mxWfpDone) return; window.__mxWfpDone = true;
+                    try{ sessionStorage.removeItem('mxPayIntent'); }catch(_){ }   // КРИТИЧНО: інакше після reload оплата відкриється знову → цикл
                     var o = document.getElementById('mxPayOvl');
                     if(o){ var i2 = o.querySelector('.mx-povl-in'); if(i2){ i2.innerHTML = '<span class="mx-dz-spin"></span>' + (ok ? 'Дякуємо! Оновлюємо замовлення…' : 'Оновлюємо замовлення…'); } }
                     payOvl(true);
@@ -992,11 +1010,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 }
                 if(!window.__mxWfpMsg){
                     window.__mxWfpMsg = true;
+                    // реагуємо ЛИШЕ на фінальні події віджета; службові (load/init/resize) ігноруємо
+                    var WFP_FINAL = ['WfpWidgetEventClose', 'WfpWidgetEventApproved', 'WfpWidgetEventDeclined'];
                     window.addEventListener('message', function(ev){
                         var d = ev ? ev.data : null;
                         var s = (typeof d === 'string') ? d : (d && typeof d === 'object' && typeof d.type === 'string' ? d.type : '');
-                        if(!s || s.indexOf('WfpWidgetEvent') === -1) return;
-                        mxSoftReload(s.indexOf('Approved') !== -1);
+                        if(!s) return;
+                        s = s.replace(/\s+/g, '');
+                        if(WFP_FINAL.indexOf(s) === -1) return;
+                        mxSoftReload(s === 'WfpWidgetEventApproved');
                     });
                 }
                 // панель OneBox із «сирим» кодом оплати: ховаємо і за класом, і за видимим текстом
@@ -1035,10 +1057,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         seen++;
                         if(!wfpOpen()){
                             clearInterval(w); mxWfpWatching = false;
-                            var o = document.getElementById('mxPayOvl');
-                            if(o){ var inr = o.querySelector('.mx-povl-in'); if(inr){ inr.innerHTML = '<span class="mx-dz-spin"></span>Оновлюємо замовлення…'; } }
-                            payOvl(true);
-                            setTimeout(function(){ try{ location.reload(); }catch(_){ } }, 1200);
+                            mxSoftReload(false);   // чистить mxPayIntent перед reload — без цього можливий цикл
                         }
                         if(seen > 1800){ clearInterval(w); mxWfpWatching = false; }   // страховка: 15 хв
                     }, 500);
