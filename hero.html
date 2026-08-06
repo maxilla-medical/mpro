@@ -136,9 +136,16 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-rc-val{ font-size:calc(14.5 * var(--u)); font-weight:700; color:#0F172A; line-height:1.4; letter-spacing:-0.2px; }
 /* файлове поле на етапі: підпис як у квитанції, зона компактна */
 #mxProcGrid .mx-rc-el.mx-filefield .flex-caption{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; }
+/* трекер-грід: панель НЕ розтягується (без «чорної діри») і липне при скролі */
+#mxProcGrid.mx-grid-track{ align-items:flex-start; }
+#mxProcGrid.mx-grid-track .mx-col-side{ position:sticky; top:calc(18 * var(--u)); }
+#mxProcGrid.mx-grid-track .mx-col-side .mx-side{ margin-top:0; flex:0 0 auto; }
 /* підказка про скани — помітна, зникає щойно зʼявився файл */
-#mxProcGrid .mx-scans-hint{ display:flex; align-items:flex-start; gap:calc(8 * var(--u)); margin:0 0 calc(9 * var(--u)); padding:calc(10 * var(--u)) calc(13 * var(--u)); background:#FFFBEB; border:1px solid #FDE68A; border-radius:calc(10 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#92400E; line-height:1.5; }
+#mxProcGrid .mx-scans-hint{ display:block; margin:0 0 calc(9 * var(--u)); padding:calc(10 * var(--u)) calc(13 * var(--u)); background:#FFFBEB; border:1px solid #FDE68A; border-radius:calc(10 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#92400E; line-height:1.55; }
 #mxProcGrid .mx-scans-hint b{ font-weight:700; }
+/* без зайвого повітря внизу карток; однакова вага імен файлів */
+#mxProcGrid .mx-col-form .os-block-element .js-data-element.mx-rc-el:last-child{ margin-bottom:0 !important; }
+#mxProcGrid .mx-file-nm, #mxProcGrid .mx-file-nm a{ font-weight:600; }
 #mxProcGrid .mx-filefield.mx-has-file .mx-scans-hint{ display:none; }
 /* збережений файл-рядок: імʼя-посилання */
 #mxProcGrid .mx-file-nm a{ color:#0F172A; text-decoration:none; }
@@ -488,9 +495,12 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             var tIco   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>';
             var tChat  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1-5.7a8.5 8.5 0 1 1 17-2.8z"/></svg>';
             // --- грід + панель (фаза: етапи 1-2 → оцінка, 3 → оплата, 4-5 → шаблон) ---
-            var grid = document.createElement('div'); grid.id = 'mxProcGrid';
+            var grid = document.createElement('div'); grid.id = 'mxProcGrid'; grid.className = 'mx-grid-track';
             var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
             var rcol = document.createElement('div'); rcol.className = 'mx-col-side';
+            // текст під бейджем дублює нижню нотатку «чий хід» — прибираємо дубль
+            var topNote = document.querySelector('#mxProcTop .mx-ts-note');
+            if(topNote){ topNote.style.display = 'none'; }
             var phase = m.s <= 2 ? 1 : (m.s === 3 ? 2 : 3);
             var PH = [
                 { t:'Спочатку — оцінка', s:'Аналізуємо випадок і готуємо пропозицію. <b>Безкоштовно.</b>' },
@@ -542,17 +552,23 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                         host = document.createElement('div'); host.className = 'mx-files';
                         if(attach && attach.parentNode){ attach.parentNode.insertBefore(host, attach); } else { el.appendChild(host); }
                     }
-                    var items = [];
-                    Array.prototype.forEach.call(el.querySelectorAll('.js-uploaded-file'), function(u){
-                        var t = (u.textContent || '').replace(/\s+/g, ' ').trim(); if(t) items.push({ n: t });
-                    });
+                    // OneBox може рендерити той самий файл і в data-view, і в зоні — дедуп за імʼям
+                    var items = [], seen = {};
+                    function addItem(n, href){
+                        var k = n.toLowerCase();
+                        if(seen[k]){ if(href && !seen[k].href){ seen[k].href = href; } return; }
+                        var o = { n: n, href: href || null }; seen[k] = o; items.push(o);
+                    }
                     var dv = el.querySelector('.data-view');
                     if(dv){
                         Array.prototype.forEach.call(dv.querySelectorAll('a[href]'), function(a){
                             var t = (a.textContent || '').trim(); var h = a.getAttribute('href');
-                            if(t && h && h !== '#' && h.indexOf('javascript:') !== 0) items.push({ n: t, href: h });
+                            if(t && h && h !== '#' && h.indexOf('javascript:') !== 0) addItem(t, h);
                         });
                     }
+                    Array.prototype.forEach.call(el.querySelectorAll('.js-uploaded-file'), function(u){
+                        var t = (u.textContent || '').replace(/\s+/g, ' ').trim(); if(t) addItem(t);
+                    });
                     var key = items.map(function(i){ return i.n; }).join('|');
                     if(host.__k !== key){
                         host.__k = key; host.innerHTML = '';
