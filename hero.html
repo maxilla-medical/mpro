@@ -140,14 +140,48 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-rc-el.mx-filefield .flex-caption{ font-size:calc(13 * var(--u)); font-weight:700; color:#0F172A; }
 /* трекер-грід: панель НЕ розтягується (без «чорної діри») і липне при скролі */
 #mxProcGrid.mx-grid-track{ align-items:flex-start; }
-/* трекер усередині лівої колонки: «повітряний», без картки-борду.
-   Підпис — лише під активним етапом (решту називати не потрібно — точки з номерами кажуть самі) */
-#mxProcGrid.mx-grid-track .mx-col-form .mx-track{ background:transparent; box-shadow:none; border-radius:0; padding:calc(2 * var(--u)) 0 calc(20 * var(--u)); margin:0 0 calc(10 * var(--u)); max-width:none; }
-#mxProcGrid.mx-grid-track .mx-track .mx-tstage{ position:relative; width:auto; }
-#mxProcGrid.mx-grid-track .mx-track .mx-tlbl{ display:none; }
-#mxProcGrid.mx-grid-track .mx-track .mx-tstage.mx-active .mx-tlbl{ display:block; position:absolute; top:calc(27 * var(--u)); left:50%; transform:translateX(-50%); white-space:nowrap; }
-#mxProcGrid.mx-grid-track .mx-track .mx-tline{ margin-bottom:0; }
-#mxProcGrid.mx-grid-track .mx-track .mx-track-status{ margin-bottom:0; }
+/* HERO-статус: головний обʼєкт екрана етапу */
+#mxProcGrid .mx-hero-st{ padding:calc(18 * var(--u)) calc(24 * var(--u)) calc(14 * var(--u)); }
+#mxProcGrid .mx-hst-row{ display:flex; align-items:center; gap:calc(13 * var(--u)); }
+#mxProcGrid .mx-hst-ic{ flex:0 0 auto; width:calc(40 * var(--u)); height:calc(40 * var(--u)); display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#ECFDF5; color:#059669; animation:mxhpulse 2.4s ease-in-out infinite; }
+#mxProcGrid .mx-hst-ic svg{ width:calc(19 * var(--u)); height:calc(19 * var(--u)); }
+@keyframes mxhpulse{ 50%{ opacity:.55; } }
+#mxProcGrid .mx-hero-st.mx-hst-act .mx-hst-ic{ background:#EEF2FF; color:#2c3bff; }
+#mxProcGrid .mx-hst-tt{ flex:1 1 auto; min-width:0; }
+#mxProcGrid .mx-hst-t{ display:block; font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.3px; line-height:1.2; }
+#mxProcGrid .mx-hst-s{ display:block; margin-top:calc(3 * var(--u)); font-size:calc(12 * var(--u)); font-weight:500; color:#64748B; line-height:1.45; }
+#mxProcGrid .mx-hst-row .mx-ts-badge{ flex:0 0 auto; }
+/* міні-трекер усередині hero */
+#mxProcGrid .mx-hst-track .mx-track{ background:transparent; box-shadow:none; border-radius:0; max-width:none; margin:calc(13 * var(--u)) 0 0; padding:calc(12 * var(--u)) 0 0; border-top:1px solid #F1F5F9; }
+#mxProcGrid .mx-hst-track .mx-tstage{ width:auto; }
+#mxProcGrid .mx-hst-track .mx-tlbl{ display:none; }
+#mxProcGrid .mx-hst-track .mx-tdot{ width:calc(18 * var(--u)); height:calc(18 * var(--u)); font-size:calc(9 * var(--u)); }
+#mxProcGrid .mx-hst-track .mx-tdot svg{ width:calc(9 * var(--u)); height:calc(9 * var(--u)); }
+#mxProcGrid .mx-hst-track .mx-tline{ margin-bottom:0; }
+/* приховані файлові поля (ними керують компактні рядки) */
+#mxProcGrid .mx-ff-hidden{ display:none !important; }
+/* секція файлів усередині картки «Замовлення» */
+#mxProcGrid .mx-fsec{ margin-top:calc(13 * var(--u)); padding-top:calc(4 * var(--u)); border-top:1px solid #F1F5F9; }
+#mxProcGrid .mx-frow{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)); padding:calc(8 * var(--u)) 0; }
+#mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #F8FAFC; }
+#mxProcGrid .mx-frow-lbl{ flex:0 0 auto; min-width:calc(52 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
+#mxProcGrid .mx-frow .mx-files{ display:contents; }
+#mxProcGrid .mx-frow .mx-file-row{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); padding:calc(4 * var(--u)) calc(11 * var(--u)); background:#F8FAFC; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); }
+#mxProcGrid .mx-frow .mx-file-ic{ display:inline-flex; width:calc(13 * var(--u)); height:calc(13 * var(--u)); color:#94A3B8; }
+#mxProcGrid .mx-frow .mx-file-ic svg{ width:100%; height:100%; }
+#mxProcGrid .mx-frow .mx-file-nm{ font-size:calc(11.5 * var(--u)); font-weight:600; color:#0F172A; max-width:calc(230 * var(--u)); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#mxProcGrid .mx-frow .mx-file-nm a{ color:#0F172A; text-decoration:none; }
+#mxProcGrid .mx-frow .mx-file-nm a:hover{ color:#2c3bff; text-decoration:underline; }
+#mxProcGrid .mx-frow .mx-file-row.mx-file-new{ background:#F0FDF4; border-color:#BBF7D0; }
+#mxProcGrid .mx-frow .mx-file-row.mx-file-new .mx-file-ic{ color:#16A34A; }
+#mxProcGrid .mx-frow-add{ flex:0 0 auto; padding:calc(4 * var(--u)) calc(11 * var(--u)); background:transparent; border:1px dashed #CBD5E1; border-radius:calc(999 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(11.5 * var(--u)); font-weight:600; color:#64748B; cursor:pointer; transition:color .14s ease, border-color .14s ease; }
+#mxProcGrid .mx-frow-add:hover{ color:#2c3bff; border-color:#2c3bff; }
+#mxProcGrid .mx-frow-note{ flex:0 0 auto; font-size:calc(11 * var(--u)); font-weight:600; color:#B45309; background:#FFFBEB; border:1px solid #FDE68A; border-radius:calc(999 * var(--u)); padding:calc(3 * var(--u)) calc(10 * var(--u)); }
+#mxProcGrid .mx-frow.mx-has-file .mx-frow-note{ display:none; }
+#mxProcGrid .mx-frow-load{ display:none; align-items:center; gap:calc(6 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:600; color:#2c3bff; }
+#mxProcGrid .mx-frow-load .mx-dz-spin{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); }
+#mxProcGrid .mx-frow.mx-uploading .mx-frow-add{ display:none; }
+#mxProcGrid .mx-frow.mx-uploading .mx-frow-load{ display:inline-flex; }
 /* наші секції-картки */
 #mxProcGrid .mx-card{ background:#FFFFFF; border-radius:calc(18 * var(--u)); padding:calc(16 * var(--u)) calc(24 * var(--u)) calc(18 * var(--u)); box-shadow:0 6px 24px rgba(15,23,42,0.05); box-sizing:border-box; }
 #mxProcGrid .mx-card + .mx-card{ margin-top:calc(12 * var(--u)); }
@@ -265,7 +299,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* бейдж статусу — праворуч у тому ж рядку, не окремий поверх */
 .mx-track-status{ flex:0 0 auto; margin-left:calc(18 * var(--u)); margin-bottom:calc(16 * var(--u)); text-align:right; }
 .mx-track-status .mx-ts-badge{ padding:calc(5 * var(--u)) calc(13 * var(--u)) !important; font-size:calc(12 * var(--u)) !important; }
-.mx-track-status .mx-ts-badge{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(7 * var(--u)) calc(16 * var(--u)); background:#EEF2FF; border:1px solid #DDE3FF; border-radius:calc(999 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:700; color:#2c3bff; }
+.mx-track-status .mx-ts-badge, #mxProcGrid .mx-hst-row .mx-ts-badge{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(5 * var(--u)) calc(13 * var(--u)); background:#EEF2FF; border:1px solid #DDE3FF; border-radius:calc(999 * var(--u)); font-size:calc(12 * var(--u)); font-weight:700; color:#2c3bff; white-space:nowrap; }
 .mx-track-status .mx-ts-note{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); color:#64748B; line-height:1.5; max-width:calc(440 * var(--u)); margin-left:auto; margin-right:auto; }
 /* підпис кроку заповнення під єдиним трекером */
 #mxProcTop .mx-fill-caption{ max-width:calc(620 * var(--u)); margin:calc(16 * var(--u)) auto 0; text-align:center; font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; }
@@ -559,39 +593,33 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
             Array.prototype.forEach.call(col.querySelectorAll('.os-block-element'), function(card){
                 if(card.querySelector('.js-data-element')) lcol.appendChild(card);
             });
-            // --- файлове поле на етапі: зона активна, файли (чернетки + збережені) — зеленими рядками ---
+            // --- файлове поле на етапі: КОМПАКТНИЙ рядок «Лейбл · чипи · + Додати» (без великих зон) ---
+            var fsec = document.createElement('div'); fsec.className = 'mx-fsec';
             function trackFileField(el, capTxt){
-                el.classList.add('mx-filefield');
-                // відкриваємо РІДНУ сесію редагування OneBox — без неї «прийняти» не зберігає поле
+                el.classList.add('mx-filefield', 'mx-ff-hidden');   // саме поле ховаємо, ним керує рядок
                 var jtv = el.querySelector('.flex-value .js-text') || el.querySelector('.js-text');
-                if(jtv){ try{ jtv.click(); }catch(_){ } }
+                if(jtv){ try{ jtv.click(); }catch(_){ } }           // рідна сесія редагування (потрібна для коміту ✓)
                 var attach = el.querySelector('.ob-block-attach');
                 var btn = attach ? attach.querySelector('.ob-button-attach') : null;
                 var low = capTxt.toLowerCase();
-                var fmt = low.indexOf('томограм') !== -1 ? 'DICOM' : (low.indexOf('скан') !== -1 ? 'STL' : 'Файл');
-                if(low.indexOf('скан') !== -1) el.classList.add('mx-scans');
-                if(btn && !btn.classList.contains('mx-dz-btn')){
-                    btn.classList.add('mx-dz-btn');
-                    btn.innerHTML = '<span class="mx-dz-ico">' + tIco + '</span>'
-                        + '<span class="mx-dz-txt"><span class="mx-dz-main">Перетягніть або оберіть файли</span>'
-                        + '<span class="mx-dz-sub">' + fmt + '</span>'
-                        + '<span class="mx-dz-more">Додати ще файл</span></span>'
-                        + '<span class="mx-dz-cta">Обрати</span>'
-                        + '<span class="mx-dz-loading"><span class="mx-dz-spin"></span>Завантаження…</span>';
+                var isScan = low.indexOf('скан') !== -1;
+                var lbl = low.indexOf('томограм') !== -1 ? 'КТ' : (isScan ? 'Скани' : capTxt.replace(/\s*:\s*$/, ''));
+                var row = document.createElement('div'); row.className = 'mx-frow';
+                row.innerHTML = '<span class="mx-frow-lbl">' + esc(lbl) + '</span>';
+                var host = document.createElement('span'); host.className = 'mx-files'; row.appendChild(host);
+                if(isScan){
+                    var nt = document.createElement('span'); nt.className = 'mx-frow-note';
+                    nt.textContent = 'ще не додано — можна й після нашої оцінки';
+                    row.appendChild(nt);
                 }
-                // помітна підказка про скани: видима, ПОКИ файлів немає (ховає CSS при mx-has-file)
-                if(el.classList.contains('mx-scans') && !el.querySelector('.mx-scans-hint')){
-                    var hint = document.createElement('div'); hint.className = 'mx-scans-hint';
-                    hint.innerHTML = '<b>Скани щелеп ще не додано.</b> Додайте зараз, якщо вже є — або пізніше, після нашої оцінки кейса та пропозиції.';
-                    if(attach && attach.parentNode){ attach.parentNode.insertBefore(hint, attach); }
-                }
+                var add = document.createElement('button'); add.type = 'button'; add.className = 'mx-frow-add'; add.textContent = '+ Додати';
+                add.addEventListener('click', function(e){ e.preventDefault(); if(btn){ btn.click(); } });
+                row.appendChild(add);
+                var ld = document.createElement('span'); ld.className = 'mx-frow-load';
+                ld.innerHTML = '<span class="mx-dz-spin"></span>Завантаження…';
+                row.appendChild(ld);
+                fsec.appendChild(row);
                 function sync(){
-                    var host = el.querySelector('.mx-files');
-                    if(!host){
-                        host = document.createElement('div'); host.className = 'mx-files';
-                        if(attach && attach.parentNode){ attach.parentNode.insertBefore(host, attach); } else { el.appendChild(host); }
-                    }
-                    // OneBox може рендерити той самий файл і в data-view, і в зоні — дедуп за імʼям
                     var items = [], seen = {};
                     function addItem(n, href){
                         var k = n.toLowerCase();
@@ -613,14 +641,13 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     if(host.__k !== key){
                         host.__k = key; host.innerHTML = '';
                         items.forEach(function(it){
-                            // збережені раніше — нейтральні чипи; щойно завантажені (чернетки) — зелені
-                            var r = document.createElement('div'); r.className = 'mx-file-row' + (it.href ? '' : ' mx-file-new');
+                            var r = document.createElement('span'); r.className = 'mx-file-row' + (it.href ? '' : ' mx-file-new');
                             r.innerHTML = '<span class="mx-file-ic">' + (it.href ? tFile : tCheck) + '</span><span class="mx-file-nm">'
                                 + (it.href ? ('<a href="' + it.href + '" target="_blank" rel="noopener">' + esc(it.n) + '</a>') : esc(it.n)) + '</span>';
                             host.appendChild(r);
                         });
                     }
-                    el.classList.toggle('mx-has-file', items.length > 0);
+                    row.classList.toggle('mx-has-file', items.length > 0);
                 }
                 function bindDz(){
                     if(el.__mxDzB || !attach) return;
@@ -629,12 +656,10 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                         if(!dz) return;
                         el.__mxDzB = true;
                         try{ dz.options.parallelUploads = 1; }catch(_){ }
-                        if(dz.options && dz.options.maxFiles > 1) el.classList.add('mx-multi');
-                        dz.on('addedfile', function(){ el.classList.add('mx-uploading'); });
+                        dz.on('addedfile', function(){ row.classList.add('mx-uploading'); });
                         dz.on('queuecomplete', function(){
-                            el.classList.remove('mx-uploading'); sync();
-                            // КОМІТ у OneBox: тиснемо рідний «прийняти» — поле зберігається в процесі
-                            // (сторінка перезавантажиться вже зі збереженими файлами)
+                            row.classList.remove('mx-uploading'); sync();
+                            // КОМІТ у OneBox: рідний «прийняти» → поле зберігається в процесі
                             if(el.querySelector('.js-uploaded-file')){
                                 setTimeout(function(){
                                     var acc = el.querySelector('.ob-link-accept');
@@ -642,7 +667,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                                 }, 400);
                             }
                         });
-                        dz.on('error', function(){ el.classList.remove('mx-uploading'); sync(); });
+                        dz.on('error', function(){ row.classList.remove('mx-uploading'); sync(); });
                         dz.on('success', function(){ sync(); });
                     }catch(_){ }
                 }
@@ -672,54 +697,49 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                 var vd = document.createElement('div'); vd.className = 'mx-rc-val'; vd.textContent = val;
                 el.appendChild(vd);
             });
-            // ДВІ секції за суттю (а не за розкладкою блоків OneBox): «Замовлення» + «Файли».
-            // Поля переносимо у наші картки, порожні оригінальні блоки ховаємо.
+            // ОДНА картка «Замовлення»: квитанція + компактні рядки файлів усередині
             var icoDoc  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
-            var icoFold = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
-            function mkCard(ico, title){
-                var c = document.createElement('div'); c.className = 'mx-card';
-                var hd = document.createElement('div'); hd.className = 'mx-card-h';
-                hd.innerHTML = '<span class="mx-card-ico">' + ico + '</span><span class="mx-card-t">' + title + '</span>';
-                c.appendChild(hd);
-                return c;
-            }
-            var cardData = mkCard(icoDoc, 'Замовлення');
-            var cardFiles = mkCard(icoFold, 'Файли');
-            var nData = 0, nFiles = 0;
+            var cardData = document.createElement('div'); cardData.className = 'mx-card';
+            var cdh = document.createElement('div'); cdh.className = 'mx-card-h';
+            cdh.innerHTML = '<span class="mx-card-ico">' + icoDoc + '</span><span class="mx-card-t">Замовлення</span>';
+            cardData.appendChild(cdh);
+            var nData = 0;
             Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element.mx-rc-el'), function(e){
                 if(e.classList.contains('mx-rc-empty')) return;
-                if(e.classList.contains('mx-filefield')){ cardFiles.appendChild(e); nFiles++; }
-                else { cardData.appendChild(e); nData++; }
+                cardData.appendChild(e); nData++;                    // файлові теж сюди (вони приховані, керують рядками)
             });
             Array.prototype.forEach.call(lcol.querySelectorAll('.os-block-element'), function(card){ card.style.display = 'none'; });
-            if(nData){ lcol.appendChild(cardData); var lv1 = cardData.querySelectorAll('.mx-rc-el'); lv1[lv1.length - 1].classList.add('mx-rc-last'); }
-            if(nFiles){ lcol.appendChild(cardFiles); var lv2 = cardFiles.querySelectorAll('.mx-rc-el'); lv2[lv2.length - 1].classList.add('mx-rc-last'); }
-            // трекер — «повітряний», всередині лівої колонки (одна сітка, без білого борду на дві ширини)
-            var trackEl = document.querySelector('#mxProcTop .mx-track');
-            if(trackEl){ lcol.insertBefore(trackEl, lcol.firstChild); }
-            // TODO майбутнє: статус «Погодження проекту» — PDF планування + кнопки «Приймаю / Є правки»
-            // (правки = текстове поле + завантаження скрінів). Потрібні поля процесу — додамо, щойно зʼявляться.
-            // --- нотатка «чий хід» ---
-            var ACT_NOTES = {
-                'Очікує нові дані':   '<b>Потрібна ваша дія.</b> Нам потрібні додаткові дані — додайте файли вище.',
-                'Пропозиція':         '<b>Пропозиція готова.</b> Ознайомтесь з оцінкою кейса вище.',
-                'Погодження проекту': '<b>Потрібна ваша дія.</b> Перегляньте планування та підтвердьте його.',
-                'Рахунок висталено':  '<b>Очікуємо оплату.</b> Оплата запускає виробництво — 48 годин стартують одразу.'
+            var recVis = cardData.querySelectorAll('.mx-rc-el:not(.mx-ff-hidden)');
+            if(recVis.length){ recVis[recVis.length - 1].classList.add('mx-rc-last'); }
+            if(fsec.children.length){ cardData.appendChild(fsec); }
+            if(nData || fsec.children.length){ lcol.appendChild(cardData); }
+            // --- HERO-статус: суть екрана («що відбувається зараз») + міні-трекер усередині ---
+            var HERO_ACT = {
+                'Очікує нові дані':   ['Потрібні додаткові дані', 'Перегляньте коментар менеджера та додайте файли — і ми продовжимо.'],
+                'Пропозиція':         ['Пропозиція готова', 'Ознайомтесь з оцінкою кейса нижче.'],
+                'Погодження проекту': ['Погодьте планування', 'Перегляньте план та підтвердьте його.'],
+                'Рахунок висталено':  ['Очікуємо оплату', 'Оплата запускає виробництво — 48 годин стартують одразу.']
             };
-            var PASS_NOTES = [
-                '<b>Далі — за нами.</b> Оцінюємо кейс — зазвичай відповідаємо протягом робочого дня.',
-                '<b>Далі — за нами.</b> Готуємо пропозицію та планування.',
-                '<b>Далі — за нами.</b> Після оплати одразу запускаємо виробництво.',
-                '<b>Далі — за нами.</b> Виготовляємо шаблон — відправимо Новою Поштою.',
-                '<b>Замовлення відправлено.</b> Очікуйте посилку Новою Поштою.'
+            var HERO_PASS = [
+                ['Оцінюємо ваш кейс', 'Зазвичай відповідаємо протягом робочого дня. Нічого робити не потрібно.'],
+                ['Готуємо пропозицію', 'Сповістимо, щойно план буде готовий.'],
+                ['Очікуємо оплату', 'Після оплати одразу запускаємо виробництво.'],
+                ['Виготовляємо шаблон', 'Відправимо Новою Поштою одразу після виготовлення.'],
+                ['Замовлення в дорозі', 'Очікуйте посилку Новою Поштою.']
             ];
-            var noteHtml = ACT_NOTES[status] || PASS_NOTES[m.s - 1] || PASS_NOTES[0];
-            var note = document.createElement('div');
-            note.className = 'mx-next-note' + (ACT_NOTES[status] ? ' mx-note-act' : '');
-            note.innerHTML = '<span class="mx-nn-ic">' + tChat + '</span><span class="mx-nn-t">' + noteHtml + '</span>';
-            // головна відповідь екрана — ПЕРШОЮ (одразу під трекером), а не в підвалі
-            var afterTrack = trackEl ? trackEl.nextSibling : lcol.firstChild;
-            lcol.insertBefore(note, afterTrack);
+            var hcfg = HERO_ACT[status] || HERO_PASS[m.s - 1] || HERO_PASS[0];
+            var isAct = !!HERO_ACT[status];
+            var icoClock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+            var icoBell  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
+            var hero = document.createElement('div');
+            hero.className = 'mx-card mx-hero-st' + (isAct ? ' mx-hst-act' : '');
+            hero.innerHTML =
+                '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isAct ? icoBell : icoClock) + '</span>' +
+                '<span class="mx-hst-tt"><span class="mx-hst-t">' + hcfg[0] + '</span><span class="mx-hst-s">' + hcfg[1] + '</span></span>' +
+                '<span class="mx-ts-badge">' + (m.c || status) + '</span></div>' +
+                '<div class="mx-hst-track">' + buildTracker(m.s, '', true) + '</div>';
+            lcol.insertBefore(hero, lcol.firstChild);
+            // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
         var ptries = 0;
         function renderProc(){
@@ -1222,7 +1242,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
                     }
                 } else {
                     var m = STATUS_MAP[status] || {c:status, s:1};
-                    top.innerHTML = buildTracker(m.s, m.c);
+                    top.innerHTML = '';   // трекер тепер живе всередині hero-картки статусу
                     // на трекері клієнт не рухає статус сам — ховаємо стандартний перехід
                     var cs = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status');
                     if(cs){ cs.setAttribute('data-mxhidebar','1'); }
