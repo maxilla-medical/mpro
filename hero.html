@@ -997,7 +997,30 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     }catch(_){ }
                     return false;
                 }
-                function wfpOpen(){ return !!document.querySelector('iframe[src*="wayforpay"], [class*="wayforpay"]'); }
+                function wfpOpen(){
+                    var els = document.querySelectorAll('iframe[src*="wayforpay"], [class*="wayforpay"]');
+                    for(var i = 0; i < els.length; i++){ if(els[i].offsetWidth || els[i].offsetHeight) return true; }
+                    return false;
+                }
+                // вікно WayForPay закрили (оплатив чи ні) → мʼяко перезавантажуємо сторінку:
+                // після успіху покаже новий статус, після відмови — чистий старт для повторної спроби
+                var mxWfpWatching = false;
+                function watchWfp(){
+                    if(mxWfpWatching) return;
+                    mxWfpWatching = true;
+                    var seen = 0;
+                    var w = setInterval(function(){
+                        seen++;
+                        if(!wfpOpen()){
+                            clearInterval(w); mxWfpWatching = false;
+                            var o = document.getElementById('mxPayOvl');
+                            if(o){ var inr = o.querySelector('.mx-povl-in'); if(inr){ inr.innerHTML = '<span class="mx-dz-spin"></span>Оновлюємо замовлення…'; } }
+                            payOvl(true);
+                            setTimeout(function(){ try{ location.reload(); }catch(_){ } }, 1200);
+                        }
+                        if(seen > 1800){ clearInterval(w); mxWfpWatching = false; }   // страховка: 15 хв
+                    }, 500);
+                }
                 var natBtn = col.querySelector('.nc-block-change-status .js-change-order-status') || col.querySelector('.js-change-order-status');
                 var supHref = null;
                 Array.prototype.forEach.call(document.querySelectorAll('.client-cell-body.aside-left a[href]'), function(a){
@@ -1015,7 +1038,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var t = setInterval(function(){
                         tries++;
                         hideRawPanel();
-                        if(wfpOpen() || mxPayClicked.length >= 3){ clearInterval(t); payReset(); return; }   // вікно відкрилось або ліміт кліків
+                        if(wfpOpen()){ clearInterval(t); payReset(); watchWfp(); return; }   // вікно відкрилось → стежимо за закриттям
+                        if(mxPayClicked.length >= 3){ clearInterval(t); payReset(); return; }
                         if(tryPayFn()) return;                                   // прямий виклик window.pay() — без кліків узагалі
                         var s2 = findStep2();
                         if(s2){ step2Click(s2); return; }
@@ -1049,13 +1073,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     cta.appendChild(mb);
                     // якщо перший клік перезавантажив сторінку — доводимо оплату до вікна автоматично
                     var _int = 0; try{ _int = parseInt(sessionStorage.getItem('mxPayIntent') || '0', 10); }catch(_){ }
-                    if(_int && (new Date().getTime() - _int) < 180000){
+                    // вік наміру: < 10с — це перезавантаження всередині флоу (доводимо до вікна);
+                    // старіший — це ПОВЕРНЕННЯ зі сторінки оплати (редірект-режим) → тихо скидаємо
+                    var _age = _int ? (new Date().getTime() - _int) : -1;
+                    if(_int && _age >= 0 && _age < 10000){
                         document.body.classList.add('mx-payflow');
                         hideRawPanel(); payOvl(true);
                         mb.__busy = true; mb.classList.add('mx-cta-busy'); mb.textContent = 'Відкриваємо оплату…';
                         var s2b = findStep2();
                         if(!tryPayFn() && s2b){ step2Click(s2b); }
                         chase(); setTimeout(payReset, 15000);
+                    } else if(_int){
+                        try{ sessionStorage.removeItem('mxPayIntent'); }catch(_){ }
                     }
                 } else if(natBtn){
                     mb = document.createElement('a'); mb.href = 'javascript:void(0)'; mb.className = 'mx-cta-main';
