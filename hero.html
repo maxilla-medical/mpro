@@ -223,7 +223,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 #mxProcGrid .mx-fsec{ margin-top:calc(14 * var(--u)); padding:calc(2 * var(--u)) calc(14 * var(--u)); background:#FAFBFD; border:1px solid #F1F5F9; border-radius:calc(12 * var(--u)); }
 #mxProcGrid .mx-frow{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); padding:calc(7 * var(--u)) 0; }
 #mxProcGrid .mx-frow + .mx-frow{ border-top:1px solid #EDF1F7; }
-#mxProcGrid .mx-frow-lbl{ flex:0 0 auto; min-width:calc(52 * var(--u)); padding-top:calc(4 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
+#mxProcGrid .mx-frow-lbl{ flex:0 0 auto; min-width:calc(72 * var(--u)); padding-top:calc(4 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.07em; text-transform:uppercase; }
+#mxProcGrid .mx-frow-note.mx-frow-note-info{ color:#64748B; background:#F8FAFC; border-color:#E2E8F0; }
 #mxProcGrid .mx-frow-body{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)); flex:1 1 auto; min-width:0; }
 #mxProcGrid .mx-frow .mx-files{ display:contents; }
 #mxProcGrid .mx-frow .mx-file-row{ display:inline-flex; align-items:center; gap:calc(5 * var(--u)); padding:calc(3 * var(--u)) calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E7ECF3; border-radius:calc(999 * var(--u)); }
@@ -668,7 +669,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var btn = attach ? attach.querySelector('.ob-button-attach') : null;
                 var low = capTxt.toLowerCase();
                 var isScan = low.indexOf('скан') !== -1;
-                var lbl = low.indexOf('томограм') !== -1 ? 'КТ' : (isScan ? 'Скани' : capTxt.replace(/\s*:\s*$/, ''));
+                var isExtra = low.indexOf('додатк') !== -1;   // «Додаткові файли» — дозавантаження на етапі пропозиції
+                var lbl = low.indexOf('томограм') !== -1 ? 'КТ' : (isScan ? 'Скани' : (isExtra ? 'Додаткові' : capTxt.replace(/\s*:\s*$/, '')));
                 var row = document.createElement('div'); row.className = 'mx-frow';
                 row.innerHTML = '<span class="mx-frow-lbl">' + esc(lbl) + '</span><span class="mx-frow-body"></span>';
                 var body = row.querySelector('.mx-frow-body');
@@ -677,6 +679,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var nt = document.createElement('span'); nt.className = 'mx-frow-note';
                     nt.textContent = 'ще не додано — можна й після нашої оцінки';
                     body.appendChild(nt);
+                }
+                if(isExtra && canAdd){
+                    // чесність у момент дозавантаження: нові дані можуть змінити оцінку
+                    var ntE = document.createElement('span'); ntE.className = 'mx-frow-note mx-frow-note-info';
+                    ntE.textContent = 'переглянемо і за потреби уточнимо оцінку';
+                    body.appendChild(ntE);
                 }
                 if(canAdd){
                     var add = document.createElement('button'); add.type = 'button'; add.className = 'mx-frow-add'; add.textContent = '+ Додати';
@@ -1679,7 +1687,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         });
                     }
                 } else {
-                    var m = STATUS_MAP[status] || {c:status, s:1};
+                    // службові статуси-двійники (напр. «Пропозиція — дозавантажені файли» для
+                    // сповіщення менеджера) для клієнта виглядають ЯК базовий статус
+                    var statusBase = status.indexOf('Пропозиція') === 0 ? 'Пропозиція' : status;
+                    var m = STATUS_MAP[statusBase] || {c:statusBase, s:1};
                     // тонкий топбар зі шляхом назад до списку — стандарт статус-сторінок (Stripe/Linear);
                     // великий H1 не потрібен: заголовком екрана служить hero-картка статусу
                     var tbBack = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>';
@@ -1691,7 +1702,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     Array.prototype.forEach.call(document.querySelectorAll('.nc-block-change-status-place'), function(p){
                         if(!p.querySelector('.nc-block-change-status')){ p.style.display = 'none'; }
                     });
-                    mxTrackLayout(col, m, status);   // еталон екрана етапу: квитанція + жива панель
+                    mxTrackLayout(col, m, statusBase);   // еталон екрана етапу: квитанція + жива панель
                 }
                 return;
             }
