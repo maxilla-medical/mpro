@@ -215,6 +215,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 [class*="product-cabinet-client-info-popup"]{ display:none !important; }
 .js-client-payment-form-block{ display:none !important; }      /* крок-2: «Сумма к оплате» + сирий код */
 .info-message.custom-info-message{ display:none !important; }  /* системний тост праворуч із кодом оплати */
+.os-success.js-success{ display:none !important; }             /* тост «Сохранено» — шум, стан показує наш UI */
 body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* оверлей «шва» оплати: закриває перезавантаження між кліком і вікном WayForPay */
 #mxPayOvl{ position:fixed; inset:0; z-index:99990; background:rgba(255,255,255,.78); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; }
@@ -735,11 +736,19 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         dz.on('addedfile', function(){ row.classList.add('mx-uploading'); });
                         dz.on('queuecomplete', function(){
                             row.classList.remove('mx-uploading'); sync();
-                            // КОМІТ у OneBox: рідний «прийняти» → поле зберігається в процесі
+                            // КОМІТ у OneBox: рідний «прийняти» → поле зберігається в процесі.
+                            // OneBox відповідає перезавантаженням — накриваємо шов оверлеєм «Зберігаємо…»
                             if(el.querySelector('.js-uploaded-file')){
                                 setTimeout(function(){
                                     var acc = el.querySelector('.ob-link-accept');
-                                    if(acc){ try{ acc.click(); }catch(_){ } }
+                                    if(acc){
+                                        var o = document.getElementById('mxPayOvl');
+                                        var inH = '<span class="mx-dz-spin"></span>Зберігаємо файли…';
+                                        if(!o){ o = document.createElement('div'); o.id = 'mxPayOvl'; o.innerHTML = '<div class="mx-povl-in">' + inH + '</div>'; document.body.appendChild(o); }
+                                        else { var oi = o.querySelector('.mx-povl-in'); if(oi){ oi.innerHTML = inH; } o.style.display = 'flex'; }
+                                        setTimeout(function(){ if(o){ o.style.display = 'none'; } }, 12000);   // стеля, якщо перезавантаження не сталося
+                                        try{ acc.click(); }catch(_){ }
+                                    }
                                 }, 400);
                             }
                         });
