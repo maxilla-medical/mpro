@@ -740,6 +740,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             // OneBox відповідає перезавантаженням — накриваємо шов оверлеєм «Зберігаємо…»
                             if(el.querySelector('.js-uploaded-file')){
                                 setTimeout(function(){
+                                    // зберігаємо файл рідною галочкою — це «редагування процесу»,
+                                    // статуси перемикає ВИКЛЮЧНО автоматика OneBox на етапах
                                     var acc = el.querySelector('.ob-link-accept');
                                     if(acc){
                                         var o = document.getElementById('mxPayOvl');
