@@ -221,8 +221,14 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 @keyframes mxlive{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.35; transform:scale(.8); } }
 #mxProcGrid .mx-wk-sorry{ font-size:calc(13.5 * var(--u)); font-weight:500; color:#334155; line-height:1.65; margin-bottom:calc(12 * var(--u)); text-wrap:balance; }
 #mxProcGrid .mx-wk-sorry b{ color:#0F172A; font-weight:700; }
-#mxProcGrid .mx-wk-foot a{ color:#2c3bff; font-weight:700; text-decoration:none; }
-#mxProcGrid .mx-wk-foot a:hover{ text-decoration:underline; }
+/* кнопка Telegram у стані затримки — єдина дія на екрані, тож помітна */
+#mxProcGrid .mx-wk-foot-cta{ display:flex; align-items:center; gap:calc(12 * var(--u)); flex-wrap:wrap; }
+#mxProcGrid .mx-tg-btn{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); padding:calc(9 * var(--u)) calc(18 * var(--u)); background:#229ED9; color:#FFFFFF !important; border-radius:calc(10 * var(--u)); font-size:calc(13 * var(--u)); font-weight:700; text-decoration:none !important; box-shadow:0 2px 8px rgba(34,158,217,.28); transition:background .15s ease, box-shadow .15s ease, transform .1s ease; }
+#mxProcGrid .mx-tg-btn:hover{ background:#1B8CC2; box-shadow:0 4px 12px rgba(34,158,217,.34); }
+#mxProcGrid .mx-tg-btn:active{ transform:translateY(1px); }
+#mxProcGrid .mx-tg-ic{ display:inline-flex; width:calc(15 * var(--u)); height:calc(15 * var(--u)); }
+#mxProcGrid .mx-tg-ic svg{ width:100%; height:100%; }
+#mxProcGrid .mx-tg-note{ font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; }
 #mxProcGrid .mx-wk-foot{ margin-top:calc(12 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #F1F5F9; font-size:calc(11 * var(--u)); font-weight:500; color:#94A3B8; }
 @media (max-width: 900px){ #mxProcGrid .mx-wk-body{ flex-direction:column; align-items:flex-start; gap:calc(12 * var(--u)); } }
 /* вартість: рядки-квитанція + «Разом» — цифра рішення, найпомітніша у картці */
@@ -1499,8 +1505,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                                         'Доопрацьовуємо його <b>у пріоритеті</b> — надішлемо, щойно буде готове.</div>' +
                                         '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Повідомимо одразу після завершення</div>';
                                 }
+                                // кнопка в Telegram із готовим текстом: номер замовлення + пацієнт
                                 var ft = wc.querySelector('.mx-wk-foot');
-                                if(ft){ ft.innerHTML = 'Потрібні деталі — напишіть нам: <a href="https://t.me/dlmaxilla" target="_blank" rel="noopener">@dlmaxilla</a>'; }
+                                if(ft){
+                                    var msg = 'Добрий день! Маю питання щодо замовлення'
+                                        + (ordNum ? ' №' + ordNum : '')
+                                        + (mxPatient ? ' (пацієнт: ' + mxPatient + ')' : '');
+                                    var icoTg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.5.5-.9.5l.3-4.6 8.3-7.5c.4-.3-.1-.5-.6-.2L7.4 13 3 11.6c-1-.3-1-1 .2-1.5l17.3-6.7c.8-.3 1.5.2 1.4 1z"/></svg>';
+                                    ft.classList.add('mx-wk-foot-cta');
+                                    ft.innerHTML = '<a class="mx-tg-btn" href="https://t.me/dlmaxilla?text=' + encodeURIComponent(msg) + '" target="_blank" rel="noopener">'
+                                        + '<span class="mx-tg-ic">' + icoTg + '</span>Написати в Telegram</a>'
+                                        + '<span class="mx-tg-note">Відповідаємо швидко в робочий час</span>';
+                                }
                             }
                             return;
                         }
