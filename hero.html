@@ -186,6 +186,18 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-offer-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-oc-body{ margin-top:calc(12 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F5F7FF; border-left:3px solid #2c3bff; border-radius:calc(4 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)) calc(4 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.65; color:#1E293B; white-space:pre-wrap; }
 #mxProcGrid .mx-oc-foot{ margin-top:calc(11 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.5; }
+/* згортання карток-історії: шапка стає кнопкою, у згорнутому стані видно суть */
+#mxProcGrid .mx-card-toggle{ cursor:pointer; user-select:none; }
+#mxProcGrid .mx-card-toggle:hover .mx-card-t{ color:#2c3bff; }
+#mxProcGrid .mx-card-sum{ margin-left:auto; font-size:calc(12 * var(--u)); font-weight:600; color:#94A3B8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(280 * var(--u)); }
+#mxProcGrid .mx-card-sum + .mx-card-chev{ margin-left:calc(10 * var(--u)); }
+#mxProcGrid .mx-card-chev{ flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center; justify-content:center; width:calc(22 * var(--u)); height:calc(22 * var(--u)); border-radius:50%; color:#94A3B8; transition:transform .18s ease, background .14s ease, color .14s ease; }
+#mxProcGrid .mx-card-chev svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); }
+#mxProcGrid .mx-card-toggle:hover .mx-card-chev{ background:#F1F5F9; color:#2c3bff; }
+#mxProcGrid .mx-collapsed .mx-card-chev{ transform:rotate(-90deg); }
+#mxProcGrid .mx-collapsed .mx-card-h{ margin-bottom:0; padding-bottom:0; border-bottom:none; }
+#mxProcGrid .mx-collapsed .mx-card-body{ display:none; }
+#mxProcGrid .mx-card-body{ animation:mxUp .22s ease both; }
 /* статус угоди в шапці картки: помітно, але не перебиває таймер */
 #mxProcGrid .mx-oc-paid-badge{ margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(6 * var(--u)); padding:calc(4 * var(--u)) calc(11 * var(--u)); background:#F0FDF4; border:1px solid #BBF7D0; border-radius:calc(999 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; color:#16A34A; white-space:nowrap; }
 #mxProcGrid .mx-oc-paid-badge::before{ content:''; width:calc(6 * var(--u)); height:calc(6 * var(--u)); border-radius:50%; background:#22C55E; }
@@ -1535,6 +1547,55 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     }
                     tick(); setInterval(tick, 1000);
                 }
+            })();
+            // ===== ЗГОРТАННЯ ІСТОРІЇ (progressive disclosure) =====
+            // Після оплати рішення вже прийнято: пропозиція і дані замовлення стають довідкою.
+            // Ховаємо їх під клік, але у згорнутому вигляді лишаємо головний факт.
+            (function(){
+                if(!isPaid) return;   // до оплати все це — робочий контент, згортати не можна
+                var chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+                function collapsible(card, key, summary){
+                    if(!card || card.__col) return;
+                    var head = card.querySelector('.mx-card-h'); if(!head) return;
+                    card.__col = true;
+                    var body = document.createElement('div'); body.className = 'mx-card-body';
+                    while(head.nextSibling){ body.appendChild(head.nextSibling); }
+                    card.appendChild(body);
+                    if(summary){
+                        var sm = document.createElement('span'); sm.className = 'mx-card-sum'; sm.textContent = summary;
+                        head.appendChild(sm);
+                    }
+                    var cv = document.createElement('span'); cv.className = 'mx-card-chev'; cv.innerHTML = chev;
+                    head.appendChild(cv);
+                    head.classList.add('mx-card-toggle');
+                    head.setAttribute('role', 'button'); head.setAttribute('tabindex', '0');
+                    var sk = 'mxCol_' + key + '_' + (ordNum || '0');
+                    var open = false;
+                    try{ open = sessionStorage.getItem(sk) === '1'; }catch(_){ }
+                    function apply(){
+                        card.classList.toggle('mx-collapsed', !open);
+                        head.setAttribute('aria-expanded', open ? 'true' : 'false');
+                    }
+                    function toggle(){
+                        open = !open; apply();
+                        try{ sessionStorage.setItem(sk, open ? '1' : '0'); }catch(_){ }
+                    }
+                    head.addEventListener('click', function(e){
+                        if(e.target.closest('a, button, input')) return;   // не ламаємо посилання всередині шапки
+                        toggle();
+                    });
+                    head.addEventListener('keydown', function(e){
+                        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+                    });
+                    apply();
+                }
+                // «Замовлення»: у згорнутому вигляді лишається пацієнт і кількість файлів
+                var files = cardData ? cardData.querySelectorAll('.mx-frow .mx-file-row').length : 0;
+                var sumParts = [];
+                if(mxPatient){ sumParts.push(mxPatient); }
+                if(files){ sumParts.push(files + (files === 1 ? ' файл' : (files < 5 ? ' файли' : ' файлів'))); }
+                collapsible(cardData, 'ord', sumParts.join(' · '));
+                collapsible(ocCard, 'off', '');   // статус несе зелений бейдж у шапці
             })();
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
