@@ -210,11 +210,19 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-wk-nrow + .mx-wk-nrow{ margin-top:calc(9 * var(--u)); }
 #mxProcGrid .mx-wk-nic{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(20 * var(--u)); height:calc(20 * var(--u)); border-radius:50%; background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-wk-nic svg{ width:calc(11 * var(--u)); height:calc(11 * var(--u)); }
-/* прострочено: янтарний тон — увага без тривоги (червоний тут читався б як помилка клієнта) */
-#mxProcGrid .mx-wk-over .mx-wk-time{ background:#FFFBEB; border-color:#FDE68A; }
-#mxProcGrid .mx-wk-over .mx-wk-clock.mx-wk-soon{ font-size:calc(19 * var(--u)); color:#B45309; }
-#mxProcGrid .mx-wk-sorry{ font-size:calc(13 * var(--u)); font-weight:500; color:#334155; line-height:1.6; margin-bottom:calc(11 * var(--u)); text-wrap:balance; }
+/* прострочено: янтарний тон — увага без тривоги (червоний читався б як помилка клієнта).
+   Замість «мертвого» таймера — вибачення в заголовку + живий пульс роботи */
+#mxProcGrid .mx-wk-over{ border-color:#FDE68A; box-shadow:0 1px 3px rgba(180,83,9,.07); }
+#mxProcGrid .mx-wk-over .mx-card-ico{ background:#FFFBEB; color:#B45309; }
+#mxProcGrid .mx-wk-over .mx-wk-time{ display:none; }
+#mxProcGrid .mx-wk-over .mx-wk-body{ display:block; }
+#mxProcGrid .mx-wk-live{ margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(4 * var(--u)) calc(11 * var(--u)); background:#FFFBEB; border:1px solid #FDE68A; border-radius:calc(999 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; color:#B45309; white-space:nowrap; }
+#mxProcGrid .mx-wk-live i{ width:calc(6 * var(--u)); height:calc(6 * var(--u)); border-radius:50%; background:#F59E0B; animation:mxlive 1.6s ease-in-out infinite; }
+@keyframes mxlive{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.35; transform:scale(.8); } }
+#mxProcGrid .mx-wk-sorry{ font-size:calc(13.5 * var(--u)); font-weight:500; color:#334155; line-height:1.65; margin-bottom:calc(12 * var(--u)); text-wrap:balance; }
 #mxProcGrid .mx-wk-sorry b{ color:#0F172A; font-weight:700; }
+#mxProcGrid .mx-wk-foot a{ color:#2c3bff; font-weight:700; text-decoration:none; }
+#mxProcGrid .mx-wk-foot a:hover{ text-decoration:underline; }
 #mxProcGrid .mx-wk-foot{ margin-top:calc(12 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #F1F5F9; font-size:calc(11 * var(--u)); font-weight:500; color:#94A3B8; }
 @media (max-width: 900px){ #mxProcGrid .mx-wk-body{ flex-direction:column; align-items:flex-start; gap:calc(12 * var(--u)); } }
 /* вартість: рядки-квитанція + «Разом» — цифра рішення, найпомітніша у картці */
@@ -1475,18 +1483,25 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             if(!wc.__over){
                                 wc.__over = true;
                                 wc.classList.add('mx-wk-over');
-                                var ct = wc.querySelector('.mx-card-t'); if(ct){ ct.textContent = 'Планування майже готове'; }
+                                // вибачення — у заголовок; «ми вже поспішаємо» показує живий пульс, а не слова
+                                var ci = wc.querySelector('.mx-card-ico');
+                                if(ci){ ci.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6"/><path d="M12 16.5h.01"/></svg>'; }
+                                var ct = wc.querySelector('.mx-card-t'); if(ct){ ct.textContent = 'Перепрошуємо за затримку'; }
+                                var ch = wc.querySelector('.mx-card-h');
+                                if(ch && !ch.querySelector('.mx-wk-live')){
+                                    var lv = document.createElement('span'); lv.className = 'mx-wk-live';
+                                    lv.innerHTML = '<i></i>Працюємо над кейсом зараз';
+                                    ch.appendChild(lv);
+                                }
                                 var nx = wc.querySelector('.mx-wk-next');
                                 if(nx){
-                                    nx.innerHTML = '<div class="mx-wk-sorry">Ваш кейс потребував більше часу, ніж зазвичай — просимо вибачення. ' +
-                                        'Він у роботі просто зараз, планування буде готове до перегляду <b>найближчим часом</b>.</div>' +
-                                        '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Повідомимо одразу, щойно буде готово</div>';
+                                    nx.innerHTML = '<div class="mx-wk-sorry">Ваш кейс виявився складнішим за типовий, тому планування зайняло більше 48 годин. ' +
+                                        'Доопрацьовуємо його <b>у пріоритеті</b> — надішлемо, щойно буде готове.</div>' +
+                                        '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Повідомимо одразу після завершення</div>';
                                 }
-                                var ft = wc.querySelector('.mx-wk-foot'); if(ft){ ft.textContent = 'Питання — напишіть нам у Telegram: @dlmaxilla'; }
+                                var ft = wc.querySelector('.mx-wk-foot');
+                                if(ft){ ft.innerHTML = 'Потрібні деталі — напишіть нам: <a href="https://t.me/dlmaxilla" target="_blank" rel="noopener">@dlmaxilla</a>'; }
                             }
-                            clockEl.textContent = 'У роботі';
-                            clockEl.classList.add('mx-wk-soon');
-                            lblEl.textContent = 'завершуємо планування';
                             return;
                         }
                         // показуємо ЗАЛИШОК РОБОЧОГО часу (без вихідних)
