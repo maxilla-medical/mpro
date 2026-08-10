@@ -186,6 +186,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-offer-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-oc-body{ margin-top:calc(12 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F5F7FF; border-left:3px solid #2c3bff; border-radius:calc(4 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)) calc(4 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.65; color:#1E293B; white-space:pre-wrap; }
 #mxProcGrid .mx-oc-foot{ margin-top:calc(11 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.5; }
+/* статус угоди в шапці картки: помітно, але не перебиває таймер */
+#mxProcGrid .mx-oc-paid-badge{ margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(6 * var(--u)); padding:calc(4 * var(--u)) calc(11 * var(--u)); background:#F0FDF4; border:1px solid #BBF7D0; border-radius:calc(999 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; color:#16A34A; white-space:nowrap; }
+#mxProcGrid .mx-oc-paid-badge::before{ content:''; width:calc(6 * var(--u)); height:calc(6 * var(--u)); border-radius:50%; background:#22C55E; }
 /* пропозиція після оплати — довідкова, без акценту */
 #mxProcGrid .mx-offer-card.mx-offer-paid{ border-color:#EDF1F7; box-shadow:none; }
 #mxProcGrid .mx-offer-paid .mx-card-ico{ background:#F1F5F9; color:#94A3B8; }
@@ -200,6 +203,13 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-wk-lbl{ margin-top:calc(7 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.05em; text-transform:uppercase; max-width:calc(150 * var(--u)); line-height:1.35; }
 #mxProcGrid .mx-wk-note{ flex:1 1 auto; min-width:0; font-size:calc(13 * var(--u)); font-weight:500; color:#334155; line-height:1.6; text-wrap:balance; }
 #mxProcGrid .mx-wk-note b{ color:#0F172A; font-weight:700; }
+/* мікро-таймлайн «Далі»: 3 короткі рядки замість абзацу */
+#mxProcGrid .mx-wk-next{ flex:1 1 auto; min-width:0; }
+#mxProcGrid .mx-wk-nlbl{ font-size:calc(10 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.12em; text-transform:uppercase; margin-bottom:calc(9 * var(--u)); }
+#mxProcGrid .mx-wk-nrow{ display:flex; align-items:center; gap:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:600; color:#334155; }
+#mxProcGrid .mx-wk-nrow + .mx-wk-nrow{ margin-top:calc(9 * var(--u)); }
+#mxProcGrid .mx-wk-nic{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(20 * var(--u)); height:calc(20 * var(--u)); border-radius:50%; background:#EEF2FF; color:#2c3bff; }
+#mxProcGrid .mx-wk-nic svg{ width:calc(11 * var(--u)); height:calc(11 * var(--u)); }
 #mxProcGrid .mx-wk-foot{ margin-top:calc(12 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #F1F5F9; font-size:calc(11 * var(--u)); font-weight:500; color:#94A3B8; }
 @media (max-width: 900px){ #mxProcGrid .mx-wk-body{ flex-direction:column; align-items:flex-start; gap:calc(12 * var(--u)); } }
 /* вартість: рядки-квитанція + «Разом» — цифра рішення, найпомітніша у картці */
@@ -348,7 +358,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 .mx-side .mx-stp-txt{ min-width:0; padding-bottom:calc(20 * var(--u)); }
 .mx-side .mx-stp:last-of-type .mx-stp-txt{ padding-bottom:0; }
 .mx-side .mx-stp-t{ font-size:calc(13.5 * var(--u)); font-weight:700; color:#fff; line-height:1.3; display:flex; align-items:center; gap:calc(8 * var(--u)); flex-wrap:wrap; text-wrap:balance; }
-.mx-side .mx-stp-here{ font-size:calc(9.5 * var(--u)); font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#A5B4FC; background:rgba(99,102,241,0.16); border:1px solid rgba(129,140,248,0.35); border-radius:calc(999 * var(--u)); padding:calc(2 * var(--u)) calc(8 * var(--u)); }
+.mx-side .mx-stp-here{ display:block; margin-bottom:calc(3 * var(--u)); font-size:calc(9.5 * var(--u)); font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#8B9CFF; }
 .mx-side .mx-stp-s{ font-size:calc(12 * var(--u)); color:#9AA0B4; line-height:1.5; margin-top:calc(4 * var(--u)); }
 .mx-side .mx-stp-s b{ color:#4ADE80; font-weight:700; }
 @media (max-width: 900px){ #mxProcGrid{ flex-direction:column; } #mxProcGrid .mx-col-side{ flex-basis:auto; width:100%; max-width:calc(600 * var(--u)); margin:0 auto; } #mxProcGrid .mx-col-form{ max-width:calc(600 * var(--u)); margin:0 auto; } }
@@ -666,7 +676,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var done = (i + 1) < phase, act = (i + 1) === phase, last = (i === PH.length - 1);
                 sh += '<div class="mx-stp' + (act ? ' mx-stp-act' : '') + (done ? ' mx-stp-done' : '') + '">'
                     + '<div class="mx-stp-rail"><span class="mx-stp-n">' + (done ? tCheck : (i + 1)) + '</span>' + (last ? '' : '<span class="mx-stp-line"></span>') + '</div>'
-                    + '<div class="mx-stp-txt"><div class="mx-stp-t">' + p.t + (act ? '<span class="mx-stp-here">Ви тут</span>' : '') + '</div>'
+                    + '<div class="mx-stp-txt">' + (act ? '<div class="mx-stp-here">Ви тут</div>' : '') + '<div class="mx-stp-t">' + p.t + '</div>'
                     + '<div class="mx-stp-s">' + p.s + '</div></div></div>';
             });
             rcol.innerHTML = '<div class="mx-side"><div class="mx-side-eyebrow">Як це працює</div>' + sh
@@ -972,7 +982,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     // прибираємо заклик і акцент, щоб не конкурувала з карткою «Коли буде готово»
                     oc.classList.add('mx-offer-paid');
                     var _ft = oc.querySelector('.mx-oc-foot'); if(_ft){ _ft.parentNode.removeChild(_ft); }
-                    var _ct = oc.querySelector('.mx-card-t'); if(_ct){ _ct.textContent = 'Погоджена пропозиція'; }
+                    var _ch = oc.querySelector('.mx-card-h');
+                    if(_ch){ var _pl = document.createElement('span'); _pl.className = 'mx-oc-paid-badge'; _pl.textContent = 'Прийнято та оплачено'; _ch.appendChild(_pl); }
                 }
                 lcol.insertBefore(oc, hero.nextSibling);
                 ocCard = oc;
@@ -1421,15 +1432,22 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     }
                 }
                 var icoGear = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.36.4.66.73.86.3.19.65.29 1 .29H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+                var icoMail = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>';
+                var icoEye  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+                var icoOk   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
                 var wc = document.createElement('div'); wc.className = 'mx-card mx-work-card';
                 wc.innerHTML =
                     '<div class="mx-card-h"><span class="mx-card-ico">' + icoGear + '</span><span class="mx-card-t">Коли буде готово планування</span></div>' +
                     '<div class="mx-wk-body">' +
                         '<div class="mx-wk-time"><div class="mx-wk-clock">—</div><div class="mx-wk-lbl">залишилось із 48 годин на планування</div></div>' +
-                        '<div class="mx-wk-note">Створюємо проєкт віртуального пацієнта, розміщуємо wax-up і позиціонуємо імплантати. ' +
-                        'Готове планування надішлемо сюди — ви зможете <b>погодити</b> його або <b>попросити правки</b>.</div>' +
+                        // замість абзацу — мікро-таймлайн «Далі»: 3 рядки по 3-4 слова, читається за 2 секунди
+                        '<div class="mx-wk-next"><div class="mx-wk-nlbl">Далі</div>' +
+                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Лист із прямим посиланням</div>' +
+                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoEye + '</span>Дивитесь планування тут</div>' +
+                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoOk + '</span>Погоджуєте або просите правки</div>' +
+                        '</div>' +
                     '</div>' +
-                    '<div class="mx-wk-foot">48 годин рахуємо в робочий час: пн 09:00 — пт 18:00 (Київ). Вихідні на відлік не впливають.</div>';
+                    '<div class="mx-wk-foot">Робочий час: пн 09:00 — пт 18:00 (Київ)</div>';
                 lcol.insertBefore(wc, hero.nextSibling);
                 var clockEl = wc.querySelector('.mx-wk-clock'), lblEl = wc.querySelector('.mx-wk-lbl');
                 if(!startDate){
@@ -1914,7 +1932,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             '<div class="mx-side">' +
                                 '<div class="mx-side-eyebrow">Як це працює</div>' +
                                 '<div class="mx-stp mx-stp-act"><div class="mx-stp-rail"><span class="mx-stp-n">1</span><span class="mx-stp-line"></span></div>' +
-                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Спочатку — оцінка<span class="mx-stp-here">Ви тут</span></div>' +
+                                    '<div class="mx-stp-txt"><div class="mx-stp-here">Ви тут</div><div class="mx-stp-t">Спочатку — оцінка</div>' +
                                     '<div class="mx-stp-s">Надсилаєте КТ і скани — ми аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b></div></div></div>' +
                                 '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">2</span><span class="mx-stp-line"></span></div>' +
                                     '<div class="mx-stp-txt"><div class="mx-stp-t">Оплата після оцінки</div>' +
@@ -2088,7 +2106,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var last = (i === mxSteps.length - 1);
                 mxStepsHtml +=
                     '<div class="mx-stp' + (st.here ? ' mx-stp-act' : '') + '"><div class="mx-stp-rail"><span class="mx-stp-n">' + (i + 1) + '</span>' + (last ? '' : '<span class="mx-stp-line"></span>') + '</div>' +
-                    '<div class="mx-stp-txt"><div class="mx-stp-t">' + st.t + (st.here ? '<span class="mx-stp-here">Ви тут</span>' : '') + '</div>' +
+                    '<div class="mx-stp-txt">' + (st.here ? '<div class="mx-stp-here">Ви тут</div>' : '') + '<div class="mx-stp-t">' + st.t + '</div>' +
                     '<div class="mx-stp-s">' + st.s + '</div></div></div>';
             });
             rcol.innerHTML =
