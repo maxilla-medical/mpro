@@ -186,7 +186,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-offer-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-oc-body{ margin-top:calc(12 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F5F7FF; border-left:3px solid #2c3bff; border-radius:calc(4 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)) calc(4 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.65; color:#1E293B; white-space:pre-wrap; }
 #mxProcGrid .mx-oc-foot{ margin-top:calc(11 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.5; }
-/* картка «Проєкт у роботі»: таймер 48 робочих годин */
+/* пропозиція після оплати — довідкова, без акценту */
+#mxProcGrid .mx-offer-card.mx-offer-paid{ border-color:#EDF1F7; box-shadow:none; }
+#mxProcGrid .mx-offer-paid .mx-card-ico{ background:#F1F5F9; color:#94A3B8; }
+#mxProcGrid .mx-offer-paid .mx-oc-body{ background:#FAFBFD; border-left-color:#CBD5E1; color:#475569; }
+/* картка «Коли буде готово планування»: таймер 48 годин на планування */
 #mxProcGrid .mx-work-card{ border-color:#DDE3FF; box-shadow:0 1px 3px rgba(44,59,255,.07); }
 #mxProcGrid .mx-work-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-wk-body{ display:flex; align-items:center; gap:calc(20 * var(--u)); margin-top:calc(13 * var(--u)); }
@@ -920,8 +924,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             ];
             // пасивні статуси з власним текстом (не «чий хід», а «що саме зараз робимо»)
             var HERO_PASS_ST = {
-                'Рахунок оплачено': ['Оплату отримано — вже працюємо', 'Створюємо проєкт віртуального пацієнта, розміщуємо wax-up і плануємо позиції імплантатів.'],
-                'Депозит':          ['Оплату отримано — вже працюємо', 'Створюємо проєкт віртуального пацієнта, розміщуємо wax-up і плануємо позиції імплантатів.'],
+                'Рахунок оплачено': ['Оплату отримано — вже працюємо', 'Нічого робити не потрібно — повідомимо, щойно планування буде готове.'],
+                'Депозит':          ['Оплату отримано — вже працюємо', 'Нічого робити не потрібно — повідомимо, щойно планування буде готове.'],
                 'Створення проекту':['Створюємо проєкт', 'Проєкт віртуального пацієнта, wax-up і позиції імплантатів — у роботі.']
             };
             var hcfg = HERO_ACT[status] || HERO_PASS_ST[status] || HERO_PASS[m.s - 1] || HERO_PASS[0];
@@ -963,6 +967,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     '<div class="mx-oc-body"></div>' +
                     '<div class="mx-oc-foot">Якщо все влаштовує — повідомте нас, і ми виставимо рахунок. Оплата запускає збір проєкту та планування.</div>';
                 oc.querySelector('.mx-oc-body').textContent = mxOfferTxt;   // textContent + pre-wrap: абзаци збережено, розмітка безпечна
+                if(isPaid){
+                    // після оплати пропозиція — це вже історія угоди, а не заклик до дії:
+                    // прибираємо заклик і акцент, щоб не конкурувала з карткою «Коли буде готово»
+                    oc.classList.add('mx-offer-paid');
+                    var _ft = oc.querySelector('.mx-oc-foot'); if(_ft){ _ft.parentNode.removeChild(_ft); }
+                    var _ct = oc.querySelector('.mx-card-t'); if(_ct){ _ct.textContent = 'Погоджена пропозиція'; }
+                }
                 lcol.insertBefore(oc, hero.nextSibling);
                 ocCard = oc;
             }
@@ -1386,13 +1397,19 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     return new Date(cur.getTime() + left);
                 }
                 // старт: поле «Дата оплати» (київський настінний час); якщо його немає — не показуємо таймер
+                // поле «Дата оплати» може бути виведене і в центральну колонку, і в бічний блок —
+                // шукаємо по ВСІЙ сторінці
                 var startDate = null, paidRaw = '';
-                Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(e){
+                Array.prototype.forEach.call(document.querySelectorAll('.js-data-element'), function(e){
                     var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
                     if(paidRaw || c.indexOf('оплат') === -1 || c.indexOf('дата') === -1) return;
                     var dv = e.querySelector('.data-view');
                     var v = dv ? (dv.textContent || '').replace(/\s+/g, ' ').trim() : '';
-                    if(v){ paidRaw = v; e.classList.add('mx-rc-empty'); e.style.display = 'none'; }   // дату показує таймер
+                    if(!v){ var vi = e.querySelector('input, textarea'); if(vi){ v = (vi.value || '').trim(); } }
+                    if(v){
+                        paidRaw = v;
+                        if(lcol.contains(e)){ e.classList.add('mx-rc-empty'); e.style.display = 'none'; }   // у квитанції дублювати не треба
+                    }
                 });
                 if(paidRaw){
                     var mm = paidRaw.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})/)
@@ -1406,13 +1423,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var icoGear = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.36.4.66.73.86.3.19.65.29 1 .29H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
                 var wc = document.createElement('div'); wc.className = 'mx-card mx-work-card';
                 wc.innerHTML =
-                    '<div class="mx-card-h"><span class="mx-card-ico">' + icoGear + '</span><span class="mx-card-t">Проєкт у роботі</span></div>' +
+                    '<div class="mx-card-h"><span class="mx-card-ico">' + icoGear + '</span><span class="mx-card-t">Коли буде готово планування</span></div>' +
                     '<div class="mx-wk-body">' +
-                        '<div class="mx-wk-time"><div class="mx-wk-clock">—</div><div class="mx-wk-lbl">залишилось із 48 робочих годин</div></div>' +
+                        '<div class="mx-wk-time"><div class="mx-wk-clock">—</div><div class="mx-wk-lbl">залишилось із 48 годин на планування</div></div>' +
                         '<div class="mx-wk-note">Створюємо проєкт віртуального пацієнта, розміщуємо wax-up і позиціонуємо імплантати. ' +
-                        'Нам потрібно до <b>48 годин у робочий час</b> — далі надішлемо планування на погодження.</div>' +
+                        'Готове планування надішлемо сюди — ви зможете <b>погодити</b> його або <b>попросити правки</b>.</div>' +
                     '</div>' +
-                    '<div class="mx-wk-foot">Робочий час: пн 09:00 — пт 18:00 (Київ). Вихідні на відлік не впливають.</div>';
+                    '<div class="mx-wk-foot">48 годин рахуємо в робочий час: пн 09:00 — пт 18:00 (Київ). Вихідні на відлік не впливають.</div>';
                 lcol.insertBefore(wc, hero.nextSibling);
                 var clockEl = wc.querySelector('.mx-wk-clock'), lblEl = wc.querySelector('.mx-wk-lbl');
                 if(!startDate){
@@ -1433,7 +1450,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         if(left <= 0){
                             clockEl.textContent = 'Майже готово';
                             clockEl.classList.add('mx-wk-soon');
-                            lblEl.textContent = 'фінішуємо планування — зв’яжемось найближчим часом';
+                            lblEl.textContent = 'фінішуємо планування — надішлемо найближчим часом';
                             return;
                         }
                         // показуємо ЗАЛИШОК РОБОЧОГО часу (без вихідних)
@@ -1446,7 +1463,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         }
                         var h = Math.floor(rem / 3600000), mi = Math.floor(rem % 3600000 / 60000), s = Math.floor(rem % 60000 / 1000);
                         clockEl.textContent = pad(h) + ':' + pad(mi) + ':' + pad(s);
-                        lblEl.textContent = 'залишилось із 48 робочих годин';
+                        lblEl.textContent = 'залишилось із 48 годин на планування';
                     }
                     tick(); setInterval(tick, 1000);
                 }
