@@ -716,24 +716,27 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 }
                 fsec.appendChild(row);
                 function sync(){
-                    var items = [], seen = {};
-                    function addItem(n, href){
-                        var k = n.toLowerCase();
-                        if(seen[k]){ if(href && !seen[k].href){ seen[k].href = href; } return; }
-                        var o = { n: n, href: href || null }; seen[k] = o; items.push(o);
-                    }
+                    // ВАЖЛИВО: файли з однаковими іменами — різні файли. Дедуплікуємо не за назвою,
+                    // а за КІЛЬКІСТЮ: чернетка показується лише понад уже збережені файли тієї ж назви
+                    var items = [], linkCount = {}, draftCount = {};
                     var dv = el.querySelector('.data-view');
                     if(dv){
                         Array.prototype.forEach.call(dv.querySelectorAll('a[href]'), function(a){
                             var t = (a.textContent || '').trim(); var h = a.getAttribute('href');
-                            if(t && h && h !== '#' && h.indexOf('javascript:') !== 0) addItem(t, h);
+                            if(!t || !h || h === '#' || h.indexOf('javascript:') === 0) return;
+                            var k = t.toLowerCase();
+                            linkCount[k] = (linkCount[k] || 0) + 1;
+                            items.push({ n: t, href: h });
                         });
                     }
                     Array.prototype.forEach.call(el.querySelectorAll('.js-uploaded-file'), function(u){
-                        var t = (u.textContent || '').replace(/\s+/g, ' ').trim(); if(t) addItem(t);
+                        var t = (u.textContent || '').replace(/\s+/g, ' ').trim(); if(!t) return;
+                        var k = t.toLowerCase();
+                        draftCount[k] = (draftCount[k] || 0) + 1;
+                        if(draftCount[k] > (linkCount[k] || 0)){ items.push({ n: t, href: null }); }
                     });
                     var tFile = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
-                    var key = items.map(function(i){ return i.n; }).join('|');
+                    var key = items.map(function(i){ return i.n + (i.href ? '#' : '*'); }).join('|');
                     if(host.__k !== key){
                         host.__k = key; host.innerHTML = '';
                         items.forEach(function(it){
