@@ -689,7 +689,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 }
                 if(canAdd){
                     var add = document.createElement('button'); add.type = 'button'; add.className = 'mx-frow-add'; add.textContent = '+ Додати';
-                    add.addEventListener('click', function(e){ e.preventDefault(); if(btn){ btn.click(); } });
+                    add.addEventListener('click', function(e){
+                        e.preventDefault(); e.stopPropagation();
+                        // рідна кнопка OneBox — це <a href="#">: її клік додає «#» і смикає сторінку.
+                        // Тому відкриваємо файловий діалог напряму через прихований input Dropzone.
+                        var fi = null;
+                        try{
+                            var _dz = (window.Dropzone && window.Dropzone.forElement && attach) ? window.Dropzone.forElement(attach) : null;
+                            if(_dz && _dz.hiddenFileInput){ fi = _dz.hiddenFileInput; }
+                        }catch(_){ }
+                        if(fi){ try{ fi.click(); return; }catch(_){ } }
+                        if(btn){ try{ btn.click(); }catch(_){ } }   // запасний шлях
+                    });
                     body.appendChild(add);
                     var ld = document.createElement('span'); ld.className = 'mx-frow-load';
                     ld.innerHTML = '<span class="mx-dz-spin"></span>Завантаження…';
