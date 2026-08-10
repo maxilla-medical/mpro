@@ -659,18 +659,26 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             });
             // --- файлове поле на етапі: КОМПАКТНИЙ рядок «Лейбл · чипи · + Додати» (без великих зон) ---
             var fsec = document.createElement('div'); fsec.className = 'mx-fsec';
+            // якщо на етапі виведено поле «Додаткові файли» — саме воно приймає нові файли,
+            // а КТ/Скани стають read-only: інакше тиха дозавантажка повз сповіщення менеджеру
+            var hasExtraField = false;
+            Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(e){
+                if(!e.querySelector('.ob-block-attach')) return;
+                var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+                if(c.indexOf('додатк') !== -1){ hasExtraField = true; }
+            });
             function trackFileField(el, capTxt){
                 el.classList.add('mx-filefield', 'mx-ff-hidden');   // саме поле ховаємо, ним керує рядок
-                // догрузка доречна, поки дані ще впливають на результат (оцінка/планування/оплата);
-                // з виробництва (етап 4+) файли read-only — нові вже нічого не змінять
-                var canAdd = m.s < 4;
+                var low = capTxt.toLowerCase();
+                var isScan = low.indexOf('скан') !== -1;
+                var isExtra = low.indexOf('додатк') !== -1;   // «Додаткові файли» — дозавантаження на етапі пропозиції
+                // догрузка доречна, поки дані ще впливають на результат (до виробництва);
+                // а коли є поле «Додаткові» — приймає лише воно
+                var canAdd = m.s < 4 && (isExtra || !hasExtraField);
                 var jtv = el.querySelector('.flex-value .js-text') || el.querySelector('.js-text');
                 if(canAdd && jtv){ try{ jtv.click(); }catch(_){ } } // рідна сесія редагування (потрібна для коміту ✓)
                 var attach = el.querySelector('.ob-block-attach');
                 var btn = attach ? attach.querySelector('.ob-button-attach') : null;
-                var low = capTxt.toLowerCase();
-                var isScan = low.indexOf('скан') !== -1;
-                var isExtra = low.indexOf('додатк') !== -1;   // «Додаткові файли» — дозавантаження на етапі пропозиції
                 var lbl = low.indexOf('томограм') !== -1 ? 'КТ' : (isScan ? 'Скани' : (isExtra ? 'Додаткові' : capTxt.replace(/\s*:\s*$/, '')));
                 var row = document.createElement('div'); row.className = 'mx-frow';
                 row.innerHTML = '<span class="mx-frow-lbl">' + esc(lbl) + '</span><span class="mx-frow-body"></span>';
