@@ -210,6 +210,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-cta-sec:hover{ border-color:#CBD5E1; background:#F8FAFC; }
 /* рідний блок онлайн-оплати OneBox: керуємо ним із нашої кнопки, тож ховаємо */
 .mx-payform-native{ display:none !important; }
+/* службові кнопки процедур «Додано файли…» — клієнту не показуємо, їх тисне код */
+.mx-proc-hidden{ display:none !important; }
 /* службова панель кроку-2 OneBox (показує сирий код) — ховаємо БЕЗУМОВНО:
    CSS застосовується до рендера, тож панель не встигає навіть блимнути */
 [class*="product-cabinet-client-info-popup"]{ display:none !important; }
@@ -1131,7 +1133,16 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         if(seen > 1800){ clearInterval(w); mxWfpWatching = false; }   // страховка: 15 хв
                     }, 500);
                 }
-                var natBtn = col.querySelector('.nc-block-change-status .js-change-order-status') || col.querySelector('.js-change-order-status');
+                // кнопка погодження = справжній перехід статусу, але НЕ службова процедура
+                // (кнопки процедур теж мають клас js-change-order-status)
+                var natBtn = null;
+                Array.prototype.forEach.call(col.querySelectorAll('.js-change-order-status'), function(x){
+                    if(natBtn) return;
+                    if(/js-procedure/.test(String(x.className))) return;
+                    var t = (x.value || x.textContent || '').toLowerCase();
+                    if(t.indexOf('додано файли') !== -1) return;
+                    natBtn = x;
+                });
                 var supHref = 'https://t.me/dlmaxilla';   // канал питань — Telegram
                 var cta = document.createElement('div'); cta.className = 'mx-oc-cta';
                 var mb = null;
@@ -1232,7 +1243,17 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     });
                     return res;
                 }
-                function hideProc(){ procBtns().forEach(function(b){ b.style.display = 'none'; }); }
+                // рідні кнопки OneBox мають CSS із !important — ховаємо теж через !important
+                function hideProc(){
+                    procBtns().forEach(function(b){
+                        try{ b.style.setProperty('display', 'none', 'important'); }catch(_){ b.style.display = 'none'; }
+                        b.classList.add('mx-proc-hidden');
+                        var w = b.parentElement;   // порожня обгортка кнопки теж не потрібна
+                        if(w && w.children.length === 1 && !/nc-block-change-status/.test(String(w.className))){
+                            try{ w.style.setProperty('display', 'none', 'important'); }catch(_){ }
+                        }
+                    });
+                }
                 hideProc();
                 var hpN = 0;
                 var hpT = setInterval(function(){ hpN++; hideProc(); if(hpN > 20){ clearInterval(hpT); } }, 500);
@@ -1242,6 +1263,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var t = setInterval(function(){
                         tries++;
                         var bs = procBtns();
+                        // запасний шлях: якщо процедур немає, але налаштовано клієнтський перехід статусу —
+                        // тиснемо його (той самий рідний механізм, що й «Далі» на F2)
+                        if(!bs.length){
+                            var sw = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .js-change-order-status');
+                            if(sw){ bs = [sw]; }
+                        }
                         if(bs.length){
                             clearInterval(t);
                             try{ sessionStorage.removeItem('mxProcClick'); }catch(_){ }
