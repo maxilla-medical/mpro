@@ -641,7 +641,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var PH = [
                 { t:'Спочатку — оцінка', s:'Аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>' },
                 { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
-                { t:'Шаблон у клініці за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою після погодження планування.' }
+                { t:'Шаблон відправимо за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою за 48 годин з моменту погодження планування.' }
             ];
             var sh = '';
             PH.forEach(function(p, i){
@@ -661,6 +661,28 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             });
             // --- файлове поле на етапі: КОМПАКТНИЙ рядок «Лейбл · чипи · + Додати» (без великих зон) ---
             var fsec = document.createElement('div'); fsec.className = 'mx-fsec';
+            // службові кнопки процедур «Додано файли…» (OneBox): і зберігають процес, і перемикають статус
+            function mxProcBtnList(){
+                var res = [];
+                Array.prototype.forEach.call(document.querySelectorAll('a, button, input[type="button"], input[type="submit"], [class*="procedure"]'), function(x){
+                    if(x.className && String(x.className).indexOf('mx-') === 0) return;
+                    var t = (x.value || x.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+                    if(t && t.length < 60 && t.indexOf('додано файли') !== -1){ if(res.indexOf(x) === -1){ res.push(x); } }
+                });
+                return res;
+            }
+            function mxProcClickable(){
+                var bs = mxProcBtnList();
+                for(var i = 0; i < bs.length; i++){ if(/^(A|BUTTON|INPUT)$/.test(bs[i].tagName)) return bs[i]; }
+                return bs[0] ? (bs[0].querySelector ? bs[0].querySelector('a, button, input[type="button"], input[type="submit"]') : null) : null;
+            }
+            function mxSaveOvl(txt){
+                var o = document.getElementById('mxPayOvl');
+                var inH = '<span class="mx-dz-spin"></span>' + txt;
+                if(!o){ o = document.createElement('div'); o.id = 'mxPayOvl'; o.innerHTML = '<div class="mx-povl-in">' + inH + '</div>'; document.body.appendChild(o); }
+                else { var oi = o.querySelector('.mx-povl-in'); if(oi){ oi.innerHTML = inH; } o.style.display = 'flex'; }
+                setTimeout(function(){ if(o){ o.style.display = 'none'; } }, 12000);
+            }
             // якщо на етапі виведено поле «Додаткові файли» — саме воно приймає нові файли,
             // а КТ/Скани стають read-only: інакше тиха дозавантажка повз сповіщення менеджеру
             var hasExtraField = false;
@@ -764,18 +786,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             // OneBox відповідає перезавантаженням — накриваємо шов оверлеєм «Зберігаємо…»
                             if(el.querySelector('.js-uploaded-file')){
                                 setTimeout(function(){
-                                    // зберігаємо файл рідною галочкою; для «Додаткових» ставимо прапорець:
-                                    // після перезавантаження код натисне процедуру «Додано файли…» (перехід статусу)
                                     var acc = el.querySelector('.ob-link-accept');
-                                    if(acc && isExtra){ try{ sessionStorage.setItem('mxProcClick', String(new Date().getTime())); }catch(_){ } }
-                                    if(acc){
-                                        var o = document.getElementById('mxPayOvl');
-                                        var inH = '<span class="mx-dz-spin"></span>Зберігаємо файли…';
-                                        if(!o){ o = document.createElement('div'); o.id = 'mxPayOvl'; o.innerHTML = '<div class="mx-povl-in">' + inH + '</div>'; document.body.appendChild(o); }
-                                        else { var oi = o.querySelector('.mx-povl-in'); if(oi){ oi.innerHTML = inH; } o.style.display = 'flex'; }
-                                        setTimeout(function(){ if(o){ o.style.display = 'none'; } }, 12000);   // стеля, якщо перезавантаження не сталося
-                                        try{ acc.click(); }catch(_){ }
+                                    // для «Додаткових»: кнопка процедури має «Зберегти процес перед перемиканням»,
+                                    // тож ОДИН клік зберігає файл І перемикає статус → сповіщення менеджеру
+                                    var pb = isExtra ? mxProcClickable() : null;
+                                    if(!acc && !pb) return;
+                                    mxSaveOvl('Зберігаємо файли…');
+                                    if(pb){
+                                        try{ pb.click(); return; }catch(_){ }
                                     }
+                                    // запасний шлях: рідна галочка (після перезавантаження спробуємо процедуру)
+                                    if(isExtra){ try{ sessionStorage.setItem('mxProcClick', String(new Date().getTime())); }catch(_){ } }
+                                    if(acc){ try{ acc.click(); }catch(_){ } }
                                 }, 400);
                             }
                         });
@@ -1233,16 +1255,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             // --- процедури OneBox «Додано файли…»: службові кнопки для клієнта не призначені —
             //     ховаємо їх завжди і тиснемо програмно ОДИН раз після дозавантаження (прапорець mxProcClick) ---
             (function(){
-                function procBtns(){
-                    var res = [];
-                    Array.prototype.forEach.call(document.querySelectorAll('a, button, input[type="button"], input[type="submit"], [class*="procedure"]'), function(x){
-                        // не чіпаємо власні елементи інтерфейсу (mx-*), решту сторінки скануємо всю
-                        if(x.className && String(x.className).indexOf('mx-') === 0) return;
-                        var t = (x.value || x.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
-                        if(t && t.length < 60 && t.indexOf('додано файли') !== -1){ if(res.indexOf(x) === -1){ res.push(x); } }
-                    });
-                    return res;
-                }
+                var procBtns = mxProcBtnList;
                 // рідні кнопки OneBox мають CSS із !important — ховаємо теж через !important
                 function hideProc(){
                     procBtns().forEach(function(b){
@@ -1741,8 +1754,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                                     '<div class="mx-stp-txt"><div class="mx-stp-t">Оплата після оцінки</div>' +
                                     '<div class="mx-stp-s">Вносите оплату лише тоді, коли пропозиція Вас влаштовує.</div></div></div>' +
                                 '<div class="mx-stp"><div class="mx-stp-rail"><span class="mx-stp-n">3</span></div>' +
-                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Шаблон у клініці за 48 годин</div>' +
-                                    '<div class="mx-stp-s">Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.</div></div></div>' +
+                                    '<div class="mx-stp-txt"><div class="mx-stp-t">Шаблон відправимо за 48 годин</div>' +
+                                    '<div class="mx-stp-s">Виготовляємо та надсилаємо Новою Поштою за 48 годин з моменту погодження планування.</div></div></div>' +
                                 '<div class="mx-side-foot">' + iCheck + 'Дані пацієнта захищені</div>' +
                             '</div>';
                         grid.appendChild(lcol); grid.appendChild(rcol);
@@ -1900,7 +1913,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var MX_STEPS_DEFAULT = [
                 { t:'Спочатку — оцінка', s:'Заповнюєте заявку, надсилаєте КТ — ми аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>', here:true },
                 { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
-                { t:'Шаблон у клініці за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою одразу після погодження планування.' }
+                { t:'Шаблон відправимо за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою за 48 годин з моменту погодження планування.' }
             ];
             var mxFid = (location.pathname.match(/\/client\/form\/(\d+)/) || [])[1] || '';
             var mxSteps = MX_FORM_STEPS[mxFid] || MX_STEPS_DEFAULT;
