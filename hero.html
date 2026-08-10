@@ -210,6 +210,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-wk-nrow + .mx-wk-nrow{ margin-top:calc(9 * var(--u)); }
 #mxProcGrid .mx-wk-nic{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(20 * var(--u)); height:calc(20 * var(--u)); border-radius:50%; background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-wk-nic svg{ width:calc(11 * var(--u)); height:calc(11 * var(--u)); }
+/* прострочено: янтарний тон — увага без тривоги (червоний тут читався б як помилка клієнта) */
+#mxProcGrid .mx-wk-over .mx-wk-time{ background:#FFFBEB; border-color:#FDE68A; }
+#mxProcGrid .mx-wk-over .mx-wk-clock.mx-wk-soon{ font-size:calc(19 * var(--u)); color:#B45309; }
+#mxProcGrid .mx-wk-sorry{ font-size:calc(13 * var(--u)); font-weight:500; color:#334155; line-height:1.6; margin-bottom:calc(11 * var(--u)); text-wrap:balance; }
+#mxProcGrid .mx-wk-sorry b{ color:#0F172A; font-weight:700; }
 #mxProcGrid .mx-wk-foot{ margin-top:calc(12 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #F1F5F9; font-size:calc(11 * var(--u)); font-weight:500; color:#94A3B8; }
 @media (max-width: 900px){ #mxProcGrid .mx-wk-body{ flex-direction:column; align-items:flex-start; gap:calc(12 * var(--u)); } }
 /* вартість: рядки-квитанція + «Разом» — цифра рішення, найпомітніша у картці */
@@ -1442,8 +1447,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         '<div class="mx-wk-time"><div class="mx-wk-clock">—</div><div class="mx-wk-lbl">залишилось із 48 годин на планування</div></div>' +
                         // замість абзацу — мікро-таймлайн «Далі»: 3 рядки по 3-4 слова, читається за 2 секунди
                         '<div class="mx-wk-next"><div class="mx-wk-nlbl">Далі</div>' +
-                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Лист із прямим посиланням</div>' +
-                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoEye + '</span>Дивитесь планування тут</div>' +
+                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Отримуєте email з плануванням</div>' +
+                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoEye + '</span>Переглядаєте планування тут</div>' +
                             '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoOk + '</span>Погоджуєте або просите правки</div>' +
                         '</div>' +
                     '</div>' +
@@ -1466,9 +1471,22 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         }
                         var left = dl - now;
                         if(left <= 0){
-                            clockEl.textContent = 'Майже готово';
+                            // час вичерпано: чесно вибачаємось і підтверджуємо, що кейс у роботі
+                            if(!wc.__over){
+                                wc.__over = true;
+                                wc.classList.add('mx-wk-over');
+                                var ct = wc.querySelector('.mx-card-t'); if(ct){ ct.textContent = 'Планування майже готове'; }
+                                var nx = wc.querySelector('.mx-wk-next');
+                                if(nx){
+                                    nx.innerHTML = '<div class="mx-wk-sorry">Ваш кейс потребував більше часу, ніж зазвичай — просимо вибачення. ' +
+                                        'Він у роботі просто зараз, планування буде готове до перегляду <b>найближчим часом</b>.</div>' +
+                                        '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Повідомимо одразу, щойно буде готово</div>';
+                                }
+                                var ft = wc.querySelector('.mx-wk-foot'); if(ft){ ft.textContent = 'Питання — напишіть нам у Telegram: @dlmaxilla'; }
+                            }
+                            clockEl.textContent = 'У роботі';
                             clockEl.classList.add('mx-wk-soon');
-                            lblEl.textContent = 'фінішуємо планування — надішлемо найближчим часом';
+                            lblEl.textContent = 'завершуємо планування';
                             return;
                         }
                         // показуємо ЗАЛИШОК РОБОЧОГО часу (без вихідних)
