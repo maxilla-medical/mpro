@@ -186,6 +186,18 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-offer-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-oc-body{ margin-top:calc(12 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); background:#F5F7FF; border-left:3px solid #2c3bff; border-radius:calc(4 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)) calc(4 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.65; color:#1E293B; white-space:pre-wrap; }
 #mxProcGrid .mx-oc-foot{ margin-top:calc(11 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.5; }
+/* картка «Проєкт у роботі»: таймер 48 робочих годин */
+#mxProcGrid .mx-work-card{ border-color:#DDE3FF; box-shadow:0 1px 3px rgba(44,59,255,.07); }
+#mxProcGrid .mx-work-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
+#mxProcGrid .mx-wk-body{ display:flex; align-items:center; gap:calc(20 * var(--u)); margin-top:calc(13 * var(--u)); }
+#mxProcGrid .mx-wk-time{ flex:0 0 auto; text-align:center; padding:calc(12 * var(--u)) calc(18 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(12 * var(--u)); }
+#mxProcGrid .mx-wk-clock{ font-size:calc(28 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.5px; line-height:1; font-variant-numeric:tabular-nums; white-space:nowrap; }
+#mxProcGrid .mx-wk-clock.mx-wk-soon{ font-size:calc(19 * var(--u)); color:#16A34A; }
+#mxProcGrid .mx-wk-lbl{ margin-top:calc(7 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.05em; text-transform:uppercase; max-width:calc(150 * var(--u)); line-height:1.35; }
+#mxProcGrid .mx-wk-note{ flex:1 1 auto; min-width:0; font-size:calc(13 * var(--u)); font-weight:500; color:#334155; line-height:1.6; text-wrap:balance; }
+#mxProcGrid .mx-wk-note b{ color:#0F172A; font-weight:700; }
+#mxProcGrid .mx-wk-foot{ margin-top:calc(12 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #F1F5F9; font-size:calc(11 * var(--u)); font-weight:500; color:#94A3B8; }
+@media (max-width: 900px){ #mxProcGrid .mx-wk-body{ flex-direction:column; align-items:flex-start; gap:calc(12 * var(--u)); } }
 /* вартість: рядки-квитанція + «Разом» — цифра рішення, найпомітніша у картці */
 #mxProcGrid .mx-oc-price{ margin-top:calc(12 * var(--u)); }
 #mxProcGrid .mx-ocp-row{ display:flex; justify-content:space-between; align-items:baseline; gap:calc(14 * var(--u)); padding:calc(8 * var(--u)) 0; }
@@ -637,7 +649,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             // текст під бейджем дублює нижню нотатку «чий хід» — прибираємо дубль
             var topNote = document.querySelector('#mxProcTop .mx-ts-note');
             if(topNote){ topNote.style.display = 'none'; }
-            var phase = m.s <= 2 ? 1 : (m.s === 3 ? 2 : 3);
+            // після оплати «Ви тут» переїжджає на крок 3 (виготовлення), а не лишається на оплаті
+            var isPaid = /оплачено|депозит|створення проекту|погодження проекту|погоджено/i.test(status);
+            var phase = isPaid ? 3 : (m.s <= 2 ? 1 : (m.s === 3 ? 2 : 3));
             var PH = [
                 { t:'Спочатку — оцінка', s:'Аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>' },
                 { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
@@ -904,7 +918,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 ['Виготовляємо шаблон', 'Відправимо Новою Поштою одразу після виготовлення.'],
                 ['Замовлення в дорозі', 'Очікуйте посилку Новою Поштою.']
             ];
-            var hcfg = HERO_ACT[status] || HERO_PASS[m.s - 1] || HERO_PASS[0];
+            // пасивні статуси з власним текстом (не «чий хід», а «що саме зараз робимо»)
+            var HERO_PASS_ST = {
+                'Рахунок оплачено': ['Оплату отримано — вже працюємо', 'Створюємо проєкт віртуального пацієнта, розміщуємо wax-up і плануємо позиції імплантатів.'],
+                'Депозит':          ['Оплату отримано — вже працюємо', 'Створюємо проєкт віртуального пацієнта, розміщуємо wax-up і плануємо позиції імплантатів.'],
+                'Створення проекту':['Створюємо проєкт', 'Проєкт віртуального пацієнта, wax-up і позиції імплантатів — у роботі.']
+            };
+            var hcfg = HERO_ACT[status] || HERO_PASS_ST[status] || HERO_PASS[m.s - 1] || HERO_PASS[0];
             var isAct = !!HERO_ACT[status];
             var icoClock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
             var icoBell  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
@@ -1300,6 +1320,135 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             try{ sessionStorage.removeItem('mxProcClick'); }catch(_){ }   // кнопки нема — файл однаково збережено
                         }
                     }, 500);
+                }
+            })();
+            // ================= ЕТАП «РАХУНОК ОПЛАЧЕНО»: таймер 48 робочих годин =================
+            // Робоче вікно: ПН 09:00 → ПТ 18:00 за Києвом (безперервно). Вихідні — пауза.
+            (function(){
+                if(!/оплачено|депозит/i.test(status)) return;
+                var TZ = 'Europe/Kyiv';
+                function kyiv(d){
+                    var p = {};
+                    try{
+                        new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour12: false,
+                            year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', weekday:'short'
+                        }).formatToParts(d).forEach(function(x){ p[x.type] = x.value; });
+                    }catch(_){ return null; }
+                    var DOW = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
+                    var hh = parseInt(p.hour, 10); if(hh === 24){ hh = 0; }
+                    return { y:+p.year, mo:+p.month, d:+p.day, h:hh, mi:+p.minute, s:+p.second, dow:DOW[p.weekday] };
+                }
+                // instant → зсув київського часу відносно UTC у цей момент
+                function kyivShift(d){
+                    var k = kyiv(d); if(!k) return 0;
+                    return Date.UTC(k.y, k.mo - 1, k.d, k.h, k.mi, k.s) - (d.getTime() - d.getTime() % 1000);
+                }
+                // київський «настінний» час → instant (двопрохідно, щоб врахувати DST)
+                function fromKyiv(y, mo, d, h, mi){
+                    var guess = new Date(Date.UTC(y, mo - 1, d, h, mi, 0) - 2 * 3600000);
+                    for(var i = 0; i < 3; i++){
+                        var sh = kyivShift(guess);
+                        var next = new Date(Date.UTC(y, mo - 1, d, h, mi, 0) - sh);
+                        if(Math.abs(next - guess) < 1000){ return next; }
+                        guess = next;
+                    }
+                    return guess;
+                }
+                var WORK_MS = 48 * 3600000;
+                function inWindow(d){
+                    var k = kyiv(d); if(!k) return false;
+                    if(k.dow === 0 || k.dow === 6) return false;                  // сб/нд
+                    if(k.dow === 1 && k.h < 9) return false;                      // пн до 09:00
+                    if(k.dow === 5 && (k.h > 18 || (k.h === 18 && (k.mi || k.s)))) return false;   // пт після 18:00
+                    return true;
+                }
+                function windowEnd(d){                       // найближча пʼятниця 18:00 після d
+                    var k = kyiv(d);
+                    return fromKyiv(k.y, k.mo, k.d + ((5 - k.dow) + 7) % 7, 18, 0);
+                }
+                function windowStart(d){                     // найближчий понеділок 09:00 (включно з поточним)
+                    var k = kyiv(d);
+                    var add = (1 - k.dow + 7) % 7;
+                    var st = fromKyiv(k.y, k.mo, k.d + add, 9, 0);
+                    if(st <= d){ st = fromKyiv(k.y, k.mo, k.d + add + 7, 9, 0); }
+                    return st;
+                }
+                // дедлайн = старт + 48 год робочого часу (вихідні пропускаємо)
+                function deadlineFrom(start){
+                    var cur = new Date(start.getTime()), left = WORK_MS, guard = 0;
+                    while(left > 0 && guard++ < 40){
+                        if(!inWindow(cur)){ cur = windowStart(cur); continue; }
+                        var end = windowEnd(cur);
+                        var seg = end - cur;
+                        if(seg >= left){ return new Date(cur.getTime() + left); }
+                        left -= seg; cur = new Date(end.getTime() + 1000);
+                    }
+                    return new Date(cur.getTime() + left);
+                }
+                // старт: поле «Дата оплати» (київський настінний час); якщо його немає — не показуємо таймер
+                var startDate = null, paidRaw = '';
+                Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(e){
+                    var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+                    if(paidRaw || c.indexOf('оплат') === -1 || c.indexOf('дата') === -1) return;
+                    var dv = e.querySelector('.data-view');
+                    var v = dv ? (dv.textContent || '').replace(/\s+/g, ' ').trim() : '';
+                    if(v){ paidRaw = v; e.classList.add('mx-rc-empty'); e.style.display = 'none'; }   // дату показує таймер
+                });
+                if(paidRaw){
+                    var mm = paidRaw.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})/)
+                          || paidRaw.match(/(\d{2})\.(\d{2})\.(\d{4})[ ,]+(\d{1,2}):(\d{2})/);
+                    if(mm){
+                        startDate = mm[1].length === 4
+                            ? fromKyiv(+mm[1], +mm[2], +mm[3], +mm[4], +mm[5])
+                            : fromKyiv(+mm[3], +mm[2], +mm[1], +mm[4], +mm[5]);
+                    }
+                }
+                var icoGear = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.36.4.66.73.86.3.19.65.29 1 .29H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+                var wc = document.createElement('div'); wc.className = 'mx-card mx-work-card';
+                wc.innerHTML =
+                    '<div class="mx-card-h"><span class="mx-card-ico">' + icoGear + '</span><span class="mx-card-t">Проєкт у роботі</span></div>' +
+                    '<div class="mx-wk-body">' +
+                        '<div class="mx-wk-time"><div class="mx-wk-clock">—</div><div class="mx-wk-lbl">залишилось із 48 робочих годин</div></div>' +
+                        '<div class="mx-wk-note">Створюємо проєкт віртуального пацієнта, розміщуємо wax-up і позиціонуємо імплантати. ' +
+                        'Нам потрібно до <b>48 годин у робочий час</b> — далі надішлемо планування на погодження.</div>' +
+                    '</div>' +
+                    '<div class="mx-wk-foot">Робочий час: пн 09:00 — пт 18:00 (Київ). Вихідні на відлік не впливають.</div>';
+                lcol.insertBefore(wc, hero.nextSibling);
+                var clockEl = wc.querySelector('.mx-wk-clock'), lblEl = wc.querySelector('.mx-wk-lbl');
+                if(!startDate){
+                    // без дати оплати таймер не вигадуємо — показуємо чесний статичний блок
+                    wc.querySelector('.mx-wk-time').style.display = 'none';
+                } else {
+                    var dl = deadlineFrom(startDate);
+                    var pend = !inWindow(startDate) ? windowStart(startDate) : null;   // старт у неробочий час
+                    function pad(n){ return (n < 10 ? '0' : '') + n; }
+                    function tick(){
+                        var now = new Date();
+                        if(pend && now < pend){
+                            clockEl.textContent = '48:00:00';
+                            lblEl.innerHTML = 'відлік стартує в понеділок о 09:00';
+                            return;
+                        }
+                        var left = dl - now;
+                        if(left <= 0){
+                            clockEl.textContent = 'Майже готово';
+                            clockEl.classList.add('mx-wk-soon');
+                            lblEl.textContent = 'фінішуємо планування — зв’яжемось найближчим часом';
+                            return;
+                        }
+                        // показуємо ЗАЛИШОК РОБОЧОГО часу (без вихідних)
+                        var rem = 0, cur = new Date(now.getTime()), guard = 0;
+                        while(cur < dl && guard++ < 40){
+                            if(!inWindow(cur)){ cur = windowStart(cur); continue; }
+                            var e2 = windowEnd(cur);
+                            if(e2 >= dl){ rem += dl - cur; break; }
+                            rem += e2 - cur; cur = new Date(e2.getTime() + 1000);
+                        }
+                        var h = Math.floor(rem / 3600000), mi = Math.floor(rem % 3600000 / 60000), s = Math.floor(rem % 60000 / 1000);
+                        clockEl.textContent = pad(h) + ':' + pad(mi) + ':' + pad(s);
+                        lblEl.textContent = 'залишилось із 48 робочих годин';
+                    }
+                    tick(); setInterval(tick, 1000);
                 }
             })();
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
