@@ -740,9 +740,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             // OneBox відповідає перезавантаженням — накриваємо шов оверлеєм «Зберігаємо…»
                             if(el.querySelector('.js-uploaded-file')){
                                 setTimeout(function(){
-                                    // зберігаємо файл рідною галочкою — це «редагування процесу»,
-                                    // статуси перемикає ВИКЛЮЧНО автоматика OneBox на етапах
+                                    // зберігаємо файл рідною галочкою; для «Додаткових» ставимо прапорець:
+                                    // після перезавантаження код натисне процедуру «Додано файли…» (перехід статусу)
                                     var acc = el.querySelector('.ob-link-accept');
+                                    if(acc && isExtra){ try{ sessionStorage.setItem('mxProcClick', String(new Date().getTime())); }catch(_){ } }
                                     if(acc){
                                         var o = document.getElementById('mxPayOvl');
                                         var inH = '<span class="mx-dz-spin"></span>Зберігаємо файли…';
@@ -1196,6 +1197,49 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     }
                 }
             }
+            // --- процедури OneBox «Додано файли…»: службові кнопки для клієнта не призначені —
+            //     ховаємо їх завжди і тиснемо програмно ОДИН раз після дозавантаження (прапорець mxProcClick) ---
+            (function(){
+                function procBtns(){
+                    var res = [];
+                    Array.prototype.forEach.call(document.querySelectorAll('a, button, input[type="button"], input[type="submit"], [class*="procedure"]'), function(x){
+                        // не чіпаємо власні елементи інтерфейсу (mx-*), решту сторінки скануємо всю
+                        if(x.className && String(x.className).indexOf('mx-') === 0) return;
+                        var t = (x.value || x.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+                        if(t && t.length < 60 && t.indexOf('додано файли') !== -1){ if(res.indexOf(x) === -1){ res.push(x); } }
+                    });
+                    return res;
+                }
+                function hideProc(){ procBtns().forEach(function(b){ b.style.display = 'none'; }); }
+                hideProc();
+                var hpN = 0;
+                var hpT = setInterval(function(){ hpN++; hideProc(); if(hpN > 20){ clearInterval(hpT); } }, 500);
+                var flag = 0; try{ flag = parseInt(sessionStorage.getItem('mxProcClick') || '0', 10); }catch(_){ }
+                if(flag && (new Date().getTime() - flag) < 180000){
+                    var tries = 0;
+                    var t = setInterval(function(){
+                        tries++;
+                        var bs = procBtns();
+                        if(bs.length){
+                            clearInterval(t);
+                            try{ sessionStorage.removeItem('mxProcClick'); }catch(_){ }
+                            var o = document.getElementById('mxPayOvl');
+                            var inH = '<span class="mx-dz-spin"></span>Оновлюємо замовлення…';
+                            if(!o){ o = document.createElement('div'); o.id = 'mxPayOvl'; o.innerHTML = '<div class="mx-povl-in">' + inH + '</div>'; document.body.appendChild(o); }
+                            else { var oi = o.querySelector('.mx-povl-in'); if(oi){ oi.innerHTML = inH; } o.style.display = 'flex'; }
+                            setTimeout(function(){ if(o){ o.style.display = 'none'; } }, 12000);
+                            // тиснемо саме КЛІКАБЕЛЬНИЙ елемент, а не контейнер процедур
+                            var bt = null;
+                            for(var bi = 0; bi < bs.length; bi++){ if(/^(A|BUTTON|INPUT)$/.test(bs[bi].tagName)){ bt = bs[bi]; break; } }
+                            if(!bt && bs[0]){ bt = bs[0].querySelector ? bs[0].querySelector('a, button, input[type="button"], input[type="submit"]') : null; }
+                            if(bt){ try{ bt.click(); }catch(_){ } }
+                        } else if(tries > 16){
+                            clearInterval(t);
+                            try{ sessionStorage.removeItem('mxProcClick'); }catch(_){ }   // кнопки нема — файл однаково збережено
+                        }
+                    }, 500);
+                }
+            })();
             // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
         }
         var ptries = 0;
