@@ -199,8 +199,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-collapsed .mx-card-body{ display:none; }
 #mxProcGrid .mx-card-body{ animation:mxUp .22s ease both; }
 /* ЧИПИ вибору досліджень (мультисписки OneBox) */
-#mxProcGrid .os-block-form .mx-chips{ display:flex !important; flex-wrap:wrap; gap:calc(8 * var(--u)); margin-top:calc(4 * var(--u)); order:4; }
-#mxProcGrid .os-block-form .mx-chip{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(9 * var(--u)) calc(15 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(13 * var(--u)); font-weight:600; color:#334155; cursor:pointer; transition:border-color .14s ease, background .14s ease, color .14s ease; }
+#mxProcGrid .os-block-form .mx-chips{ display:grid !important; grid-template-columns:repeat(auto-fill, minmax(calc(215 * var(--u)), 1fr)); gap:calc(8 * var(--u)); margin-top:calc(4 * var(--u)); order:4; }
+#mxProcGrid .os-block-form .mx-chips .mx-chip-wide{ grid-column:1 / -1; }
+#mxProcGrid .os-block-form .mx-chip{ display:flex; align-items:center; text-align:left; white-space:normal; line-height:1.3; min-height:calc(42 * var(--u)); box-sizing:border-box; gap:calc(7 * var(--u)); padding:calc(9 * var(--u)) calc(15 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(13 * var(--u)); font-weight:600; color:#334155; cursor:pointer; transition:border-color .14s ease, background .14s ease, color .14s ease; }
 #mxProcGrid .os-block-form .mx-chip::before{ content:''; width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; border:1.5px solid #CBD5E1; border-radius:calc(5 * var(--u)); background:#fff; transition:all .14s ease; }
 #mxProcGrid .os-block-form .mx-chip:hover{ border-color:#C7D2FE; background:#F8FAFF; }
 #mxProcGrid .os-block-form .mx-chip.mx-chip-on{ border-color:#2c3bff; background:#F5F7FF; color:#0F172A; }
@@ -220,7 +221,45 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow label.mx-rad-on{ border-color:#2c3bff; background:#F5F7FF; color:#0F172A; }
 #mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow input[type="radio"]{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); margin:0; accent-color:#2c3bff; }
 #mxProcGrid .os-block-form .element.mx-dep-off{ opacity:.45; pointer-events:none; }
-#mxProcGrid .os-block-form .element.mx-dep-off .description{ display:block !important; }
+/* ── ФОРМА ЗАПИСУ: блоки, сітка чипів, підсумок ────────────────────────────── */
+/* рідний прогрес-бар OneBox («Заполнено полей: N/M») — рос. мова + рахує приховані поля */
+.ob-form-progressbar, .js-proggressbar{ display:none !important; }
+/* блок-секція форми */
+#mxProcGrid.mx-form-study .mx-fgroup{ margin:0 0 calc(28 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-fgroup:last-of-type{ margin-bottom:0; }
+#mxProcGrid.mx-form-study .mx-fg-h{ display:flex; align-items:center; gap:calc(10 * var(--u)); margin:0 0 calc(16 * var(--u)); padding-bottom:calc(11 * var(--u)); border-bottom:1px solid #EEF1F6; }
+#mxProcGrid.mx-form-study .mx-fg-n{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:calc(22 * var(--u)); height:calc(22 * var(--u)); border-radius:calc(999 * var(--u)); background:#EEF2FF; color:#2c3bff; font-size:calc(12 * var(--u)); font-weight:800; }
+#mxProcGrid.mx-form-study .mx-fg-t{ font-size:calc(15.5 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.01em; }
+#mxProcGrid.mx-form-study .mx-fg-s{ margin-left:auto; display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(12 * var(--u)); font-weight:600; color:#94A3B8; white-space:nowrap; }
+#mxProcGrid.mx-form-study .mx-fg-chev{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); transition:transform .18s ease; }
+#mxProcGrid.mx-form-study .mx-fgroup-more .mx-fg-h{ cursor:pointer; user-select:none; }
+#mxProcGrid.mx-form-study .mx-fgroup-more .mx-fg-h:hover .mx-fg-s{ color:#64748B; }
+#mxProcGrid.mx-form-study .mx-fgroup-more.mx-fg-closed .mx-fg-body{ display:none; }
+#mxProcGrid.mx-form-study .mx-fgroup-more.mx-fg-closed .mx-fg-chev{ transform:rotate(-90deg); }
+/* усередині блоку «що призначаєте» назви груп — мікро-лейбли, а не «поля» */
+#mxProcGrid.mx-form-study .mx-fgroup-study > .mx-fg-body > .element{ margin-bottom:calc(16 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-fgroup-study > .mx-fg-body > .element > .title{ font-size:calc(11.5 * var(--u)) !important; font-weight:700 !important; letter-spacing:.06em; text-transform:uppercase; color:#94A3B8 !important; margin-bottom:calc(3 * var(--u)); }
+/* номери полів і пілюлі «Опційно» у цій формі не потрібні: нумеруються блоки, обовʼязкове й так видно */
+#mxProcGrid.mx-form-study .element .mx-fnum{ display:none !important; }
+#mxProcGrid.mx-form-study .element .mx-req-badge.mx-req-opt{ display:none !important; }
+/* підказка під полем (замість зникаючого плейсхолдера) */
+#mxProcGrid.mx-form-study .element .mx-fhint{ order:5; margin-top:calc(6 * var(--u)); font-size:calc(12 * var(--u)); line-height:1.45; color:#94A3B8; }
+/* мітка частотного варіанта */
+#mxProcGrid .os-block-form .mx-chip .mx-chip-hot{ margin-left:calc(2 * var(--u)); flex:0 0 auto; font-size:calc(9.5 * var(--u)); font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#2c3bff; background:#EEF2FF; border-radius:calc(999 * var(--u)); padding:calc(2 * var(--u)) calc(7 * var(--u)); }
+/* CTA — акцент бренду + живий рядок стану */
+#mxProcGrid.mx-form-study .mx-col-form > .mx-next-proxy{ height:calc(52 * var(--u)); font-size:calc(15 * var(--u)); font-weight:700; background:#2c3bff; box-shadow:0 calc(6 * var(--u)) calc(18 * var(--u)) rgba(44,59,255,0.22); }
+#mxProcGrid.mx-form-study .mx-col-form > .mx-next-proxy:hover{ background:#1F2CE0; }
+#mxProcGrid .mx-cta-status{ margin-top:calc(9 * var(--u)); text-align:center; font-family:'Manrope',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:600; color:#94A3B8; }
+#mxProcGrid .mx-cta-status.mx-cs-ok{ color:#16A34A; }
+/* панель праворуч: липка, по висоті контенту — жодних чорних полотен */
+#mxProcGrid.mx-form-study .mx-col-side{ position:sticky; top:calc(18 * var(--u)); align-self:flex-start; }
+#mxProcGrid.mx-form-study .mx-col-side .mx-side{ flex:0 0 auto; }
+.mx-side .mx-sum-h{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8A90A6; margin:0 0 calc(12 * var(--u)); }
+.mx-side .mx-sum-row{ display:flex; align-items:flex-start; gap:calc(9 * var(--u)); padding:calc(9 * var(--u)) 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:calc(12.5 * var(--u)); line-height:1.4; color:#E7E9F2; font-weight:600; }
+.mx-side .mx-sum-row:last-of-type{ border-bottom:0; }
+.mx-side .mx-sum-row svg{ flex:0 0 auto; width:calc(14 * var(--u)); height:calc(14 * var(--u)); color:#4B8BFF; margin-top:calc(2 * var(--u)); }
+.mx-side .mx-sum-sub{ display:block; font-size:calc(11.5 * var(--u)); font-weight:500; color:#8A90A6; margin-top:calc(2 * var(--u)); }
+.mx-side .mx-sum-note{ margin-top:calc(14 * var(--u)); padding-top:calc(13 * var(--u)); border-top:1px solid rgba(255,255,255,0.07); font-size:calc(12 * var(--u)); line-height:1.45; color:#9AA0B4; }
 /* підказка про готовий комплект */
 #mxProcGrid .os-block-form .mx-bundle-hint{ display:none; order:5; align-items:center; flex-wrap:wrap; gap:calc(11 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); }
 #mxProcGrid .os-block-form .mx-bh-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#334155; }
@@ -2599,6 +2638,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var nm = hh ? (hh.textContent || '').replace(/\s+/g, ' ').trim() : '';
                     if(nm && h1El && h1El.textContent !== nm){ h1El.textContent = nm; }
                     var dHtml = mxDescScan(true);
+                    if(subEl && subEl.getAttribute('data-mx-lock')){ if(tries > 25) clearInterval(t); return; }
                     if(dHtml && subEl){
                         if(subEl.innerHTML !== dHtml){ subEl.innerHTML = dHtml; }
                         clearInterval(t);
@@ -2676,6 +2716,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 if(!multis.length) return null;
                 var api = { multis: multis, deps: [], sync: function(){} };
                 function norm(s){ return String(s || '').toLowerCase().replace(/["'’ʼ`]/g, '').replace(/\s+/g, ' ').trim(); }
+                // варіанти, що дають більшість направлень — показуємо міткою «Найчастіше»
+                var MX_HOT = ['кт двох щелеп'];
                 // 1) чипи замість мультисписку
                 multis.forEach(function(m){
                     // OneBox загортає мультисписок у .labels-list і піднімає над ним Select2/Chosen —
@@ -2688,8 +2730,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     Array.prototype.forEach.call(m.sel.options, function(o){
                         if(!o.value && !o.textContent.trim()) return;
                         var b = document.createElement('button'); b.type = 'button';
-                        b.className = 'mx-chip' + (o.selected ? ' mx-chip-on' : '');
-                        b.textContent = o.textContent.trim();
+                        var oTxt = o.textContent.trim();
+                        b.className = 'mx-chip' + (o.selected ? ' mx-chip-on' : '') + (oTxt.length > 40 ? ' mx-chip-wide' : '');
+                        b.textContent = oTxt;
+                        if(MX_HOT.indexOf(norm(oTxt)) !== -1){    // частотний варіант — помітно швидший для ока
+                            var hot = document.createElement('span'); hot.className = 'mx-chip-hot'; hot.textContent = 'Найчастіше';
+                            b.appendChild(hot);
+                        }
                         b.addEventListener('click', function(){
                             o.selected = !o.selected;
                             b.classList.toggle('mx-chip-on', o.selected);
@@ -2720,7 +2767,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     Array.prototype.forEach.call(cbs, function(c){
                         var l = c.closest('label') || (c.id ? card.querySelector('label[for="' + c.id + '"]') : null);
                         var txt = l ? l.textContent.replace(/\s+/g, ' ').trim() : '';
-                        if(!txt || norm(txt) === tn){ txt = 'Так, потрібен'; }   // не дублюємо заголовок поля
+                        // OneBox інколи кладе label із підписом ВСЕРЕДИНУ .title — тоді ховати label не можна,
+                        // бо разом із ним зникне назва поля. Ховаємо лише сам чекбокс.
+                        var inTitle = !!(l && l.closest('.title'));
+                        if(!txt || norm(txt) === tn || inTitle){ txt = 'Так, потрібен'; }
                         var b = document.createElement('button'); b.type = 'button';
                         b.className = 'mx-chip' + (c.checked ? ' mx-chip-on' : '');
                         b.textContent = txt;
@@ -2730,10 +2780,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             try{ c.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
                             api.sync();
                         });
-                        if(l){ l.style.setProperty('display', 'none', 'important'); }
+                        if(l && !inTitle){ l.style.setProperty('display', 'none', 'important'); }
                         c.style.setProperty('display', 'none', 'important');
-                        var cw = c.closest('.labels-list');
-                        if(cw && cw !== el && cw.contains(c) && !cw.querySelector('.mx-chips')){ cw.style.setProperty('display', 'none', 'important'); }
+                        if(!inTitle){
+                            var cw = c.closest('.labels-list');
+                            if(cw && cw !== el && cw.contains(c) && !cw.querySelector('.mx-chips')){ cw.style.setProperty('display', 'none', 'important'); }
+                        }
                         box.appendChild(b);
                         el.__cbchips.push({ c: c, b: b });
                     });
@@ -2866,11 +2918,36 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     });
                     setBundleHint();
                 };
-                api.anyStudy = function(){
-                    var any = false;
-                    multis.forEach(function(m){ if(norm(m.name).indexOf('додатков') !== -1) return; if(anySel(m)) any = true; });
-                    return any;
+                // текстові поля-дослідження (сегменти) — це теж призначення, а не «деталі»:
+                // лікар може направити тільки на сегмент, і форма мусить це пропускати
+                var segEls = [];
+                Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
+                    if(norm(ttlText(el)).indexOf('сегмент') === -1) return;
+                    var f = el.querySelector('input[type="text"], textarea');
+                    if(f){ segEls.push({ el: el, f: f, name: ttlText(el) }); f.addEventListener('input', function(){ api.sync(); }); }
+                });
+                api.segEls = segEls;
+                // перелік обраного — для підсумку в правій панелі
+                api.selected = function(){
+                    var out = [];
+                    multis.forEach(function(m){
+                        var extra = norm(m.name).indexOf('додатков') !== -1;
+                        m.opts.forEach(function(x){ if(x.o.selected){ out.push({ n: x.o.textContent.trim(), extra: extra }); } });
+                    });
+                    segEls.forEach(function(sg){
+                        var v = (sg.f.value || '').trim();
+                        if(v){ out.push({ n: sg.name, sub: v }); }
+                    });
+                    api.deps.forEach(function(d){
+                        if(d.kind !== 'scan' || !d.el.__cbchips) return;
+                        d.el.__cbchips.forEach(function(z){ if(z.c.checked){ out.push({ n: ttlText(d.el), extra: true }); } });
+                    });
+                    return out;
                 };
+                api.studyCount = function(){
+                    return api.selected().filter(function(x){ return !x.extra; }).length;
+                };
+                api.anyStudy = function(){ return api.studyCount() > 0; };
                 api.rotMissing = function(){
                     if(!api.rotEl || !api.rotEl.classList.contains('mx-dep-on')) return false;
                     var any = false;
@@ -2896,24 +2973,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     d.paint = paint;
                     paint();
                 });
+                api.ttlText = ttlText;
                 api.firstStudyEl = multis[0] ? multis[0].el : null;
                 api.sync();
                 api.deps.forEach(function(d){ if(d.paint) d.paint(); });
                 return api;
             })();
-
-            // перенумерація: залежні підполя (прикус, положення рота) власних номерів не мають,
-            // тож нумерація верхніх полів має лишитися суцільною 1…N
-            if(mxStudy){
-                var rn = 0;
-                Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
-                    var b = el.querySelector(':scope > .title > .mx-fnum');
-                    if(!b) return;
-                    if(el.classList.contains('mx-dep') || el.classList.contains('mx-dep-sub')) return;
-                    rn = rn + 1;
-                    if(b.textContent !== String(rn)){ b.textContent = rn; }
-                });
-            }
 
             if(sb && !document.getElementById('mxNextProxy')){
                 sb.classList.add('mx-realsubmit');
@@ -2954,6 +3019,120 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     if(el2 && el2.classList.contains('mx-req-miss') && (ev.target.value || '').trim()){ el2.classList.remove('mx-req-miss'); }
                 }, true);
                 lcol.appendChild(proxy);
+            }
+
+            // ================= ФОРМА ЗАПИСУ: три блоки, підказки, живий підсумок =================
+            // 13 пронумерованих полів читаються як анкета на 13 пунктів. Насправді дій три:
+            // хто пацієнт → що призначаємо → деталі (за бажанням). Складаємо форму саме так.
+            if(mxStudy){
+                grid.classList.add('mx-form-study');
+                var T = mxStudy.ttlText;
+                function nrm(x){ return String(x || '').toLowerCase().replace(/["'’ʼ`]/g, '').replace(/\s+/g, ' ').trim(); }
+                function esc2(x){ return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+                // ---- 1. три блоки замість плаского списку полів
+                var formEl = card.querySelector('form') || card;
+                var rows = Array.prototype.filter.call(formEl.children, function(n){ return n.classList && n.classList.contains('element'); });
+                var firstMulti = -1, extraMulti = -1, lastMulti = -1;
+                rows.forEach(function(el, i){
+                    if(!el.querySelector('select[multiple]')) return;
+                    if(firstMulti < 0) firstMulti = i;
+                    lastMulti = i;
+                    if(extraMulti < 0 && nrm(T(el)).indexOf('додатков') !== -1) extraMulti = i;
+                });
+                if(firstMulti < 0) firstMulti = 0;
+                var cut = extraMulti >= 0 ? extraMulti : (lastMulti + 1);
+                var chev = '<svg class="mx-fg-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+                function mkGroup(n, t, sub, els, cls){
+                    if(!els.length) return null;
+                    var g = document.createElement('div'); g.className = 'mx-fgroup ' + (cls || '');
+                    g.innerHTML = '<div class="mx-fg-h"><span class="mx-fg-n">' + n + '</span><span class="mx-fg-t">' + t + '</span>'
+                        + (sub ? '<span class="mx-fg-s">' + sub + '</span>' : '') + '</div><div class="mx-fg-body"></div>';
+                    var body = g.querySelector('.mx-fg-body');
+                    els.forEach(function(e){ body.appendChild(e); });
+                    if(sb && sb.parentNode === formEl){ formEl.insertBefore(g, sb); } else { formEl.appendChild(g); }
+                    return g;
+                }
+                mkGroup(1, 'Пацієнт', '', rows.slice(0, firstMulti), 'mx-fgroup-pat');
+                mkGroup(2, 'Що призначаєте', 'одне або кілька', rows.slice(firstMulti, cut), 'mx-fgroup-study');
+                var gMore = mkGroup(3, 'Деталі', 'необовʼязково' + chev, rows.slice(cut), 'mx-fgroup-more mx-fg-closed');
+                if(gMore){
+                    var gh = gMore.querySelector('.mx-fg-h');
+                    gh.addEventListener('click', function(){ gMore.classList.toggle('mx-fg-closed'); if(window.__mxAlignFn) window.__mxAlignFn(); });
+                }
+
+                // ---- 2. інструкції під полем: плейсхолдер зникає рівно тоді, коли підказка потрібна
+                Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
+                    if(el.querySelector('.mx-fhint')) return;
+                    var d = el.querySelector('.description');
+                    var dt = d ? d.textContent.replace(/\s+/g, ' ').trim() : '';
+                    if(!dt || dt.indexOf('heading_filed:') === 0) return;
+                    var f = el.querySelector('input[type="text"], input[type="tel"], input[type="email"], textarea');
+                    var instr = /[—·]/.test(dt);
+                    if(f && !instr) return;                       // опис уже працює плейсхолдером
+                    if(f && instr){
+                        var parts = dt.split('—');
+                        var shortPh = parts[0].replace(/\s+/g, ' ').trim();
+                        if(shortPh && parts.length > 1){
+                            f.setAttribute('placeholder', shortPh);
+                            dt = parts.slice(1).join('—').replace(/\s+/g, ' ').trim() || dt;   // у підказці — те, чого немає в плейсхолдері
+                        }
+                    }
+                    var h = document.createElement('div'); h.className = 'mx-fhint'; h.textContent = dt;
+                    el.appendChild(h);
+                });
+
+                // ---- 3. шапка: у цієї форми немає «кроку 2», не обіцяємо його
+                var badgeEl = lcol.querySelector('.mx-fill-badge');
+                if(badgeEl) badgeEl.textContent = 'Заявка на запис';
+                var dotsEl = lcol.querySelector('.mx-fill-dots'); if(dotsEl) dotsEl.style.display = 'none';
+                var nameEl = lcol.querySelector('.mx-fill-name'); if(nameEl) nameEl.style.display = 'none';
+                var subEl2 = lcol.querySelector('.mx-fh-sub');
+                if(subEl2){
+                    subEl2.textContent = 'Зателефонуємо пацієнту протягом робочого дня і запишемо на зручний час.';
+                    subEl2.setAttribute('data-mx-lock', '1');
+                }
+
+                // ---- 4. CTA: акцентна кнопка з дією, під нею — живий стан
+                var proxyEl = document.getElementById('mxNextProxy');
+                if(proxyEl) proxyEl.textContent = 'Записати пацієнта';
+                var statusEl = document.createElement('div'); statusEl.className = 'mx-cta-status';
+                if(proxyEl && proxyEl.parentNode) proxyEl.parentNode.insertBefore(statusEl, proxyEl.nextSibling);
+
+                // ---- 5. права панель: поки нічого не обрано — як це працює, далі — підсумок замовлення
+                var sideEl2 = rcol.querySelector('.mx-side');
+                var stepsWrap = document.createElement('div'); stepsWrap.className = 'mx-side-steps';
+                Array.prototype.slice.call(sideEl2.children).forEach(function(n){
+                    if(n.classList && n.classList.contains('mx-side-foot')) return;
+                    stepsWrap.appendChild(n);
+                });
+                sideEl2.insertBefore(stepsWrap, sideEl2.firstChild);
+                var sumWrap = document.createElement('div'); sumWrap.className = 'mx-side-sum';
+                sumWrap.style.display = 'none';
+                sideEl2.insertBefore(sumWrap, stepsWrap.nextSibling);
+                var tickSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                function renderSum(){
+                    var list = mxStudy.selected();
+                    var n = mxStudy.studyCount();
+                    if(!list.length){
+                        sumWrap.style.display = 'none'; stepsWrap.style.display = '';
+                    } else {
+                        stepsWrap.style.display = 'none'; sumWrap.style.display = '';
+                        var h = '<div class="mx-sum-h">Ваше замовлення</div>';
+                        list.forEach(function(it){
+                            h += '<div class="mx-sum-row">' + tickSvg + '<span>' + esc2(it.n)
+                               + (it.sub ? '<span class="mx-sum-sub">' + esc2(it.sub) + '</span>' : '') + '</span></div>';
+                        });
+                        h += '<div class="mx-sum-note">Зателефонуємо пацієнту протягом робочого дня і запишемо на зручний час.</div>';
+                        if(sumWrap.innerHTML !== h) sumWrap.innerHTML = h;
+                    }
+                    statusEl.textContent = n ? ('Обрано досліджень: ' + n) : 'Оберіть хоча б одне дослідження';
+                    statusEl.classList.toggle('mx-cs-ok', n > 0);
+                    if(window.__mxAlignFn) window.__mxAlignFn();
+                }
+                var baseSync = mxStudy.sync;
+                mxStudy.sync = function(){ baseSync(); renderSum(); };
+                mxStudy.sync();
             }
 
             // вирівнюємо панель (верх по картці, низи зводить flex)
