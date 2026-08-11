@@ -901,6 +901,45 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 #mxProcGrid .mx-filefield.mx-multi .mx-dz-sub::after{ content:' · можна кілька файлів'; }
 #mxProcGrid .mx-filefield.mx-multi:not(.mx-req-field) .mx-dz-sub::after{ content:' · можна кілька файлів · або пізніше'; }
 #mxProcGrid .mx-filefield:not(.mx-multi):not(.mx-req-field) .mx-dz-sub::after{ content:' · можна пізніше'; }
+/* ── ФОРМА 8, КЛАСИКА v3: дев'ять блоків-карток (мова форми хірургічних шаблонів) ── */
+#mxProcGrid.mx-form-study .mx-c9{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(14 * var(--u)); padding:calc(18 * var(--u)) calc(18 * var(--u)) calc(20 * var(--u)); margin:0 0 calc(14 * var(--u)); box-shadow:0 1px 2px rgba(15,23,42,0.03); }
+#mxProcGrid.mx-form-study .mx-c9-h{ font-size:calc(15.5 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#0F172A; margin:0 0 calc(14 * var(--u)); font-family:'Manrope',sans-serif; }
+/* назви полів усередині карток дублюють заголовок картки — ховаємо (лише прямі діти тіла:
+   ящик «Положення рота» всередині чипів лишається з власним підписом) */
+#mxProcGrid.mx-form-study .mx-c9 .mx-c9-b > .element > .title{ display:none !important; }
+/* пацієнт і нерозпізнані поля: жирна назва + пілюля, як у формі 6 */
+#mxProcGrid.mx-form-study .mx-c9-pat .mx-c9-b > .element > .title,
+#mxProcGrid.mx-form-study .mx-c9-rest .mx-c9-b > .element > .title{ display:flex !important; align-items:center; gap:calc(8 * var(--u)); font-size:calc(13.5 * var(--u)) !important; font-weight:700 !important; letter-spacing:0 !important; text-transform:none !important; color:#0F172A !important; margin-bottom:calc(8 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9-pat .mx-c9-b{ display:grid; grid-template-columns:1fr 1fr; gap:calc(14 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9 .mx-c9-b > .element{ margin:0 0 calc(10 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9 .mx-c9-b > .element:last-child{ margin-bottom:0; }
+/* сітка чипів у картці: два стовпці; рядки з однією позицією — на всю ширину */
+#mxProcGrid.mx-form-study .mx-c9 .mx-chips{ grid-template-columns:1fr 1fr; margin-top:0; }
+#mxProcGrid.mx-form-study .mx-c9 .mx-cell-full{ grid-column:1 / -1; }
+/* «Найчастіше»: більші картки-кнопки у тій самій сітці рядків */
+#mxProcGrid.mx-form-study .mx-favgrid{ display:grid; grid-template-columns:1fr 1fr; gap:calc(10 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc-full{ grid-column:1 / -1; }
+/* сегменти: чип на всю ширину, поле «які зуби» під ним */
+#mxProcGrid.mx-form-study .mx-c9 .element.mx-seg .mx-chips{ grid-template-columns:1fr; }
+/* заблокована послуга: видно, але недоступно, поки не обрано відповідне дослідження */
+#mxProcGrid.mx-form-study .mx-cell-lock{ opacity:.45; pointer-events:none; }
+/* ящик «Положення рота» стає одразу під ОБРАНИМ суглобом (легасі order:6 тягнув його в кінець) */
+#mxProcGrid.mx-form-study .mx-c9 .mx-chips > .element.mx-dep{ order:0; }
+/* підказка сегмента («напр., 14–16») — лише коли сегмент обрано і поле зубів видно */
+#mxProcGrid.mx-form-study .element.mx-seg:not(.mx-seg-on) .mx-fhint{ display:none; }
+/* коментар — простір для тексту */
+#mxProcGrid.mx-form-study .mx-c9-cmt textarea{ min-height:calc(96 * var(--u)) !important; resize:vertical; }
+/* гейт підсвічує цілу картку */
+#mxProcGrid.mx-form-study .mx-c9.mx-req-miss{ border-color:#F87171; box-shadow:0 0 0 3px rgba(220,38,38,0.08); animation:mxshake .45s ease; }
+/* прихована картка (немає жодної живої опції) */
+#mxProcGrid.mx-form-study .mx-c9.mx-field-off{ display:none !important; }
+/* CTA «Надіслати →» */
+#mxProcGrid .mx-col-form > .mx-next-proxy .mx-np-arr{ margin-left:calc(6 * var(--u)); }
+@media (max-width: 900px){
+  #mxProcGrid.mx-form-study .mx-c9-pat .mx-c9-b{ grid-template-columns:1fr; }
+  #mxProcGrid.mx-form-study .mx-c9 .mx-chips{ grid-template-columns:1fr; }
+  #mxProcGrid.mx-form-study .mx-favgrid{ grid-template-columns:1fr; }
+}
 </style>
 <div id="mxHero" style="
     font-family:'Manrope',sans-serif; width:100%; box-sizing:border-box;
@@ -2847,7 +2886,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 ],
                 '8': [   // Запис пацієнта на дослідження
                     { t:'Надсилаєте заявку', s:'Телефонуємо пацієнту і записуємо на зручний день та час.', here:true },
-                    { t:'Стежите за записом', s:'Усі записані пацієнти — у вашому кабінеті, із датою візиту.' },
+                    { t:'Запис на візит', s:'Ми швидко звʼяжемось з пацієнтом та підберемо зручний час візиту.' },
                     { t:'Знімок у кабінеті', s:'Одразу після візиту — у кабінеті та на email.' }
                 ],
                 '7': [   // 3D-друк зі STL клієнта: без планування, друк одразу після оплати
@@ -3004,7 +3043,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         body = '<path class="b" d="' + LO + '"/><circle class="b" cx="5" cy="9.5" r="2.4"/><circle class="a" cx="21" cy="9.5" r="2.4"/>';
                     } else if(t.indexOf('панорамний') !== -1){
                         body = '<path class="a" d="M3.5 16 Q13 5.5 22.5 16"/><path class="b" d="M5 19.5 H21"/>';
-                    } else if(t.indexOf('трг бокова') !== -1){
+                    } else if(t.indexOf('трг бокова') !== -1 || t.indexOf('трг бічна') !== -1){
                         body = '<path class="b" d="' + HEAD + '"/><path class="a" d="M18.5 4.5 V21.5"/><path class="a" d="M18.5 8 H22"/><path class="a" d="M18.5 13 H22"/><path class="a" d="M18.5 18 H22"/>';
                     } else if(t.indexOf('трг пряма') !== -1){
                         body = '<path class="b" d="' + HEAD + '"/><path class="a" d="M13 4 V21"/><path class="a" d="M5.5 12 H20.5"/>';
@@ -3022,6 +3061,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var wrap = m.sel.closest('.labels-list') || m.sel.parentElement;
                     if(wrap && wrap !== m.el && wrap.contains(m.sel)){ wrap.style.setProperty('display', 'none', 'important'); }
                     m.sel.style.setProperty('display', 'none', 'important');
+                    // суглоби взаємовиключні: «двох» уже містить лівий+правий, а «Положення рота»
+                    // в OneBox одне на форму — кілька суглобів дали б неоднозначні дані
+                    m.exclusive = norm(m.name).indexOf('суглоб') !== -1;
                     var box = document.createElement('div'); box.className = 'mx-chips';
                     m.opts = [];
                     Array.prototype.forEach.call(m.sel.options, function(o){
@@ -3034,6 +3076,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         b.insertAdjacentHTML('beforeend', MX_TICK);
                         b.addEventListener('click', function(){
                             o.selected = !o.selected;
+                            if(m.exclusive && o.selected){
+                                m.opts.forEach(function(x2){ if(x2.o !== o && x2.o.selected){ x2.o.selected = false; x2.b.classList.remove('mx-chip-on'); } });
+                            }
                             b.classList.toggle('mx-chip-on', o.selected);
                             try{ m.sel.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
                             try{ if(window.jQuery){ window.jQuery(m.sel).trigger('change'); } }catch(_){ }
@@ -3116,20 +3161,17 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         jm.el.appendChild(el);
                         api.rotEl = el;
                         api.deps.push({ el: el, kind: 'rot', test: function(){ return anySel(jm); },
+                            // ящик «Положення рота» стає одразу ПІД обраним суглобом (рядки на всю ширину)
+                            host: function(){
+                                var c = null;
+                                jm.opts.forEach(function(x){ if(!c && x.o.selected) c = x.cell; });
+                                return c || jm.el;
+                            },
                             onHide: function(){ Array.prototype.forEach.call(el.querySelectorAll('input[type="radio"]'), function(r){ r.checked = false; }); } });
                     } else if(low.indexOf('скан облич') !== -1){
-                        el.classList.add('mx-dep-soft');
-                        chipifyChecks(el);
-                        if(el.__cbchips && el.__cbchips[0]){ api.scan = { c: el.__cbchips[0].c, b: el.__cbchips[0].b, el: el, name: ttlText(el) }; }
-                        api.deps.push({ el: el, kind: 'scan', soft: true, test: function(){
-                            var ok = false;
-                            multis.forEach(function(m){ m.opts.forEach(function(x){
-                                if(x.o.selected && /черепа|пазух|щелеп/.test(x.t)) ok = true;
-                            }); });
-                            return ok;
-                        }, onHide: function(){
-                            var c = el.querySelector('input[type="checkbox"]'); if(c && c.checked){ c.checked = false; }
-                        } });
+                        // оптичний скан прибрано з кабінету (рішення 2026-08-11): поле лишається
+                        // в OneBox і в DOM, але не рендериться і не заповнюється — як прикус
+                        el.classList.add('mx-field-off');
                     }
                 });
                 // 3) підказка про готовий комплект
@@ -3363,70 +3405,184 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 lcol.appendChild(proxy);
             }
 
-            // ================= ФОРМА ЗАПИСУ: три блоки, підказки, живий підсумок =================
-            // 13 пронумерованих полів читаються як анкета на 13 пунктів. Насправді дій три:
-            // хто пацієнт → що призначаємо → деталі (за бажанням). Складаємо форму саме так.
+            // ================= ФОРМА ЗАПИСУ: класика — 9 блоків-карток (мова форми 6) =================
+            // Жодних згорнутих секцій і зайвих шарів: пацієнт → найчастіше → категорії → опис →
+            // коментар. Усе видно одразу, ніщо не рухається саме. «Найчастіше» — НЕ копії:
+            // картка керує тим самим <option>, що й чип у категорії, вибір світиться в обох місцях.
             if(mxStudy){
                 grid.classList.add('mx-form-study');
                 var T = mxStudy.ttlText;
                 function nrm(x){ return String(x || '').toLowerCase().replace(/["'’ʼ`]/g, '').replace(/\s+/g, ' ').trim(); }
                 function esc2(x){ return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-                function mxPlural(n, one, few, many){
-                    var a = Math.abs(n) % 100, b = a % 10;
-                    if(a > 10 && a < 20) return many;
-                    if(b > 1 && b < 5) return few;
-                    if(b === 1) return one;
-                    return many;
-                }
 
-                // ---- 1. три блоки замість плаского списку полів
                 var formEl = card.querySelector('form') || card;
                 var rows = Array.prototype.filter.call(formEl.children, function(n){ return n.classList && n.classList.contains('element'); });
-                var firstMulti = -1, extraMulti = -1, lastMulti = -1;
-                rows.forEach(function(el, i){
-                    if(!el.querySelector('select[multiple]')) return;
-                    if(firstMulti < 0) firstMulti = i;
-                    lastMulti = i;
-                    if(extraMulti < 0 && nrm(T(el)).indexOf('додатков') !== -1) extraMulti = i;
-                });
-                if(firstMulti < 0) firstMulti = 0;
-                var cut = extraMulti >= 0 ? extraMulti : (lastMulti + 1);
-                var chev = '<svg class="mx-fg-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-                function mkGroup(n, t, sub, els, cls){
-                    if(!els.length) return null;
-                    var g = document.createElement('div'); g.className = 'mx-fgroup ' + (cls || '');
-                    g.innerHTML = '<div class="mx-fg-h">' + (n ? '<span class="mx-fg-n">' + n + '</span>' : '') + '<span class="mx-fg-t">' + t + '</span>'
-                        + (sub ? '<span class="mx-fg-s">' + sub + '</span>' : '') + '</div><div class="mx-fg-body"></div>';
-                    var body = g.querySelector('.mx-fg-body');
-                    els.forEach(function(e){ body.appendChild(e); });
-                    if(sb && sb.parentNode === formEl){ formEl.insertBefore(g, sb); } else { formEl.appendChild(g); }
-                    return g;
-                }
-                // «бажаний час візиту» прибрано з кабінету — час візиту зʼясовуємо з пацієнтом
-                // по телефону; «готові комплекти» — рішення адміністратора, не форми
-                var timeEl = null, bundleEl = null;
-                rows.forEach(function(el){
-                    var t = nrm(T(el));
-                    if(!timeEl && (t.indexOf('час візиту') !== -1 || t.indexOf('бажаний час') !== -1)) timeEl = el;
-                    if(!bundleEl && el.querySelector('select[multiple]') && t.indexOf('комплект') !== -1) bundleEl = el;
-                });
-                [timeEl, bundleEl].forEach(function(el){ if(el){ el.classList.add('mx-field-off'); } });
-                if(bundleEl){ mxStudy.multis.forEach(function(m){ if(m.el === bundleEl) m.off = true; }); }
-                function without(arr){ return arr.filter(function(e){ return e !== timeEl && e !== bundleEl; }); }
-                var gStudy = mkGroup('', 'Дослідження', '', without(rows.slice(firstMulti, cut)), 'mx-fgroup-study');
-                var gMore = mkGroup('', 'Інші побажання', 'необовʼязково' + chev, without(rows.slice(cut)), 'mx-fgroup-more mx-fg-closed');
-                var gPat  = mkGroup('', 'Пацієнт', '', without(rows.slice(0, firstMulti)), 'mx-fgroup-pat');
-                if(gMore){
-                    gMore.querySelector('.mx-fg-h').addEventListener('click', function(){ gMore.classList.toggle('mx-fg-closed'); if(window.__mxAlignFn) window.__mxAlignFn(); });
-                }
-                // вимкнені поля — у самий кінець форми, ПІСЛЯ груп: значення для сабміту
-                // лишається, а їхні приховані чипи не перехоплюють пошук по тексту
-                [timeEl, bundleEl].forEach(function(el){
-                    if(!el) return;
-                    if(sb && sb.parentNode === formEl){ formEl.insertBefore(el, sb); } else { formEl.appendChild(el); }
-                });
 
-                // ---- 2. інструкції під полем: плейсхолдер зникає рівно тоді, коли підказка потрібна
+                // ---- 1. розпізнаємо поля (єдиний дозволений матч — текст заголовка через ttlText)
+                var elName = null, elPhone = null, elTime = null, elComment = null;
+                var mJaw = null, mHead = null, mJoint = null, mPano = null, mExtra = null, mBundle = null;
+                mxStudy.multis.forEach(function(m){
+                    var t = nrm(m.name);
+                    if(!mBundle && t.indexOf('комплект') !== -1){ mBundle = m; return; }
+                    if(!mExtra && t.indexOf('додатков') !== -1){ mExtra = m; return; }
+                    if(!mJoint && t.indexOf('суглоб') !== -1){ mJoint = m; return; }
+                    if(!mPano && (t.indexOf('панорам') !== -1 || t.indexOf('трг') !== -1)){ mPano = m; return; }
+                    if(!mHead && (t.indexOf('голов') !== -1 || t.indexOf('череп') !== -1)){ mHead = m; return; }
+                    if(!mJaw && t.indexOf('щелеп') !== -1){ mJaw = m; return; }
+                });
+                rows.forEach(function(el){
+                    if(el.querySelector('select[multiple]')) return;
+                    var t = nrm(T(el));
+                    if(!elPhone && t.indexOf('телефон') !== -1 && el.querySelector('input')){ elPhone = el; return; }
+                    if(!elTime && (t.indexOf('час візиту') !== -1 || t.indexOf('бажаний час') !== -1)){ elTime = el; return; }
+                    if(el.classList.contains('mx-seg') || el.classList.contains('mx-field-off') || el.classList.contains('mx-dep')) return;
+                    // «Комментар» (рос., поки George не перейменував) і «Коментар» — обидва варіанти
+                    if(!elComment && /комм?ент/.test(t) && el.querySelector('textarea, input[type="text"]')){ elComment = el; return; }
+                    if(!elName && (t.indexOf('п.і.б') !== -1 || t.indexOf('піб') !== -1 || t.indexOf('імʼя') !== -1 || t.indexOf('пацієнт') !== -1) && el.querySelector('input[type="text"], input[type="tel"]')){ elName = el; return; }
+                });
+                if(mBundle){ mBundle.off = true; mBundle.el.classList.add('mx-field-off'); }
+                if(elTime){ elTime.classList.add('mx-field-off'); }
+
+                // ---- 2. дев'ять карток у порядку ТЗ; справжній сабміт лишається у формі — картки перед ним
+                function mkCard(title, cls){
+                    var c9 = document.createElement('div'); c9.className = 'mx-c9' + (cls ? ' ' + cls : '');
+                    c9.innerHTML = '<div class="mx-c9-h">' + title + '</div><div class="mx-c9-b"></div>';
+                    if(sb && sb.parentNode === formEl){ formEl.insertBefore(c9, sb); } else { formEl.appendChild(c9); }
+                    return c9;
+                }
+                function put(c9, els){
+                    if(!c9) return;
+                    var b = c9.querySelector('.mx-c9-b');
+                    (els || []).forEach(function(e){ if(e) b.appendChild(e); });
+                }
+                var cPat = mkCard('Пацієнт', 'mx-c9-pat'); put(cPat, [elName, elPhone]);
+                var cFav = mkCard('Найчастіше', 'mx-c9-fav');
+                var cPano = mPano ? mkCard('Звичайні знімки 2D') : null; put(cPano, mPano ? [mPano.el] : []);
+                var cHead = mHead ? mkCard('КТ Голови 3D') : null; put(cHead, mHead ? [mHead.el] : []);
+                var cJaw = mJaw ? mkCard('КТ Щелеп 3D') : null; put(cJaw, mJaw ? [mJaw.el] : []);
+                var segRows = (mxStudy.segEls || []).map(function(sg){ return sg.el; });
+                var cSeg = segRows.length ? mkCard('КТ Сегментів 3D') : null; put(cSeg, segRows);
+                var cJoint = mJoint ? mkCard('КТ Суглобів 3D') : null; put(cJoint, mJoint ? [mJoint.el] : []);
+                var cExtra = mExtra ? mkCard('Опис знімків') : null; put(cExtra, mExtra ? [mExtra.el] : []);
+                var cCmt = elComment ? mkCard('Коментар', 'mx-c9-cmt') : null; put(cCmt, elComment ? [elComment] : []);
+
+                // ---- 3. рядки всередині карток — точно за ТЗ (одна позиція в рядку = на всю ширину)
+                function layoutRows(m, spec){
+                    if(!m || !m.chips) return;
+                    var used = [];
+                    spec.forEach(function(rowDef){
+                        var full = rowDef.length === 1;
+                        rowDef.forEach(function(re){
+                            var hit = null;
+                            m.opts.forEach(function(x){ if(!hit && used.indexOf(x) === -1 && re.test(x.t)) hit = x; });
+                            if(!hit) return;
+                            used.push(hit);
+                            if(full){ hit.cell.classList.add('mx-cell-full'); }
+                            m.chips.appendChild(hit.cell);
+                        });
+                    });
+                }
+                layoutRows(mPano, [[/панорамн/], [/трг (бокова|бічна)/, /трг пряма/]]);
+                layoutRows(mHead, [[/череп/, /пазух/]]);
+                layoutRows(mJaw, [[/^кт двох щелеп$/], [/щелеп з суглобами/], [/верхн/, /нижн/]]);
+                layoutRows(mJoint, [[/двох суглобів/], [/лівого/], [/правого/]]);
+
+                // ---- 4. «Опис знімків»: дві послуги, кожна доступна лише коли є що описувати.
+                // Опис рентгенолога — не для 2D (панорама/ТРГ так не описуються);
+                // цефалометричний аналіз — лише коли обрано ТРГ (бічну або пряму).
+                var xOpis = null, xCeph = null;
+                if(mExtra){
+                    mExtra.opts.forEach(function(x){
+                        if(!xOpis && /опис знімк/.test(x.t)){ xOpis = x; return; }
+                        if(!xCeph && /цефалометр/.test(x.t)){ xCeph = x; return; }
+                        // решту додаткових послуг у кабінеті не показуємо (рішення 2026-08-11)
+                        x.cell.classList.add('mx-cell-off');
+                        if(x.o.selected){ x.o.selected = false; x.b.classList.remove('mx-chip-on'); }
+                    });
+                    [xOpis, xCeph].forEach(function(x){
+                        if(!x) return;
+                        x.cell.classList.add('mx-cell-full');
+                        mExtra.chips.appendChild(x.cell);
+                    });
+                    if(!xOpis && !xCeph && cExtra){ cExtra.classList.add('mx-field-off'); }
+                }
+                function is2D(t){ return /панорам|трг/.test(t); }
+                function lockExtra(){
+                    if(!mExtra) return;
+                    var any3D = false, anyTRG = false;
+                    mxStudy.multis.forEach(function(m){
+                        if(m.off || m === mExtra) return;
+                        m.opts.forEach(function(x){
+                            if(!x.o.selected) return;
+                            if(is2D(x.t)){ if(/трг/.test(x.t)) anyTRG = true; }
+                            else { any3D = true; }
+                        });
+                    });
+                    (mxStudy.segEls || []).forEach(function(sg){ if(sg.on()) any3D = true; });
+                    var changed = false;
+                    function setLock(x, ok){
+                        if(!x) return;
+                        x.cell.classList.toggle('mx-cell-lock', !ok);
+                        if(!ok && x.o.selected){ x.o.selected = false; x.b.classList.remove('mx-chip-on'); changed = true; }
+                    }
+                    setLock(xOpis, any3D);
+                    setLock(xCeph, anyTRG);
+                    if(changed){
+                        try{ mExtra.sel.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
+                    }
+                }
+
+                // ---- 5. «Найчастіше» — великі картки, синхронні з чипами категорій (спільний <option>)
+                var favRefs = [];
+                (function(){
+                    var byT = {};
+                    mxStudy.allOpts().forEach(function(a){ if(!a.m.off && a.m !== mExtra && !byT[a.t]) byT[a.t] = a; });
+                    function pick(){ for(var i = 0; i < arguments.length; i++){ if(byT[arguments[i]]) return byT[arguments[i]]; } return null; }
+                    var FAV_ROWS = [
+                        [pick('кт двох щелеп'), pick('кт черепа + 3d ceph')],
+                        [pick('кт двох щелеп з суглобами')],
+                        [pick('панорамний знімок зубів'), pick('трг бічна проекція', 'трг бокова проекція')]
+                    ];
+                    var wrap = document.createElement('div'); wrap.className = 'mx-favgrid';
+                    FAV_ROWS.forEach(function(row){
+                        row = row.filter(Boolean);
+                        if(!row.length) return;
+                        var full = row.length === 1;
+                        row.forEach(function(a){
+                            var pb = document.createElement('button'); pb.type = 'button';
+                            pb.className = 'mx-pc' + (full ? ' mx-pc-full' : '');
+                            pb.innerHTML = mxStudy.ico(a.t) + '<span class="mx-pc-t">' + esc2(a.x.o.textContent.trim()) + '</span>' + mxStudy.tick;
+                            pb.addEventListener('click', function(){ a.x.b.click(); });
+                            wrap.appendChild(pb);
+                            favRefs.push({ a: a, pb: pb });
+                        });
+                    });
+                    if(favRefs.length){ cFav.querySelector('.mx-c9-b').appendChild(wrap); }
+                    else { cFav.classList.add('mx-field-off'); }
+                })();
+                function paintFav(){
+                    favRefs.forEach(function(r){ r.pb.classList.toggle('mx-chip-on', r.a.x.o.selected); });
+                }
+
+                // ---- 6. коментар: плейсхолдер за ТЗ George
+                if(elComment){
+                    var cmf = elComment.querySelector('textarea, input[type="text"]');
+                    if(cmf){ cmf.setAttribute('placeholder', 'Напишіть особливості виконання дослідження якщо є'); }
+                }
+
+                // ---- 7. поля поза картками: приховані — у САМИЙ кінець форми ПІСЛЯ карток
+                // (значення для сабміту лишається, невидимі чипи не перехоплюють пошук по тексту);
+                // нерозпізнане видиме поле — в окрему картку, а не голим у формі
+                var leftovers = [];
+                Array.prototype.slice.call(formEl.children).forEach(function(el){
+                    if(!el.classList || !el.classList.contains('element')) return;
+                    if(el.classList.contains('mx-field-off')){
+                        if(sb && sb.parentNode === formEl){ formEl.insertBefore(el, sb); } else { formEl.appendChild(el); }
+                    } else { leftovers.push(el); }
+                });
+                if(leftovers.length){ put(mkCard('Додатково', 'mx-c9-rest'), leftovers); }
+
+                // ---- 8. інструкції під полем: плейсхолдер зникає рівно тоді, коли підказка потрібна
                 Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
                     if(el.querySelector('.mx-fhint')) return;
                     var d = el.querySelector('.description');
@@ -3447,7 +3603,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     el.appendChild(h);
                 });
 
-                // ---- 3. шапка: у цієї форми немає «кроку 2», не обіцяємо його
+                // ---- 9. шапка: у цієї форми немає «кроку 2», не обіцяємо його
                 var fillEl = lcol.querySelector('.mx-fill');
                 if(fillEl) fillEl.style.display = 'none';
                 var subEl2 = lcol.querySelector('.mx-fh-sub');
@@ -3456,201 +3612,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     subEl2.setAttribute('data-mx-lock', '1');
                 }
 
-                // ---- 3b. категорії як у паперовому направленні: щелепи й голова відкриті,
-                // рідше потрібне — тихими рядками, що розкриваються одним кліком.
-                // Нічого не рухається саме — тільки руками користувача.
-                var chevDown = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-                var studyBody = grid.querySelector('.mx-fgroup-study > .mx-fg-body');
-                var SECS = [];
-                function wrapSec(title, els){
-                    els = (els || []).filter(function(e){ return e && e.parentNode; });
-                    if(!els.length) return null;
-                    var sec = document.createElement('div'); sec.className = 'mx-sec';
-                    sec.innerHTML = '<button type="button" class="mx-sec-h"><span class="mx-sec-t">' + title + '</span><span class="mx-sec-pick"></span><span class="mx-sec-cnt"></span>' + chevDown + '</button><div class="mx-sec-b"></div>';
-                    els[0].parentNode.insertBefore(sec, els[0]);
-                    var body = sec.querySelector('.mx-sec-b');
-                    els.forEach(function(e){ e.classList.add('mx-sec-elt'); body.appendChild(e); });
-                    sec.querySelector('.mx-sec-h').addEventListener('click', function(){
-                        sec.classList.toggle('mx-sec-open');
-                        if(window.__mxAlignFn) window.__mxAlignFn();
-                    });
-                    var vn = sec.querySelectorAll('.mx-chip').length;
-                    sec.querySelector('.mx-sec-cnt').textContent = vn + ' ' + mxPlural(vn, 'варіант', 'варіанти', 'варіантів');
-                    SECS.push(sec);
-                    return sec;
-                }
-                if(studyBody){
-                    var secSeg = [], secJoint = null, secPano = null;
-                    Array.prototype.slice.call(studyBody.children).forEach(function(el){
-                        if(!el.classList || !el.classList.contains('element')) return;
-                        var t = nrm(T(el));
-                        if(el.classList.contains('mx-seg')){ secSeg.push(el); return; }
-                        if(el.querySelector('select[multiple]')){
-                            if(t.indexOf('суглоб') !== -1) secJoint = el;
-                            else if(t.indexOf('панорама') !== -1 || t.indexOf('трг') !== -1) secPano = el;
-                        }
-                    });
-                    wrapSec('КТ Сегмент', secSeg);
-                    wrapSec('КТ Суглобів', secJoint ? [secJoint] : []);
-                }
-                function paintSecs(){
-                    SECS.forEach(function(sec){
-                        var names = [];
-                        Array.prototype.forEach.call(sec.querySelectorAll('.mx-chip.mx-chip-on'), function(c){
-                            var t = ''; Array.prototype.forEach.call(c.childNodes, function(n){ if(n.nodeType === 3) t += n.textContent; });
-                            names.push(t.replace(/\s+/g, ' ').trim());
-                        });
-                        var pick = sec.querySelector('.mx-sec-pick');
-                        pick.textContent = names.length ? (names[0] + (names.length > 1 ? ' +' + (names.length - 1) : '')) : '';
-                        sec.classList.toggle('mx-sec-has', !!names.length);
-                    });
-                }
-                mxStudy.paintSecs = paintSecs;
-                // залежне поле живе всередині комірки свого чипа
-                mxStudy.hostOf = function(btn, groupEl){
-                    var c = btn && btn.parentElement;
-                    return (c && c.classList && c.classList.contains('mx-cell')) ? c : groupEl;
-                };
-                // гейт підсвітив поле у згорнутому місці — розкриваємо саме його
-                mxStudy.reveal = function(el){
-                    if(!el || !el.closest) return;
-                    var sc = el.closest('.mx-sec'); if(sc){ sc.classList.add('mx-sec-open'); }
-                    var g = el.closest('.mx-fgroup-more'); if(g){ g.classList.remove('mx-fg-closed'); }
-                };
+                // ---- 10. гейт: «оберіть дослідження» підсвічує картку «Найчастіше»
+                if(cFav && !cFav.classList.contains('mx-field-off')){ mxStudy.firstStudyEl = cFav; }
+                mxStudy.reveal = function(){};   // згорнутих місць у формі більше немає
 
-                // ---- 3b2. верхній шар швидких дій: пʼять найчастіших досліджень великими картками.
-                // Це НЕ копії: картка керує тим самим <option>, що й чип у категорії нижче.
-                var MX_PROMO = ['кт двох щелеп', 'кт двох щелеп з суглобами', 'кт черепа + 3d ceph',
-                                'панорамний знімок зубів', 'трг бокова проекція'];
-                var MX_SCAN_HOSTS = ['кт двох щелеп', 'кт двох щелеп з суглобами', 'кт черепа + 3d ceph'];
-                var promoWrap = null, scanOffer = null, promoRefs = [];
-                if(studyBody && mxStudy.allOpts){
-                    var byT = {};
-                    mxStudy.allOpts().forEach(function(a){ if(!a.m.off && !byT[a.t]) byT[a.t] = a; });
-                    promoWrap = document.createElement('div'); promoWrap.className = 'mx-promo';
-                    MX_PROMO.forEach(function(nm){
-                        var a = byT[nm]; if(!a) return;
-                        var pb = document.createElement('button'); pb.type = 'button'; pb.className = 'mx-pc';
-                        pb.innerHTML = mxStudy.ico(nm) + '<span class="mx-pc-t">' + esc2(a.x.o.textContent.trim()) + '</span>' + mxStudy.tick;
-                        pb.addEventListener('click', function(){ a.x.b.click(); });
-                        promoWrap.appendChild(pb);
-                        // у категоріях нижче лишаються «інші» — продубльована позиція зникає зі списку,
-                        // але її справжній чип живе далі: промо-картка керує саме ним
-                        if(a.x.cell){ a.x.cell.classList.add('mx-cell-off'); }
-                        promoRefs.push({ a: a, pb: pb, scanHost: MX_SCAN_HOSTS.indexOf(nm) !== -1 });
-                    });
-                    if(promoRefs.length){
-                        studyBody.insertBefore(promoWrap, studyBody.firstChild);
-                        // пропозиція скана: одна тиха строка під верхнім блоком,
-                        // зʼявляється, коли обрано КТ щелеп/суглобів/черепа
-                        if(mxStudy.scan){
-                            scanOffer = document.createElement('button');
-                            scanOffer.type = 'button'; scanOffer.className = 'mx-scan-offer';
-                            scanOffer.innerHTML = mxStudy.ico('скан обличчя') + '<span class="mx-so-t">Додати оптичний скан обличчя</span><span class="mx-so-state"></span>';
-                            scanOffer.addEventListener('click', function(){
-                                var c = mxStudy.scan.c;
-                                c.checked = !c.checked;
-                                try{ c.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
-                                mxStudy.sync();
-                            });
-                            promoWrap.parentNode.insertBefore(scanOffer, promoWrap.nextSibling);
-                        }
-                    } else { promoWrap = null; }
-                }
-                function paintPromo(){
-                    var anyHost = false;
-                    promoRefs.forEach(function(r){
-                        r.pb.classList.toggle('mx-chip-on', r.a.x.o.selected);
-                        if(r.scanHost && r.a.x.o.selected) anyHost = true;
-                    });
-                    if(scanOffer && mxStudy.scan){
-                        scanOffer.classList.toggle('mx-so-show', anyHost);
-                        var on = mxStudy.scan.c.checked;
-                        scanOffer.classList.toggle('mx-chip-on', on);
-                        scanOffer.querySelector('.mx-so-state').textContent = on ? 'Додано' : 'Додати';
-                    }
-                }
-                mxStudy.paintPromo = paintPromo;
-                Array.prototype.forEach.call(grid.querySelectorAll('.mx-fgroup-study > .mx-fg-body > .element'), function(el){
-                    var box = el.querySelector('.mx-chips');
-                    if(!box) return;
-                    var alive = false;
-                    Array.prototype.forEach.call(box.querySelectorAll('.mx-chip'), function(c){
-                        if(!c.closest('.mx-cell-off')) alive = true;
-                    });
-                    if(!alive){ el.classList.add('mx-field-off'); }
-                });
-
-                // ---- 3b3. «Обрано» — теги-чеки над блоком пацієнта, зняти зайве — один клік
-                var tagsWrap = document.createElement('div'); tagsWrap.className = 'mx-tags';
-                tagsWrap.innerHTML = '<div class="mx-tags-l">Обрано:</div><div class="mx-tags-b"></div>';
-                if(typeof gPat !== 'undefined' && gPat && gPat.parentNode){ gPat.parentNode.insertBefore(tagsWrap, gPat); }
-                var tagsBody = tagsWrap.querySelector('.mx-tags-b');
-                function paintTags(){
-                    var list = mxStudy.selected();
-                    tagsWrap.classList.toggle('mx-tags-show', !!list.length);
-                    var h = '';
-                    list.forEach(function(it, i){
-                        h += '<span class="mx-tag' + (it.extra ? ' mx-tag-x' : '') + '" data-i="' + i + '">' + esc2(it.n)
-                           + (it.sub ? '<i>' + esc2(it.sub) + '</i>' : '')
-                           + '<button type="button" class="mx-tag-rm" aria-label="Прибрати">&times;</button></span>';
-                    });
-                    if(tagsBody.innerHTML !== h) tagsBody.innerHTML = h;
-                }
-                tagsBody.addEventListener('click', function(ev){
-                    var rm = ev.target.closest ? ev.target.closest('.mx-tag-rm') : null;
-                    if(!rm) return;
-                    var i = parseInt(rm.parentNode.getAttribute('data-i'), 10);
-                    var it = mxStudy.selected()[i]; if(!it) return;
-                    // знімаємо саме той елемент, який стоїть за тегом
-                    var done = false;
-                    mxStudy.allOpts().forEach(function(a){ if(!done && !a.m.off && a.x.o.selected && a.x.o.textContent.trim() === it.n){ a.x.b.click(); done = true; } });
-                    if(!done && mxStudy.segEls){ mxStudy.segEls.forEach(function(sg){ if(!done && sg.on() && sg.name === it.n){ sg.b.click(); done = true; } }); }
-                    if(!done && mxStudy.scan && mxStudy.scan.name === it.n && mxStudy.scan.c.checked){
-                        mxStudy.scan.c.checked = false;
-                        try{ mxStudy.scan.c.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
-                        mxStudy.sync(); done = true;
-                    }
-                });
-                mxStudy.paintTags = paintTags;
-
-                // ---- 3c. повтор минулої заявки: друга заявка має займати секунди, а не хвилину
-                var LAST_KEY = 'mxLastStudy8';
-                function readLast(){
-                    try{ var v = JSON.parse(window.localStorage.getItem(LAST_KEY) || 'null'); return (v && v.length) ? v : null; }catch(_){ return null; }
-                }
-                function saveLast(){
-                    try{
-                        var names = mxStudy.selected().filter(function(x){ return !x.extra; }).map(function(x){ return x.n; });
-                        if(names.length) window.localStorage.setItem(LAST_KEY, JSON.stringify(names));
-                    }catch(_){ }
-                }
-                (function(){
-                    var last = readLast();
-                    if(!last || !studyBody) return;
-                    var opts = mxStudy.allOpts();
-                    var hit = opts.filter(function(a){ return !a.m.off && last.indexOf(a.x.o.textContent.trim()) !== -1; });
-                    var segHit = (mxStudy.segEls || []).filter(function(sg){ return last.indexOf(sg.name) !== -1; });
-                    if(!hit.length && !segHit.length) return;
-                    var againSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>';
-                    var head = last[0] + (last.length > 1 ? (' +' + (last.length - 1)) : '');
-                    var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'mx-again';
-                    btn.innerHTML = againSvg + '<span>Як минулого разу: <b>' + esc2(head) + '</b></span><span class="mx-again-do">Обрати</span>';
-                    btn.addEventListener('click', function(){
-                        hit.forEach(function(a){ if(!a.x.o.selected){ a.x.b.click(); } });
-                        segHit.forEach(function(sg){ if(!sg.on()){ sg.b.click(); } });
-                        SECS.forEach(function(sec){ if(sec.querySelector('.mx-chip-on')) sec.classList.add('mx-sec-open'); });
-                        btn.parentNode && btn.parentNode.removeChild(btn);
-                        if(window.__mxAlignFn) window.__mxAlignFn();
-                    });
-                    studyBody.parentNode.insertBefore(btn, studyBody);
-                })();
-
-                // ---- 4. липка панель дії: кнопка та лічильник завжди на екрані
+                // ---- 11. єдина кнопка «Надіслати →»; фідбек гейта — рядком під нею
                 var proxyEl = document.getElementById('mxNextProxy');
-                if(proxyEl) proxyEl.textContent = 'Записати пацієнта';
-                // фіксованої смуги внизу немає: друга кнопка на екрані — другий шанс
-                // натиснути зарано. Фідбек гейта — рядок під єдиною кнопкою.
+                if(proxyEl) proxyEl.innerHTML = 'Надіслати <span class="mx-np-arr">→</span>';
                 var gmsg = document.createElement('div'); gmsg.className = 'mx-gate-msg';
                 if(proxyEl && proxyEl.parentNode){ proxyEl.parentNode.insertBefore(gmsg, proxyEl.nextSibling); }
                 mxStudy.onFail = function(kind){
@@ -3661,9 +3629,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     gmsg.classList.add('mx-gm-on');
                 };
                 mxStudy.clearFail = function(){ gmsg.classList.remove('mx-gm-on'); };
-                mxStudy.onSubmit = saveLast;
 
-                // ---- 5. права панель: поки нічого не обрано — як це працює, далі — підсумок замовлення
+                // ---- 12. права панель: кроки, поки нічого не обрано; далі — підсумок замовлення
                 var sideEl2 = rcol.querySelector('.mx-side');
                 var stepsWrap = document.createElement('div'); stepsWrap.className = 'mx-side-steps';
                 Array.prototype.slice.call(sideEl2.children).forEach(function(n){
@@ -3676,6 +3643,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 sideEl2.insertBefore(sumWrap, stepsWrap.nextSibling);
                 var tickSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
                 function renderSum(){
+                    lockExtra();
+                    paintFav();
                     var list = mxStudy.selected();
                     var n = mxStudy.studyCount();
                     if(!list.length){
@@ -3687,20 +3656,16 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             h += '<div class="mx-sum-row">' + tickSvg + '<span>' + esc2(it.n)
                                + (it.sub ? '<span class="mx-sum-sub">' + esc2(it.sub) + '</span>' : '') + '</span></div>';
                         });
-                        h += '<div class="mx-sum-note">Зателефонуємо пацієнту протягом робочого дня і запишемо на зручний час.</div>';
+                        h += '<div class="mx-sum-note">Ми швидко звʼяжемось з пацієнтом та підберемо зручний час візиту.</div>';
                         if(sumWrap.innerHTML !== h) sumWrap.innerHTML = h;
                     }
                     gmsg.classList.remove('mx-gm-on');
-                    if(mxStudy.paintSecs) mxStudy.paintSecs();
-                    if(mxStudy.paintPromo) mxStudy.paintPromo();
-                    if(mxStudy.paintTags) mxStudy.paintTags();
                     // червону підсвітку знімаємо, щойно умова виконана
                     if(mxStudy.firstStudyEl && n > 0) mxStudy.firstStudyEl.classList.remove('mx-req-miss');
                     if(mxStudy.rotEl && !mxStudy.rotMissing()) mxStudy.rotEl.classList.remove('mx-req-miss');
-
                     if(window.__mxAlignFn) window.__mxAlignFn();
                 }
-                // ---- 6. телефон і імʼя: найдорожче поле форми не має приймати сміття
+                // ---- 13. телефон і імʼя: найдорожче поле форми не має приймати сміття
                 (function(){
                     var phoneEl = null, nameEl2 = null;
                     Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
