@@ -413,6 +413,30 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid.mx-form-study .mx-fgroup-more .mx-fg-t{ font-size:calc(14 * var(--u)); font-weight:600; color:#475569; }
 #mxProcGrid.mx-form-study .mx-fgroup-more .mx-fg-n{ display:none; }
 #mxProcGrid.mx-form-study .mx-time-chips{ margin-bottom:calc(14 * var(--u)); }
+/* ── ПЛОСКА ФОРМА: дві картки-зони, секції-рядки, тихі маркери частотного ── */
+html #mxProcGrid .element.mx-field-off, .mx-field-off{ display:none !important; }
+#mxProcGrid.mx-form-study .mx-fgroup{ background:#FFFFFF; border:1px solid #E9EDF3; border-radius:calc(16 * var(--u)); padding:calc(22 * var(--u)) calc(26 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 2px rgba(16,24,40,0.03); margin:0 0 calc(14 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-fgroup .mx-fg-h{ margin:0 0 calc(18 * var(--u)); padding:0 0 calc(13 * var(--u)); border-bottom:1px solid #F0F3F8; cursor:default; }
+#mxProcGrid.mx-form-study .mx-fgroup-more{ background:transparent; border:0; box-shadow:none; padding:calc(4 * var(--u)) calc(8 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-fgroup-more .mx-fg-h{ border-bottom:0; padding:calc(8 * var(--u)) 0; margin:0; cursor:pointer; }
+/* секція-рядок: рідкісна категорія — один рядок, поки не знадобиться */
+#mxProcGrid.mx-form-study .mx-sec{ border:1px solid #E9EDF3; border-radius:calc(12 * var(--u)); background:#FBFCFE; margin:0 0 calc(10 * var(--u)); overflow:hidden; }
+#mxProcGrid.mx-form-study .mx-sec-h{ display:flex; width:100%; box-sizing:border-box; align-items:center; gap:calc(10 * var(--u)); padding:calc(14 * var(--u)) calc(16 * var(--u)); background:none; border:0; cursor:pointer; font-family:'Manrope',sans-serif; font-size:calc(14.5 * var(--u)); font-weight:500; color:#344054; text-align:left; transition:background .12s ease; }
+#mxProcGrid.mx-form-study .mx-sec-h:hover{ background:#F4F6FB; }
+#mxProcGrid.mx-form-study .mx-sec-h svg{ flex:0 0 auto; margin-left:auto; width:calc(16 * var(--u)); height:calc(16 * var(--u)); color:#98A2B3; transition:transform .18s ease; }
+#mxProcGrid.mx-form-study .mx-sec-open .mx-sec-h svg{ transform:rotate(180deg); }
+#mxProcGrid.mx-form-study .mx-sec-pick{ margin-left:auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:calc(12.5 * var(--u)); font-weight:600; color:#2c3bff; }
+#mxProcGrid.mx-form-study .mx-sec-pick:empty{ display:none; }
+#mxProcGrid.mx-form-study .mx-sec-has .mx-sec-pick + svg{ margin-left:calc(6 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-sec-has{ border-color:#DCE0FF; background:#FDFDFF; }
+#mxProcGrid.mx-form-study .mx-sec-b{ display:none; padding:calc(2 * var(--u)) calc(16 * var(--u)) calc(16 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-sec-open .mx-sec-b{ display:block; }
+#mxProcGrid.mx-form-study .mx-sec-b .element{ margin:0 0 calc(10 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-sec-b .element:last-child{ margin-bottom:0; }
+#mxProcGrid.mx-form-study .mx-sec-elt > .title{ display:none !important; }
+/* тихий маркер частотного: маленька синя крапка перед назвою, зникає після вибору */
+#mxProcGrid .os-block-form .mx-chip.mx-hot::before{ content:''; flex:0 0 auto; width:calc(6 * var(--u)); height:calc(6 * var(--u)); border-radius:calc(999 * var(--u)); background:#2c3bff; opacity:.5; }
+#mxProcGrid .os-block-form .mx-chip.mx-hot.mx-chip-on::before{ display:none; }
 /* підказка про готовий комплект */
 #mxProcGrid .os-block-form .mx-bundle-hint{ display:none; order:5; align-items:center; flex-wrap:wrap; gap:calc(11 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); }
 #mxProcGrid .os-block-form .mx-bh-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#334155; }
@@ -2870,7 +2894,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var api = { multis: multis, deps: [], sync: function(){} };
                 function norm(s){ return String(s || '').toLowerCase().replace(/["'’ʼ`]/g, '').replace(/\s+/g, ' ').trim(); }
                 // варіанти, що дають більшість направлень — показуємо міткою «Найчастіше»
-                var MX_HOT = ['кт двох щелеп'];
+                var MX_HOT = ['кт двох щелеп', 'кт черепа + 3d ceph'];
                 var MX_TICK = '<svg class="mx-chip-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
                 // 1) чипи замість мультисписку
                 multis.forEach(function(m){
@@ -2887,6 +2911,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         var oTxt = o.textContent.trim();
                         b.className = 'mx-chip' + (o.selected ? ' mx-chip-on' : '') + (oTxt.length > 40 ? ' mx-chip-wide' : '');
                         b.textContent = oTxt;
+                        if(MX_HOT.indexOf(norm(oTxt)) !== -1){ b.classList.add('mx-hot'); }
                         b.insertAdjacentHTML('beforeend', MX_TICK);
                         b.addEventListener('click', function(){
                             o.selected = !o.selected;
@@ -3040,7 +3065,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var optTrgSide= findOpt(/трг бокова/);
                 var panoM = optPano ? optPano.m : null;
                 var hintBox = null;
-                if(panoM && (bundleCT || bundleTRG)){
+                // комплект пропонує адміністратор на рецепції, а не форма — підказки немає
+                if(false && panoM && (bundleCT || bundleTRG)){
                     hintBox = document.createElement('div'); hintBox.className = 'mx-bundle-hint';
                     panoM.el.appendChild(hintBox);
                 }
@@ -3123,6 +3149,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 api.selected = function(){
                     var out = [];
                     multis.forEach(function(m){
+                        if(m.off) return;
                         var extra = norm(m.name).indexOf('додатков') !== -1;
                         m.opts.forEach(function(x){ if(x.o.selected){ out.push({ n: x.o.textContent.trim(), extra: extra }); } });
                     });
@@ -3265,59 +3292,39 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 if(firstMulti < 0) firstMulti = 0;
                 var cut = extraMulti >= 0 ? extraMulti : (lastMulti + 1);
                 var chev = '<svg class="mx-fg-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-                var tickSm = '<svg class="mx-st-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
                 function mkGroup(n, t, sub, els, cls){
                     if(!els.length) return null;
                     var g = document.createElement('div'); g.className = 'mx-fgroup ' + (cls || '');
-                    g.innerHTML = '<div class="mx-fg-h"><span class="mx-fg-n">' + (n || '') + tickSm + '</span><span class="mx-fg-t">' + t + '</span>'
-                        + '<span class="mx-st-sum"></span>'
+                    g.innerHTML = '<div class="mx-fg-h">' + (n ? '<span class="mx-fg-n">' + n + '</span>' : '') + '<span class="mx-fg-t">' + t + '</span>'
                         + (sub ? '<span class="mx-fg-s">' + sub + '</span>' : '') + '</div><div class="mx-fg-body"></div>';
                     var body = g.querySelector('.mx-fg-body');
                     els.forEach(function(e){ body.appendChild(e); });
                     if(sb && sb.parentNode === formEl){ formEl.insertBefore(g, sb); } else { formEl.appendChild(g); }
                     return g;
                 }
-                // «бажаний час візиту» — це не «деталь», а окремий крок: маленьке зобовʼязання,
-                // яке дуже добре працює на конверсію між «хто пацієнт» і «що призначаємо»
-                var timeEl = null;
-                rows.forEach(function(el){ var t = nrm(T(el)); if(!timeEl && (t.indexOf('час візиту') !== -1 || t.indexOf('бажаний час') !== -1)) timeEl = el; });
-                function without(arr){ return arr.filter(function(e){ return e !== timeEl; }); }
-                var gPat  = mkGroup(1, 'Дані пацієнта', '', without(rows.slice(0, firstMulti)), 'mx-fgroup-pat mx-st');
-                var gTime = timeEl ? mkGroup(2, 'Коли зручно пацієнту', '', [timeEl], 'mx-fgroup-time mx-st') : null;
-                var gStudy = mkGroup(gTime ? 3 : 2, 'Що призначаєте', '', without(rows.slice(firstMulti, cut)), 'mx-fgroup-study mx-st');
+                // «бажаний час візиту» прибрано з кабінету — час візиту зʼясовуємо з пацієнтом
+                // по телефону; «готові комплекти» — рішення адміністратора, не форми
+                var timeEl = null, bundleEl = null;
+                rows.forEach(function(el){
+                    var t = nrm(T(el));
+                    if(!timeEl && (t.indexOf('час візиту') !== -1 || t.indexOf('бажаний час') !== -1)) timeEl = el;
+                    if(!bundleEl && el.querySelector('select[multiple]') && t.indexOf('комплект') !== -1) bundleEl = el;
+                });
+                [timeEl, bundleEl].forEach(function(el){ if(el){ el.classList.add('mx-field-off'); } });
+                if(bundleEl){ mxStudy.multis.forEach(function(m){ if(m.el === bundleEl) m.off = true; }); }
+                function without(arr){ return arr.filter(function(e){ return e !== timeEl && e !== bundleEl; }); }
+                var gPat  = mkGroup(1, 'Пацієнт', '', without(rows.slice(0, firstMulti)), 'mx-fgroup-pat');
+                var gStudy = mkGroup(2, 'Дослідження', '', without(rows.slice(firstMulti, cut)), 'mx-fgroup-study');
                 var gMore = mkGroup('', 'Інші побажання', 'необовʼязково' + chev, without(rows.slice(cut)), 'mx-fgroup-more mx-fg-closed');
                 if(gMore){
-                    var gh = gMore.querySelector('.mx-fg-h');
-                    gh.addEventListener('click', function(){ gMore.classList.toggle('mx-fg-closed'); if(window.__mxAlignFn) window.__mxAlignFn(); });
+                    gMore.querySelector('.mx-fg-h').addEventListener('click', function(){ gMore.classList.toggle('mx-fg-closed'); if(window.__mxAlignFn) window.__mxAlignFn(); });
                 }
-                // швидкі варіанти часу: клік замість набору тексту
-                if(gTime){
-                    var tf = gTime.querySelector('input[type="text"], input[type="tel"], textarea');
-                    if(tf){
-                        var tBox = document.createElement('div'); tBox.className = 'mx-chips mx-time-chips';
-                        ['Будь-який час', 'До обіду', 'Після 17:00', 'Вихідні'].forEach(function(lbl){
-                            var cell = document.createElement('div'); cell.className = 'mx-cell';
-                            var tb = document.createElement('button'); tb.type = 'button'; tb.className = 'mx-chip';
-                            tb.textContent = lbl;
-                            tb.insertAdjacentHTML('beforeend', '<svg class="mx-chip-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>');
-                            tb.addEventListener('click', function(){
-                                var on = !tb.classList.contains('mx-chip-on');
-                                Array.prototype.forEach.call(tBox.querySelectorAll('.mx-chip'), function(x){ x.classList.remove('mx-chip-on'); });
-                                tb.classList.toggle('mx-chip-on', on);
-                                tf.value = on ? lbl : '';
-                                if(mxStep) mxStep.refresh(true);
-                            });
-                            cell.appendChild(tb); tBox.appendChild(cell);
-                        });
-                        gTime.querySelector('.mx-fg-body').insertBefore(tBox, timeEl);
-                        tf.addEventListener('input', function(){
-                            Array.prototype.forEach.call(tBox.querySelectorAll('.mx-chip'), function(x){
-                                x.classList.toggle('mx-chip-on', x.textContent.trim().indexOf((tf.value || '').trim()) === 0 && !!(tf.value || '').trim());
-                            });
-                            if(mxStep) mxStep.refresh(false);
-                        });
-                    }
-                }
+                // вимкнені поля — у самий кінець форми, ПІСЛЯ груп: значення для сабміту
+                // лишається, а їхні приховані чипи не перехоплюють пошук по тексту
+                [timeEl, bundleEl].forEach(function(el){
+                    if(!el) return;
+                    if(sb && sb.parentNode === formEl){ formEl.insertBefore(el, sb); } else { formEl.appendChild(el); }
+                });
 
                 // ---- 2. інструкції під полем: плейсхолдер зникає рівно тоді, коли підказка потрібна
                 Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
@@ -3349,69 +3356,66 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     subEl2.setAttribute('data-mx-lock', '1');
                 }
 
-                // ---- 3b. частотні дослідження нагору, решта — за кнопкою «ще N»
-                // 65% направлень — КТ двох щелеп, ще ~25% — череп, панорама і ТРГ.
-                // Лікар із типовим направленням має бачити свій варіант без прокрутки.
-                var MX_TOP_LIST = ['кт двох щелеп', 'кт черепа + 3d ceph', 'панорамний знімок зубів',
-                                   'трг бокова проекція', 'кт двох щелеп з суглобами', 'кт двох щелеп + панорамний знімок'];
+                // ---- 3b. категорії як у паперовому направленні: щелепи й голова відкриті,
+                // рідше потрібне — тихими рядками, що розкриваються одним кліком.
+                // Нічого не рухається саме — тільки руками користувача.
+                var chevDown = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
                 var studyBody = grid.querySelector('.mx-fgroup-study > .mx-fg-body');
-                var topWrap = null, restWrap = null, moreBtn = null, topChips = null, topDeps = null;
-                if(studyBody){
-                    topWrap = document.createElement('div'); topWrap.className = 'mx-top';
-                    topWrap.innerHTML = '<div class="mx-top-lbl">Найчастіші дослідження</div><div class="mx-chips mx-top-chips"></div><div class="mx-top-deps"></div>';
-                    topChips = topWrap.querySelector('.mx-top-chips');
-                    topDeps = topWrap.querySelector('.mx-top-deps');
-                    restWrap = document.createElement('div'); restWrap.className = 'mx-rest';
-                    Array.prototype.slice.call(studyBody.children).forEach(function(n){ restWrap.appendChild(n); });
-                    studyBody.appendChild(topWrap);
-                    moreBtn = document.createElement('button'); moreBtn.type = 'button'; moreBtn.className = 'mx-more-btn';
-                    studyBody.appendChild(moreBtn);
-                    studyBody.appendChild(restWrap);
-                    // переносимо самі кнопки-чипи: обробники й звʼязок з <option> лишаються тими самими
-                    var byName = {};
-                    mxStudy.allOpts().forEach(function(a){ if(!byName[a.t]) byName[a.t] = a; });
-                    var moved = 0;
-                    MX_TOP_LIST.forEach(function(nm){
-                        var a = byName[nm];
-                        if(a){ topChips.appendChild(a.x.cell || a.x.b); moved++; }
-                    });
-                    if(!moved){ topWrap.style.display = 'none'; restWrap.classList.add('mx-rest-open'); moreBtn.style.display = 'none'; }
-                    else { mxStudy.firstStudyEl = topWrap; }
-                    var bhEl = grid.querySelector('.mx-bundle-hint');
-                    if(bhEl && moved) topWrap.appendChild(bhEl);
-                    // залежні поля топ-чипів живуть під топ-рядком, а не в згорнутій групі
-                    // залежне поле живе всередині комірки свого чипа — питання не «вилазить» невідомо де
-                    mxStudy.hostOf = function(btn, groupEl){
-                        var c = btn && btn.parentElement;
-                        return (c && c.classList && c.classList.contains('mx-cell')) ? c : groupEl;
-                    };
-                    var chevDown = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-                    var restCount = restWrap.querySelectorAll('.mx-chip').length;
-                    function paintMore(){
-                        var open = restWrap.classList.contains('mx-rest-open');
-                        var picked = restWrap.querySelectorAll('.mx-chip.mx-chip-on').length;
-                        moreBtn.classList.toggle('mx-mb-open', open);
-                        moreBtn.innerHTML = (open ? 'Згорнути'
-                            : ('Ще ' + restCount + ' ' + mxPlural(restCount, 'дослідження', 'дослідження', 'досліджень')
-                               + (picked ? ('<b class="mx-mb-pick">обрано ' + picked + '</b>') : ''))) + chevDown;
-                    }
-                    mxStudy.paintMore = paintMore;
-                    // гейт може підсвітити поле у згорнутому блоці — тоді блок треба розкрити
-                    mxStudy.reveal = function(el){
-                        if(!el || !el.closest) return;
-                        var st = el.closest('.mx-fgroup.mx-st');
-                        if(st && mxStep){ mxStep.defs.forEach(function(d, i){ if(d.g === st) mxStep.open(i); }); }
-                        var r = el.closest('.mx-rest'); if(r){ r.classList.add('mx-rest-open'); paintMore(); }
-                        var g = el.closest('.mx-fgroup-more'); if(g){ g.classList.remove('mx-fg-closed'); }
-                    };
-                    moreBtn.addEventListener('click', function(){
-                        restWrap.classList.toggle('mx-rest-open');
-                        paintMore();
+                var SECS = [];
+                function wrapSec(title, els){
+                    els = (els || []).filter(function(e){ return e && e.parentNode; });
+                    if(!els.length) return null;
+                    var sec = document.createElement('div'); sec.className = 'mx-sec';
+                    sec.innerHTML = '<button type="button" class="mx-sec-h"><span class="mx-sec-t">' + title + '</span><span class="mx-sec-pick"></span>' + chevDown + '</button><div class="mx-sec-b"></div>';
+                    els[0].parentNode.insertBefore(sec, els[0]);
+                    var body = sec.querySelector('.mx-sec-b');
+                    els.forEach(function(e){ e.classList.add('mx-sec-elt'); body.appendChild(e); });
+                    sec.querySelector('.mx-sec-h').addEventListener('click', function(){
+                        sec.classList.toggle('mx-sec-open');
                         if(window.__mxAlignFn) window.__mxAlignFn();
                     });
-                    paintMore();
-                    if(mxStudy.selected().length && restWrap.querySelector('.mx-chip-on')){ restWrap.classList.add('mx-rest-open'); paintMore(); }
+                    SECS.push(sec);
+                    return sec;
                 }
+                if(studyBody){
+                    var secSeg = [], secJoint = null, secPano = null;
+                    Array.prototype.slice.call(studyBody.children).forEach(function(el){
+                        if(!el.classList || !el.classList.contains('element')) return;
+                        var t = nrm(T(el));
+                        if(el.classList.contains('mx-seg')){ secSeg.push(el); return; }
+                        if(el.querySelector('select[multiple]')){
+                            if(t.indexOf('суглоб') !== -1) secJoint = el;
+                            else if(t.indexOf('панорама') !== -1 || t.indexOf('трг') !== -1) secPano = el;
+                        }
+                    });
+                    wrapSec('КТ Сегмент', secSeg);
+                    wrapSec('КТ Суглобів', secJoint ? [secJoint] : []);
+                    wrapSec('Панорама і ТРГ', secPano ? [secPano] : []);
+                }
+                function paintSecs(){
+                    SECS.forEach(function(sec){
+                        var names = [];
+                        Array.prototype.forEach.call(sec.querySelectorAll('.mx-chip.mx-chip-on'), function(c){
+                            var t = ''; Array.prototype.forEach.call(c.childNodes, function(n){ if(n.nodeType === 3) t += n.textContent; });
+                            names.push(t.replace(/\s+/g, ' ').trim());
+                        });
+                        var pick = sec.querySelector('.mx-sec-pick');
+                        pick.textContent = names.length ? (names[0] + (names.length > 1 ? ' +' + (names.length - 1) : '')) : '';
+                        sec.classList.toggle('mx-sec-has', !!names.length);
+                    });
+                }
+                mxStudy.paintSecs = paintSecs;
+                // залежне поле живе всередині комірки свого чипа
+                mxStudy.hostOf = function(btn, groupEl){
+                    var c = btn && btn.parentElement;
+                    return (c && c.classList && c.classList.contains('mx-cell')) ? c : groupEl;
+                };
+                // гейт підсвітив поле у згорнутому місці — розкриваємо саме його
+                mxStudy.reveal = function(el){
+                    if(!el || !el.closest) return;
+                    var sc = el.closest('.mx-sec'); if(sc){ sc.classList.add('mx-sec-open'); }
+                    var g = el.closest('.mx-fgroup-more'); if(g){ g.classList.remove('mx-fg-closed'); }
+                };
 
                 // ---- 3c. повтор минулої заявки: друга заявка має займати секунди, а не хвилину
                 var LAST_KEY = 'mxLastStudy8';
@@ -3428,7 +3432,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var last = readLast();
                     if(!last || !studyBody) return;
                     var opts = mxStudy.allOpts();
-                    var hit = opts.filter(function(a){ return last.indexOf(a.x.o.textContent.trim()) !== -1; });
+                    var hit = opts.filter(function(a){ return !a.m.off && last.indexOf(a.x.o.textContent.trim()) !== -1; });
                     var segHit = (mxStudy.segEls || []).filter(function(sg){ return last.indexOf(sg.name) !== -1; });
                     if(!hit.length && !segHit.length) return;
                     var againSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>';
@@ -3438,7 +3442,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     btn.addEventListener('click', function(){
                         hit.forEach(function(a){ if(!a.x.o.selected){ a.x.b.click(); } });
                         segHit.forEach(function(sg){ if(!sg.on()){ sg.b.click(); } });
-                        if(restWrap && restWrap.querySelector('.mx-chip-on')){ restWrap.classList.add('mx-rest-open'); }
+                        SECS.forEach(function(sec){ if(sec.querySelector('.mx-chip-on')) sec.classList.add('mx-sec-open'); });
                         btn.parentNode && btn.parentNode.removeChild(btn);
                         if(window.__mxAlignFn) window.__mxAlignFn();
                     });
@@ -3521,7 +3525,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     Array.prototype.forEach.call(grid.querySelectorAll('.mx-cell'), function(c){
                         c.classList.toggle('mx-cell-open', !!c.querySelector('.element.mx-dep-on'));
                     });
-                    if(mxStudy.paintMore) mxStudy.paintMore();
+                    if(mxStudy.paintSecs) mxStudy.paintSecs();
                     // червону підсвітку знімаємо, щойно умова виконана
                     if(mxStudy.firstStudyEl && n > 0) mxStudy.firstStudyEl.classList.remove('mx-req-miss');
                     if(mxStudy.rotEl && !mxStudy.rotMissing()) mxStudy.rotEl.classList.remove('mx-req-miss');
@@ -3533,7 +3537,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         ? (picked.length + ' ' + mxPlural(picked.length, 'дослідження', 'дослідження', 'досліджень') + ' · можна надсилати')
                         : 'Оберіть дослідження';
                     if(mxStudy.syncBar) mxStudy.syncBar();
-                    if(mxStudy.stepRefresh) mxStudy.stepRefresh(false);
                     if(window.__mxAlignFn) window.__mxAlignFn();
                 }
                 // ---- 6. телефон і імʼя: найдорожче поле форми не має приймати сміття
@@ -3547,8 +3550,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         if(!nameEl2 && (t.indexOf('п.і.б') !== -1 || t.indexOf('піб') !== -1 || t.indexOf('імʼя') !== -1 || t.indexOf('ім\'я') !== -1)) nameEl2 = { el: el, f: f };
                     });
                     if(nameEl2){ nameEl2.f.setAttribute('placeholder', 'Прізвище та імʼя'); mxStudy.nameField = nameEl2.f;
-                        nameEl2.f.addEventListener('blur', function(){ if(mxStep) mxStep.refresh(false); });
-                        nameEl2.f.addEventListener('input', function(){ if(mxStep) mxStep.refresh(false); }); }
+ }
                     if(phoneEl){
                         var pf = phoneEl.f;
                         pf.setAttribute('placeholder', '+380 XX XXX XX XX');
@@ -3580,12 +3582,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             pf.value = r.empty ? '+380 ' : r.t;
                             try{ pf.setSelectionRange(pf.value.length, pf.value.length); }catch(_){ }
                             if(r.ok) phoneEl.el.classList.remove('mx-req-miss');
-                            if(mxStep) mxStep.refresh(r.ok);
                         });
                         pf.addEventListener('blur', function(){ if((pf.value || '').replace(/\D/g, '') === '380'){ pf.value = ''; } });
                         mxStudy.phoneBad = function(){ var r = fmt(pf.value); return r.ok ? null : phoneEl.el; };
                         mxStudy.phoneField = pf;
-                        pf.addEventListener('blur', function(){ if(mxStep) mxStep.refresh(false); });
                     }
                     if(nameEl2){
                         // лікарі часто пишуть КАПСОМ — приводимо до людського вигляду одразу
@@ -3600,54 +3600,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         });
                     }
                 })();
-
-                // ---- 7. кроки: відкритий лише поточний, пройдені згортаються у рядок з підсумком.
-                // На екрані завжди видно «1-2-3», а не стіну полів.
-                var mxStep = (function(){
-                    var defs = [];
-                    function add(g, doneFn, sumFn){ if(g) defs.push({ g: g, done: doneFn, sum: sumFn }); }
-                    function val(f){ return f ? (f.value || '').trim() : ''; }
-                    add(gPat, function(){
-                        return !!val(mxStudy.nameField) && !(mxStudy.phoneBad && mxStudy.phoneBad());
-                    }, function(){
-                        return [val(mxStudy.nameField), val(mxStudy.phoneField)].filter(Boolean).join(' · ');
-                    });
-                    if(gTime){
-                        var tfx = gTime.querySelector('input[type="text"], input[type="tel"], textarea');
-                        add(gTime, function(){ return !!val(tfx); }, function(){ return val(tfx); });
-                    }
-                    add(gStudy, function(){ return mxStudy.studyCount() > 0; }, function(){
-                        var l = mxStudy.selected().filter(function(x){ return !x.extra; }).map(function(x){ return x.n; });
-                        return l.length > 2 ? (l.slice(0, 2).join(' · ') + ' + ще ' + (l.length - 2)) : l.join(' · ');
-                    });
-                    function open(i){
-                        defs.forEach(function(d, j){ d.g.classList.toggle('mx-st-open', j === i); });
-                        if(window.__mxAlignFn) window.__mxAlignFn();
-                    }
-                    defs.forEach(function(d, i){
-                        d.g.querySelector('.mx-fg-h').addEventListener('click', function(){
-                            open(d.g.classList.contains('mx-st-open') ? -1 : i);
-                        });
-                    });
-                    function refresh(advance){
-                        var openIdx = -1;
-                        defs.forEach(function(d, i){
-                            var ok = d.done();
-                            d.g.classList.toggle('mx-st-done', ok);
-                            var sEl = d.g.querySelector('.mx-st-sum');
-                            if(sEl) sEl.textContent = ok ? d.sum() : '';
-                            if(d.g.classList.contains('mx-st-open')) openIdx = i;
-                        });
-                        if(advance && openIdx > -1 && defs[openIdx].done()){
-                            var nxt = -1;
-                            for(var i = openIdx + 1; i < defs.length; i++){ if(!defs[i].done()){ nxt = i; break; } }
-                            if(nxt > -1) open(nxt);
-                        }
-                    }
-                    open(0);
-                    return { refresh: refresh, open: open, defs: defs };
-                })();
-                mxStudy.stepRefresh = function(a){ mxStep.refresh(a); };
 
                 var baseSync = mxStudy.sync;
                 mxStudy.sync = function(){ baseSync(); renderSum(); };
