@@ -199,22 +199,22 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-collapsed .mx-card-body{ display:none; }
 #mxProcGrid .mx-card-body{ animation:mxUp .22s ease both; }
 /* ЧИПИ вибору досліджень (мультисписки OneBox) */
-#mxProcGrid .os-block-form .mx-chips{ display:flex; flex-wrap:wrap; gap:calc(8 * var(--u)); margin-top:calc(4 * var(--u)); }
+#mxProcGrid .os-block-form .mx-chips{ display:flex !important; flex-wrap:wrap; gap:calc(8 * var(--u)); margin-top:calc(4 * var(--u)); order:4; }
 #mxProcGrid .os-block-form .mx-chip{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(9 * var(--u)) calc(15 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(13 * var(--u)); font-weight:600; color:#334155; cursor:pointer; transition:border-color .14s ease, background .14s ease, color .14s ease; }
 #mxProcGrid .os-block-form .mx-chip::before{ content:''; width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; border:1.5px solid #CBD5E1; border-radius:calc(5 * var(--u)); background:#fff; transition:all .14s ease; }
 #mxProcGrid .os-block-form .mx-chip:hover{ border-color:#C7D2FE; background:#F8FAFF; }
 #mxProcGrid .os-block-form .mx-chip.mx-chip-on{ border-color:#2c3bff; background:#F5F7FF; color:#0F172A; }
 #mxProcGrid .os-block-form .mx-chip.mx-chip-on::before{ background:#2c3bff; border-color:#2c3bff; box-shadow:inset 0 0 0 2px #fff; }
 /* залежні поля: зʼявляються лише коли потрібні */
-#mxProcGrid .os-block-form .element.mx-dep{ display:none; }
-#mxProcGrid .os-block-form .element.mx-dep.mx-dep-on{ display:block; animation:mxUp .2s ease both; }
+#mxProcGrid .os-block-form .element.mx-dep{ display:none !important; order:6; }
+#mxProcGrid .os-block-form .element.mx-dep.mx-dep-on{ display:flex !important; flex-direction:column; animation:mxUp .2s ease both; }
 #mxProcGrid .os-block-form .element.mx-dep-sub{ margin:calc(12 * var(--u)) 0 0; padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1px solid #EDF1F7; border-radius:calc(10 * var(--u)); }
 #mxProcGrid .os-block-form .element.mx-dep-sub .title{ font-size:calc(12 * var(--u)); color:#64748B; margin-bottom:calc(6 * var(--u)); }
-#mxProcGrid .os-block-form .element.mx-dep-sub .mx-fnum{ display:none; }
-#mxProcGrid .os-block-form .element.mx-dep-sub .mx-req-badge{ display:none; }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-fnum{ display:none !important; }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-req-badge{ display:none !important; }
 /* мʼяка залежність (скан обличчя): доступний лише разом із КТ */
 /* варіанти всередині залежного підполя — компактні пілюлі, а не «голі» радіо */
-#mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow{ display:flex; flex-wrap:wrap; gap:calc(8 * var(--u)); }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow{ display:flex !important; flex-wrap:wrap; gap:calc(8 * var(--u)); order:4; }
 #mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow label{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(7 * var(--u)) calc(13 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:600; color:#334155; cursor:pointer; transition:border-color .14s ease, background .14s ease, color .14s ease; }
 #mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow label:hover{ border-color:#C7D2FE; background:#F8FAFF; }
 #mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow label.mx-rad-on{ border-color:#2c3bff; background:#F5F7FF; color:#0F172A; }
@@ -222,7 +222,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .os-block-form .element.mx-dep-off{ opacity:.45; pointer-events:none; }
 #mxProcGrid .os-block-form .element.mx-dep-off .description{ display:block !important; }
 /* підказка про готовий комплект */
-#mxProcGrid .os-block-form .mx-bundle-hint{ display:none; align-items:center; flex-wrap:wrap; gap:calc(11 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); }
+#mxProcGrid .os-block-form .mx-bundle-hint{ display:none; order:5; align-items:center; flex-wrap:wrap; gap:calc(11 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); }
 #mxProcGrid .os-block-form .mx-bh-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#334155; }
 #mxProcGrid .os-block-form .mx-bh-t b{ color:#0F172A; font-weight:700; }
 #mxProcGrid .os-block-form .mx-bh-btn{ margin-left:auto; padding:calc(7 * var(--u)) calc(14 * var(--u)); background:#2c3bff; color:#fff; border:none; border-radius:calc(9 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:700; cursor:pointer; transition:background .14s ease; }
@@ -2678,7 +2678,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 function norm(s){ return String(s || '').toLowerCase().replace(/["'’ʼ`]/g, '').replace(/\s+/g, ' ').trim(); }
                 // 1) чипи замість мультисписку
                 multis.forEach(function(m){
-                    m.sel.style.display = 'none';
+                    // OneBox загортає мультисписок у .labels-list і піднімає над ним Select2/Chosen —
+                    // ховаємо саме обгортку (сам select лишається у формі й відправляє значення)
+                    var wrap = m.sel.closest('.labels-list') || m.sel.parentElement;
+                    if(wrap && wrap !== m.el && wrap.contains(m.sel)){ wrap.style.setProperty('display', 'none', 'important'); }
+                    m.sel.style.setProperty('display', 'none', 'important');
                     var box = document.createElement('div'); box.className = 'mx-chips';
                     m.opts = [];
                     Array.prototype.forEach.call(m.sel.options, function(o){
@@ -2690,6 +2694,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             o.selected = !o.selected;
                             b.classList.toggle('mx-chip-on', o.selected);
                             try{ m.sel.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
+                            try{ if(window.jQuery){ window.jQuery(m.sel).trigger('change'); } }catch(_){ }
                             m.el.classList.remove('mx-req-miss');
                             api.sync();
                         });
@@ -2725,7 +2730,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             try{ c.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
                             api.sync();
                         });
-                        if(l){ l.style.display = 'none'; } else { c.style.display = 'none'; }
+                        if(l){ l.style.setProperty('display', 'none', 'important'); }
+                        c.style.setProperty('display', 'none', 'important');
+                        var cw = c.closest('.labels-list');
+                        if(cw && cw !== el && cw.contains(c) && !cw.querySelector('.mx-chips')){ cw.style.setProperty('display', 'none', 'important'); }
                         box.appendChild(b);
                         el.__cbchips.push({ c: c, b: b });
                     });
@@ -2829,8 +2837,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     } else if(bundleTRG && optTrgSide && optPano && optTrgSide.x.o.selected && optPano.x.o.selected && !bundleTRG.x.o.selected){
                         pair = { bundle: bundleTRG, parts: [optTrgSide, optPano] };
                     }
-                    if(!pair){ hintBox.style.display = 'none'; hintBox.innerHTML = ''; return; }
-                    hintBox.style.display = 'flex';
+                    if(!pair){ hintBox.style.setProperty('display', 'none', 'important'); hintBox.innerHTML = ''; return; }
+                    hintBox.style.setProperty('display', 'flex', 'important');
                     hintBox.innerHTML = '<span class="mx-bh-t">Є готовий комплект: <b>' + escT(pair.bundle.x.o.textContent.trim()) + '</b></span>' +
                         '<button type="button" class="mx-bh-btn">Обрати комплект</button>';
                     hintBox.querySelector('.mx-bh-btn').addEventListener('click', function(){
@@ -2875,12 +2883,14 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var rs = d.el.querySelectorAll('input[type="radio"]');
                     if(!rs.length) return;
                     var row = document.createElement('div'); row.className = 'mx-radrow';
+                    var ow = rs[0].closest('.labels-list');   // запамʼятовуємо ДО переносу
                     Array.prototype.forEach.call(rs, function(r){
                         var l = labOf(r);
                         row.appendChild(l && l.contains(r) ? l : r);
                         if(l && !l.contains(r)) row.appendChild(l);
                     });
                     d.el.appendChild(row);
+                    if(ow && ow !== d.el && !ow.querySelector('input')){ ow.style.setProperty('display', 'none', 'important'); }
                     function paint(){ Array.prototype.forEach.call(rs, function(r){ var l = labOf(r); if(l) l.classList.toggle('mx-rad-on', r.checked); }); }
                     d.el.addEventListener('change', function(){ paint(); d.el.classList.remove('mx-req-miss'); });
                     d.paint = paint;
