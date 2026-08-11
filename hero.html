@@ -198,6 +198,32 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-collapsed .mx-card-h{ margin-bottom:0; padding-bottom:0; border-bottom:none; }
 #mxProcGrid .mx-collapsed .mx-card-body{ display:none; }
 #mxProcGrid .mx-card-body{ animation:mxUp .22s ease both; }
+/* картка «Планування»: файл плану + рішення клієнта */
+#mxProcGrid .mx-plan-card{ border-color:#DDE3FF; box-shadow:0 1px 3px rgba(44,59,255,.07); }
+#mxProcGrid .mx-plan-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
+#mxProcGrid .mx-plan-ver{ margin-left:calc(10 * var(--u)); padding:calc(3 * var(--u)) calc(9 * var(--u)); background:#F1F5F9; border-radius:calc(999 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#64748B; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; }
+#mxProcGrid .mx-plan-body{ margin-top:calc(13 * var(--u)); }
+#mxProcGrid .mx-plan-files{ display:flex; flex-wrap:wrap; gap:calc(9 * var(--u)); margin-bottom:calc(13 * var(--u)); }
+#mxProcGrid .mx-plan-file{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); padding:calc(9 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); font-size:calc(13 * var(--u)); font-weight:700; color:#2c3bff !important; text-decoration:none !important; transition:background .14s ease, border-color .14s ease; }
+#mxProcGrid .mx-plan-file:hover{ background:#EEF2FF; border-color:#C7D2FE; }
+#mxProcGrid .mx-plan-file svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; }
+#mxProcGrid .mx-plan-note{ font-size:calc(13 * var(--u)); font-weight:500; color:#334155; line-height:1.6; text-wrap:balance; }
+#mxProcGrid .mx-plan-cta{ display:flex; align-items:center; gap:calc(12 * var(--u)); flex-wrap:wrap; margin-top:calc(15 * var(--u)); }
+#mxProcGrid .mx-plan-fix{ display:none; margin-top:calc(15 * var(--u)); padding-top:calc(14 * var(--u)); border-top:1px solid #F1F5F9; }
+#mxProcGrid .mx-plan-fixing .mx-plan-fix{ display:block; }
+#mxProcGrid .mx-plan-fixing .mx-plan-cta{ display:none; }
+#mxProcGrid .mx-plan-fix-lbl{ font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.1em; text-transform:uppercase; margin-bottom:calc(8 * var(--u)); }
+#mxProcGrid .mx-plan-ta{ width:100%; box-sizing:border-box; padding:calc(11 * var(--u)) calc(13 * var(--u)); border:1px solid #E2E8F0; border-radius:calc(10 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(13 * var(--u)); font-weight:500; color:#0F172A; line-height:1.5; resize:vertical; transition:border-color .14s ease, box-shadow .14s ease; }
+#mxProcGrid .mx-plan-ta:focus{ outline:none; border-color:#2c3bff; box-shadow:0 0 0 3px rgba(44,59,255,.12); }
+#mxProcGrid .mx-plan-ta.mx-ta-miss{ border-color:#F87171; box-shadow:0 0 0 3px rgba(248,113,113,.14); }
+#mxProcGrid .mx-plan-fix-hint{ margin-top:calc(7 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; }
+#mxProcGrid .mx-plan-fix-act{ display:flex; align-items:center; gap:calc(10 * var(--u)); flex-wrap:wrap; margin-top:calc(12 * var(--u)); }
+/* службова панель праворуч після оплати */
+.mx-side .mx-side-help{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#B6BFCC; line-height:1.55; margin-bottom:calc(14 * var(--u)); }
+.mx-side .mx-side-btn{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); padding:calc(9 * var(--u)) calc(16 * var(--u)); background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); border-radius:calc(10 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:700; color:#fff !important; text-decoration:none !important; transition:background .14s ease, border-color .14s ease; }
+.mx-side .mx-side-btn:hover{ background:rgba(255,255,255,0.14); border-color:rgba(255,255,255,0.3); }
+.mx-side .mx-side-btn-ic{ display:inline-flex; width:calc(13 * var(--u)); height:calc(13 * var(--u)); color:#A5B4FC; }
+.mx-side .mx-side-btn-ic svg{ width:100%; height:100%; }
 /* статус угоди в шапці картки: помітно, але не перебиває таймер */
 #mxProcGrid .mx-oc-paid-badge{ margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(6 * var(--u)); padding:calc(4 * var(--u)) calc(11 * var(--u)); background:#F0FDF4; border:1px solid #BBF7D0; border-radius:calc(999 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; color:#16A34A; white-space:nowrap; }
 #mxProcGrid .mx-oc-paid-badge::before{ content:''; width:calc(6 * var(--u)); height:calc(6 * var(--u)); border-radius:50%; background:#22C55E; }
@@ -210,9 +236,13 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-work-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
 #mxProcGrid .mx-wk-body{ display:flex; align-items:center; gap:calc(20 * var(--u)); margin-top:calc(13 * var(--u)); }
 #mxProcGrid .mx-wk-time{ flex:0 0 auto; text-align:center; padding:calc(12 * var(--u)) calc(18 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(12 * var(--u)); }
-#mxProcGrid .mx-wk-clock{ font-size:calc(28 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.5px; line-height:1; font-variant-numeric:tabular-nums; white-space:nowrap; }
-#mxProcGrid .mx-wk-clock.mx-wk-soon{ font-size:calc(19 * var(--u)); color:#16A34A; }
-#mxProcGrid .mx-wk-lbl{ margin-top:calc(7 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.05em; text-transform:uppercase; max-width:calc(150 * var(--u)); line-height:1.35; }
+#mxProcGrid .mx-wk-date{ font-size:calc(17 * var(--u)); font-weight:800; color:#0F172A; letter-spacing:-0.2px; line-height:1.25; text-wrap:balance; }
+#mxProcGrid .mx-wk-hour{ margin-top:calc(4 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; color:#475569; }
+#mxProcGrid .mx-wk-left{ margin-top:calc(8 * var(--u)); font-size:calc(10.5 * var(--u)); font-weight:700; color:#94A3B8; letter-spacing:.05em; text-transform:uppercase; }
+#mxProcGrid .mx-wk-time{ max-width:calc(210 * var(--u)); }
+#mxProcGrid .mx-wk-paused .mx-wk-time{ background:#F8FAFC; border-color:#E2E8F0; }
+#mxProcGrid .mx-wk-paused .mx-wk-date{ color:#475569; }
+#mxProcGrid .mx-wk-paused .mx-card-ico{ background:#F1F5F9; color:#64748B; }
 #mxProcGrid .mx-wk-note{ flex:1 1 auto; min-width:0; font-size:calc(13 * var(--u)); font-weight:500; color:#334155; line-height:1.6; text-wrap:balance; }
 #mxProcGrid .mx-wk-note b{ color:#0F172A; font-weight:700; }
 /* мікро-таймлайн «Далі»: 3 короткі рядки замість абзацу */
@@ -615,32 +645,29 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         }
         // ЄДИНЕ місце, де задано канал звʼязку. Зміниться менеджер — правимо тільки тут.
         var MX_TG = 'https://t.me/dlmaxilla';
-        var STAGES = ['Оцінка','Планування','Підтвердження','Виробництво','Відправлено'];
-        var STAGE_NOTE = [
-            'Ми отримали ваше замовлення та оцінюємо кейс',
-            'Готуємо план лікування. За потреби — погодимо його з вами',
-            'Підтверджуємо деталі замовлення перед запуском виробництва',
-            'Виготовляємо ваш хірургічний шаблон',
-            'Замовлення відправлено'
-        ];
+        // 6 кроків клієнтського шляху — єдина модель прогресу на екрані
+        var STAGES = ['Оцінка','Оплата','Планування','Погодження','Виготовлення','Відправлено'];
+        var STAGE_N = STAGES.length;
         var STATUS_MAP = {
             'Заявка на планування':{c:'Оцінка кейса',s:1},
             'Перевірка даних':{c:'Перевірка даних',s:1},
-            'Очікує нові дані':{c:'Очікує нові дані',s:1},
+            'Очікує нові дані':{c:'Потрібні дані',s:1},
             'Планове очікування':{c:'Призупинено',s:1},
             'Пропозиція':{c:'Пропозиція готова',s:2},
-            'Створення проекту':{c:'Підготовка планування',s:2},
-            'Погодження проекту':{c:'Погодження планування',s:2},
-            'Погоджено клієнтом':{c:'Планування затверджено',s:2},
-            'Рахунок висталено':{c:'Очікує оплати',s:3},
+            'Рахунок висталено':{c:'Очікує оплати',s:2},
             'Рахунок оплачено':{c:'Оплачено',s:3},
-            'Депозит':{c:'Депозит',s:3},
+            'Депозит':{c:'Оплачено',s:3},
             'Взяти у роботу без передоплати':{c:'',s:3},
-            'Виробництво':{c:'Виробництво',s:4},
-            'Готове до відправки':{c:'Виробництво',s:4},
-            'Відправлено':{c:'Відправлено',s:5},
-            'Успішно реалізовано':{c:'Відправлено',s:5},
-            'Закрито та не реалізовано':{c:'Відправлено',s:5}
+            'Створення проекту':{c:'Планування',s:3},
+            'Очікує додаткові дані':{c:'Потрібні дані',s:3},
+            'Погодження проекту':{c:'Погодження планування',s:4},
+            'Необхідні правки':{c:'Вносимо правки',s:4},
+            'Погоджено клієнтом':{c:'Планування затверджено',s:5},
+            'Виробництво':{c:'Виробництво',s:5},
+            'Готове до відправки':{c:'Готове до відправки',s:5},
+            'Відправлено':{c:'Відправлено',s:6},
+            'Успішно реалізовано':{c:'Доставлено',s:6},
+            'Закрито та не реалізовано':{c:'Закрито',s:6}
         };
         var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
         function readStatus(){
@@ -689,6 +716,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var tIco   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>';
             var tChat  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 20l1-5.7a8.5 8.5 0 1 1 17-2.8z"/></svg>';
             // --- грід + панель (фаза: етапи 1-2 → оцінка, 3 → оплата, 4-5 → шаблон) ---
+            var ordNumEarly = (location.pathname.match(/\/client\/order\/(\d+)/) || [])[1] || '';
             var grid = document.createElement('div'); grid.id = 'mxProcGrid'; grid.className = 'mx-grid-track';
             var lcol = document.createElement('div'); lcol.className = 'mx-col-form';
             var rcol = document.createElement('div'); rcol.className = 'mx-col-side';
@@ -696,23 +724,39 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var topNote = document.querySelector('#mxProcTop .mx-ts-note');
             if(topNote){ topNote.style.display = 'none'; }
             // після оплати «Ви тут» переїжджає на крок 3 (виготовлення), а не лишається на оплаті
-            var isPaid = /оплачено|депозит|створення проекту|погодження проекту|погоджено/i.test(status);
-            var phase = isPaid ? 3 : (m.s <= 2 ? 1 : (m.s === 3 ? 2 : 3));
-            var PH = [
-                { t:'Спочатку — оцінка', s:'Аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>' },
-                { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
-                { t:'Шаблон відправимо за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою за 48 годин з моменту погодження планування.' }
-            ];
-            var sh = '';
-            PH.forEach(function(p, i){
-                var done = (i + 1) < phase, act = (i + 1) === phase, last = (i === PH.length - 1);
-                sh += '<div class="mx-stp' + (act ? ' mx-stp-act' : '') + (done ? ' mx-stp-done' : '') + '">'
-                    + '<div class="mx-stp-rail"><span class="mx-stp-n">' + (done ? tCheck : (i + 1)) + '</span>' + (last ? '' : '<span class="mx-stp-line"></span>') + '</div>'
-                    + '<div class="mx-stp-txt">' + (act ? '<div class="mx-stp-here">Ви тут</div>' : '') + '<div class="mx-stp-t">' + p.t + '</div>'
-                    + '<div class="mx-stp-s">' + p.s + '</div></div></div>';
-            });
-            rcol.innerHTML = '<div class="mx-side"><div class="mx-side-eyebrow">Як це працює</div>' + sh
-                + '<div class="mx-side-foot">' + tCheck + 'Дані пацієнта захищені</div></div>';
+            var isPaid = m.s >= 3;                                        // оплата позаду
+            var isWaitData = /очікує додаткові дані/i.test(status);       // пауза після оплати
+            var isPlanning = /оплачено|депозит|створення проекту|без передоплати/i.test(status);
+            var isApprove  = /погодження проекту/i.test(status);          // потрібне рішення клієнта
+            var isFixing   = /необхідні правки/i.test(status);            // ми вносимо правки
+            // ПАНЕЛЬ. До оплати — «Як це працює» (продає модель роботи).
+            // Після оплати — службова довідка: прогрес живе ЛИШЕ у верхньому барі, «Ви тут» не дублюємо.
+            if(isPaid){
+                var icoTgSide = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.5.5-.9.5l.3-4.6 8.3-7.5c.4-.3-.1-.5-.6-.2L7.4 13 3 11.6c-1-.3-1-1 .2-1.5l17.3-6.7c.8-.3 1.5.2 1.4 1z"/></svg>';
+                var sideMsg = 'Добрий день! Маю питання щодо замовлення' + (ordNumEarly ? ' №' + ordNumEarly : '');
+                rcol.innerHTML = '<div class="mx-side"><div class="mx-side-eyebrow">Потрібна допомога?</div>'
+                    + '<div class="mx-side-help">Питання щодо замовлення — напишіть нам. Відповідаємо в робочий час.</div>'
+                    + '<a class="mx-side-btn" href="' + MX_TG + '?text=' + encodeURIComponent(sideMsg) + '" target="_blank" rel="noopener">'
+                    + '<span class="mx-side-btn-ic">' + icoTgSide + '</span>Написати нам</a>'
+                    + '<div class="mx-side-foot">' + tCheck + 'Дані пацієнта захищені</div></div>';
+            } else {
+                var phase = (m.s <= 1 ? 1 : (m.s === 2 ? 2 : 3));
+                var PH = [
+                    { t:'Спочатку — оцінка', s:'Аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>' },
+                    { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли пропозиція Вас влаштовує.' },
+                    { t:'Шаблон відправимо за 48 годин', s:'Виготовляємо та надсилаємо Новою Поштою за 48 годин з моменту погодження планування.' }
+                ];
+                var sh = '';
+                PH.forEach(function(p, i){
+                    var done = (i + 1) < phase, act = (i + 1) === phase, last = (i === PH.length - 1);
+                    sh += '<div class="mx-stp' + (act ? ' mx-stp-act' : '') + (done ? ' mx-stp-done' : '') + '">'
+                        + '<div class="mx-stp-rail"><span class="mx-stp-n">' + (done ? tCheck : (i + 1)) + '</span>' + (last ? '' : '<span class="mx-stp-line"></span>') + '</div>'
+                        + '<div class="mx-stp-txt">' + (act ? '<div class="mx-stp-here">Ви тут</div>' : '') + '<div class="mx-stp-t">' + p.t + '</div>'
+                        + '<div class="mx-stp-s">' + p.s + '</div></div></div>';
+                });
+                rcol.innerHTML = '<div class="mx-side"><div class="mx-side-eyebrow">Як це працює</div>' + sh
+                    + '<div class="mx-side-foot">' + tCheck + 'Дані пацієнта захищені</div></div>';
+            }
             var top = document.getElementById('mxProcTop');
             top.parentNode.insertBefore(grid, top.nextSibling);
             grid.appendChild(lcol); grid.appendChild(rcol);
@@ -875,6 +919,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             // --- поля-квитанція + спец-модулі майбутніх етапів ---
             var mxOfferTxt = null;   // текст пропозиції — центральний елемент свого етапу, живе ОКРЕМОЮ карткою
             var mxPatient = null;    // ідентичність кейса — лікар має бачити її вгорі, у hero
+            // КАПС з CRM у людський регістр: чіпаємо лише рядки БЕЗ малих літер, дефіси й апострофи зберігаємо
+            function mxName(s){
+                s = String(s == null ? '' : s).trim();
+                if(!s || /[a-zа-яіїєґ]/.test(s)) return s;             // вже нормальний регістр — не чіпаємо
+                return s.toLowerCase().replace(/[^\s\-]+/g, function(w){    // апостроф — частина слова
+                    if(w.length === 1) return w.toUpperCase();          // ініціали
+                    return w.charAt(0).toUpperCase() + w.slice(1);
+                });
+            }
             Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(el){
                 var capEl = el.querySelector('.flex-caption');
                 var capTxt = capEl ? capEl.textContent.replace(/\s+/g, ' ').trim() : '';
@@ -887,6 +940,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var val = '';
                 var dv = el.querySelector('.data-view'); if(dv){ val = (dv.textContent || '').replace(/\s+/g, ' ').trim(); }
                 if(!val){ var vi = el.querySelector('.data-edit input, .data-edit textarea, .data-edit select'); if(vi){ val = (vi.value || '').trim(); } }
+                if(val){ val = mxName(val); }                       // КАПС → людський регістр (лише показ)
                 if(low.indexOf('пацієнт') !== -1 && val){ mxPatient = val; }
                 var isOffer = low.indexOf('пропозиц') !== -1;
                 var isPay = low.indexOf('рахунок') !== -1 || low.indexOf('оплат') !== -1;
@@ -952,9 +1006,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             if(nData || fsec.children.length){ lcol.appendChild(cardData); }
             // --- HERO-статус: суть екрана («що відбувається зараз») + міні-трекер усередині ---
             var HERO_ACT = {
-                'Очікує нові дані':   ['Потрібні додаткові дані', 'Перегляньте коментар менеджера та додайте файли — і ми продовжимо.'],
+                'Очікує нові дані':   ['Потрібні дані від вас', 'Додайте файли у блоці «Замовлення» — і ми продовжимо.'],
+                'Очікує додаткові дані': ['Потрібні дані від вас', 'Відлік 48 годин зупинено. Додайте файли — і ми одразу продовжимо.'],
+                'Погодження проекту': ['Планування готове — погодьте', 'Перегляньте план і підтвердьте його або попросіть правки.'],
                 'Пропозиція':         ['Пропозиція готова', 'Ознайомтесь з оцінкою кейса нижче.'],
-                'Погодження проекту': ['Погодьте планування', 'Перегляньте план та підтвердьте його.'],
                 'Рахунок висталено':  ['Очікуємо оплату', 'Оплата запускає виробництво — 48 годин стартують одразу.']
             };
             var HERO_PASS = [
@@ -966,19 +1021,26 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             ];
             // пасивні статуси з власним текстом (не «чий хід», а «що саме зараз робимо»)
             var HERO_PASS_ST = {
-                'Рахунок оплачено': ['Оплату отримано — вже працюємо', 'Нічого робити не потрібно — повідомимо, щойно планування буде готове.'],
-                'Депозит':          ['Оплату отримано — вже працюємо', 'Нічого робити не потрібно — повідомимо, щойно планування буде готове.'],
-                'Створення проекту':['Створюємо проєкт', 'Проєкт віртуального пацієнта, wax-up і позиції імплантатів — у роботі.']
+                'Рахунок оплачено': ['Оплату отримано — вже працюємо', 'Нічого робити не потрібно.'],
+                'Депозит':          ['Оплату отримано — вже працюємо', 'Нічого робити не потрібно.'],
+                'Взяти у роботу без передоплати': ['Замовлення у роботі', 'Нічого робити не потрібно.'],
+                'Створення проекту':['Створюємо проєкт', 'Віртуальний пацієнт, wax-up і позиції імплантатів — у роботі.'],
+                'Необхідні правки': ['Вносимо правки', 'Врахуємо ваші зауваження та повернемо планування на погодження.'],
+                'Погоджено клієнтом':['Планування затверджено', 'Передаємо шаблон у виробництво.'],
+                'Виробництво':      ['Виготовляємо шаблон', 'Далі — відправка Новою Поштою.'],
+                'Готове до відправки':['Шаблон готовий', 'Найближчим часом передамо у Нову Пошту.']
             };
             var hcfg = HERO_ACT[status] || HERO_PASS_ST[status] || HERO_PASS[m.s - 1] || HERO_PASS[0];
             var isAct = !!HERO_ACT[status];
             var icoClock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
             var icoBell  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
+            var icoCog   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.36.4.66.73.86.3.19.65.29 1 .29H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
             var hero = document.createElement('div');
             hero.className = 'mx-card mx-hero-st' + (isAct ? ' mx-hst-act' : '');
-            var pct = Math.round((m.s / 5) * 100);
-            var ticks = '<i style="left:20%"></i><i style="left:40%"></i><i style="left:60%"></i><i style="left:80%"></i>';
-            var SHORT_ST = ['Оцінка', 'Планування', 'Підтвердження', 'Виробництво', 'Відправлено'];
+            var pct = Math.round((m.s / STAGE_N) * 100);
+            var ticks = '';
+            for(var tk = 1; tk < STAGE_N; tk++){ ticks += '<i style="left:' + (tk * 100 / STAGE_N) + '%"></i>'; }
+            var SHORT_ST = STAGES;
             var lbls = '';
             SHORT_ST.forEach(function(nm, i){
                 lbls += '<span class="' + (i + 1 === m.s ? 'mx-on' : (i + 1 < m.s ? 'mx-done' : '')) + '">' + nm + '</span>';
@@ -993,7 +1055,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     + '</span>';
             }
             hero.innerHTML =
-                '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isAct ? icoBell : icoClock) + '</span>' +
+                '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isAct ? icoBell : (isPlanning || isFixing ? icoCog : icoClock)) + '</span>' +
                 '<span class="mx-hst-tt"><span class="mx-hst-t">' + hcfg[0] + '</span><span class="mx-hst-s">' + hcfg[1] + '</span></span>' +
                 heroId + '</div>' +
                 '<div class="mx-hbar-row"><span class="mx-hbar"><span class="mx-hbar-fill" style="width:' + pct + '%"></span>' + ticks + '</span></div>' +
@@ -1379,7 +1441,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             // ================= ЕТАП «РАХУНОК ОПЛАЧЕНО»: таймер 48 робочих годин =================
             // Робоче вікно: ПН 09:00 → ПТ 18:00 за Києвом (безперервно). Вихідні — пауза.
             (function(){
-                if(!/оплачено|депозит/i.test(status)) return;
+                if(!(isPlanning || isWaitData)) return;   // картка часу — весь етап планування, включно з паузою
                 var TZ = 'Europe/Kyiv';
                 function kyiv(d){
                     var p = {};
@@ -1427,10 +1489,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     if(st <= d){ st = fromKyiv(k.y, k.mo, k.d + add + 7, 9, 0); }
                     return st;
                 }
-                // дедлайн = старт + 48 год робочого часу (вихідні пропускаємо)
-                function deadlineFrom(start){
-                    var cur = new Date(start.getTime()), left = WORK_MS, guard = 0;
-                    while(left > 0 && guard++ < 40){
+                // дедлайн = старт + бюджет робочого часу (вихідні пропускаємо)
+                function deadlineFrom(start, budget){
+                    var cur = new Date(start.getTime()), left = budget, guard = 0;
+                    while(left > 0 && guard++ < 60){
                         if(!inWindow(cur)){ cur = windowStart(cur); continue; }
                         var end = windowEnd(cur);
                         var seg = end - cur;
@@ -1439,40 +1501,62 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     }
                     return new Date(cur.getTime() + left);
                 }
-                // старт: поле «Дата оплати» (київський настінний час); якщо його немає — не показуємо таймер
-                // поле «Дата оплати» може бути виведене і в центральну колонку, і в бічний блок —
-                // шукаємо по ВСІЙ сторінці
-                var startDate = null, paidRaw = '';
-                Array.prototype.forEach.call(document.querySelectorAll('.js-data-element'), function(e){
-                    var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
-                    if(paidRaw || c.indexOf('оплат') === -1 || c.indexOf('дата') === -1) return;
-                    var dv = e.querySelector('.data-view');
-                    var v = dv ? (dv.textContent || '').replace(/\s+/g, ' ').trim() : '';
-                    if(!v){ var vi = e.querySelector('input, textarea'); if(vi){ v = (vi.value || '').trim(); } }
-                    if(v){
-                        paidRaw = v;
-                        if(lcol.contains(e)){ e.classList.add('mx-rc-empty'); e.style.display = 'none'; }   // у квитанції дублювати не треба
+                // скільки робочого часу минуло між двома моментами
+                function workBetween(a, b){
+                    if(b <= a) return 0;
+                    var acc = 0, cur = new Date(a.getTime()), guard = 0;
+                    while(cur < b && guard++ < 60){
+                        if(!inWindow(cur)){ cur = windowStart(cur); continue; }
+                        var e2 = windowEnd(cur);
+                        if(e2 >= b){ acc += b - cur; break; }
+                        acc += e2 - cur; cur = new Date(e2.getTime() + 1000);
                     }
-                });
-                if(paidRaw){
-                    var mm = paidRaw.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})/)
-                          || paidRaw.match(/(\d{2})\.(\d{2})\.(\d{4})[ ,]+(\d{1,2}):(\d{2})/);
-                    if(mm){
-                        startDate = mm[1].length === 4
-                            ? fromKyiv(+mm[1], +mm[2], +mm[3], +mm[4], +mm[5])
-                            : fromKyiv(+mm[3], +mm[2], +mm[1], +mm[4], +mm[5]);
-                    }
+                    return acc;
                 }
+                // читання дат із полів процесу (шукаємо по ВСІЙ сторінці — поле може бути в бічному блоці)
+                function fieldRaw(test, hideIfCentral){
+                    var out = '';
+                    Array.prototype.forEach.call(document.querySelectorAll('.js-data-element'), function(e){
+                        if(out) return;
+                        var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+                        if(!test(c)) return;
+                        var dv = e.querySelector('.data-view');
+                        var v = dv ? (dv.textContent || '').replace(/\s+/g, ' ').trim() : '';
+                        if(!v){ var vi = e.querySelector('input, textarea'); if(vi){ v = (vi.value || '').trim(); } }
+                        if(v){ out = v; if(hideIfCentral && lcol.contains(e)){ e.classList.add('mx-rc-empty'); e.style.display = 'none'; } }
+                    });
+                    return out;
+                }
+                function parseKyivDate(raw){
+                    if(!raw) return null;
+                    var mm = raw.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})/)
+                          || raw.match(/(\d{2})\.(\d{2})\.(\d{4})[ ,]+(\d{1,2}):(\d{2})/);
+                    if(!mm) return null;
+                    return mm[1].length === 4
+                        ? fromKyiv(+mm[1], +mm[2], +mm[3], +mm[4], +mm[5])
+                        : fromKyiv(+mm[3], +mm[2], +mm[1], +mm[4], +mm[5]);
+                }
+                // старт планування: спец-поле, інакше — дата оплати
+                var startRaw  = fieldRaw(function(c){ return c.indexOf('старт') !== -1 && c.indexOf('планув') !== -1; }, true)
+                             || fieldRaw(function(c){ return c.indexOf('дата') !== -1 && c.indexOf('оплат') !== -1; }, true);
+                var pauseRaw  = fieldRaw(function(c){ return c.indexOf('перехо') !== -1 && c.indexOf('дан') !== -1; }, true);
+                var resumeRaw = fieldRaw(function(c){ return c.indexOf('завантаж') !== -1 && c.indexOf('дан') !== -1; }, true);
+                var startDate = parseKyivDate(startRaw), pauseDate = parseKyivDate(pauseRaw), resumeDate = parseKyivDate(resumeRaw);
+                if(pauseDate && startDate && pauseDate < startDate){ pauseDate = null; }              // стара пауза з минулого циклу
+                if(resumeDate && pauseDate && resumeDate <= pauseDate){ resumeDate = null; }
+                var onPause = isWaitData || (!!pauseDate && !resumeDate);
                 var icoGear = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.36.4.66.73.86.3.19.65.29 1 .29H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+                var icoClockC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+                var icoPause = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9v6"/><path d="M14 9v6"/></svg>';
                 var icoMail = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>';
                 var icoEye  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
                 var icoOk   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
                 var wc = document.createElement('div'); wc.className = 'mx-card mx-work-card';
                 wc.innerHTML =
-                    '<div class="mx-card-h"><span class="mx-card-ico">' + icoGear + '</span><span class="mx-card-t">Коли буде готово планування</span></div>' +
+                    '<div class="mx-card-h"><span class="mx-card-ico">' + (onPause ? icoPause : icoClockC) + '</span>' +
+                    '<span class="mx-card-t">' + (onPause ? 'Час на паузі' : 'Коли буде готово планування') + '</span></div>' +
                     '<div class="mx-wk-body">' +
-                        '<div class="mx-wk-time"><div class="mx-wk-clock">—</div><div class="mx-wk-lbl">залишилось із 48 годин на планування</div></div>' +
-                        // замість абзацу — мікро-таймлайн «Далі»: 3 рядки по 3-4 слова, читається за 2 секунди
+                        '<div class="mx-wk-time"><div class="mx-wk-date">—</div><div class="mx-wk-hour"></div><div class="mx-wk-left"></div></div>' +
                         '<div class="mx-wk-next"><div class="mx-wk-nlbl">Далі</div>' +
                             '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Отримуєте email з плануванням</div>' +
                             '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoEye + '</span>Переглядаєте планування тут</div>' +
@@ -1481,28 +1565,53 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     '</div>' +
                     '<div class="mx-wk-foot">Робочий час: пн 09:00 — пт 18:00 (Київ)</div>';
                 lcol.insertBefore(wc, hero.nextSibling);
-                var clockEl = wc.querySelector('.mx-wk-clock'), lblEl = wc.querySelector('.mx-wk-lbl');
-                if(!startDate){
-                    // без дати оплати таймер не вигадуємо — показуємо чесний статичний блок
+                var dateEl = wc.querySelector('.mx-wk-date'), hourEl = wc.querySelector('.mx-wk-hour'), leftEl = wc.querySelector('.mx-wk-left');
+                if(onPause){
+                    // ПАУЗА: жодних обіцянок за датою — час зупинено, поки чекаємо на дані
+                    wc.classList.add('mx-wk-paused');
+                    dateEl.textContent = 'На паузі';
+                    hourEl.textContent = '';
+                    leftEl.textContent = 'чекаємо на ваші дані';
+                    var nxp = wc.querySelector('.mx-wk-next');
+                    if(nxp){
+                        nxp.innerHTML = '<div class="mx-wk-sorry">Відлік 48 годин <b>зупинено</b>, поки очікуємо на дані. ' +
+                            'Щойно завантажите — одразу продовжимо, і ви побачите нову дату готовності.</div>' +
+                            '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoOk + '</span>Додайте файли у блоці «Замовлення»</div>';
+                    }
+                } else if(!startDate){
                     wc.querySelector('.mx-wk-time').style.display = 'none';
                 } else {
-                    var dl = deadlineFrom(startDate);
-                    var pend = !inWindow(startDate) ? windowStart(startDate) : null;   // старт у неробочий час
-                    function pad(n){ return (n < 10 ? '0' : '') + n; }
+                    // бюджет: 48 год мінус спожите до паузи; відлік від відновлення або від старту
+                    var budget = WORK_MS, base = startDate;
+                    if(pauseDate && resumeDate){
+                        budget = Math.max(0, WORK_MS - workBetween(startDate, pauseDate));
+                        base = resumeDate;
+                    }
+                    var dlRaw = deadlineFrom(base, budget);
+                    // округлюємо ВГОРУ до години; після 18:00 — переносимо на 10:00 наступного робочого дня
+                    var dl = (function(d){
+                        var k = kyiv(d);
+                        var up = (k.mi > 0 || k.s > 0) ? fromKyiv(k.y, k.mo, k.d, k.h + 1, 0) : d;
+                        var ku = kyiv(up);
+                        if(ku.h >= 18 || ku.dow === 0 || ku.dow === 6){
+                            var nx = fromKyiv(ku.y, ku.mo, ku.d + 1, 10, 0);
+                            var kn = kyiv(nx);
+                            while(kn.dow === 0 || kn.dow === 6){ nx = fromKyiv(kn.y, kn.mo, kn.d + 1, 10, 0); kn = kyiv(nx); }
+                            return nx;
+                        }
+                        return up;
+                    })(dlRaw);
+                    var DOWN = ['нд','пн','вт','ср','чт','пт','сб'];
+                    var MON = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+                    function fmtDate(d){ var k = kyiv(d); return DOWN[k.dow] + ', ' + k.d + ' ' + MON[k.mo - 1]; }
+                    function fmtHour(d){ var k = kyiv(d); return 'орієнтовно до ' + k.h + ':' + (k.mi < 10 ? '0' : '') + k.mi; }
                     function tick(){
                         var now = new Date();
-                        if(pend && now < pend){
-                            clockEl.textContent = '48:00:00';
-                            lblEl.innerHTML = 'відлік стартує в понеділок о 09:00';
-                            return;
-                        }
                         var left = dl - now;
                         if(left <= 0){
-                            // час вичерпано: чесно вибачаємось і підтверджуємо, що кейс у роботі
                             if(!wc.__over){
                                 wc.__over = true;
                                 wc.classList.add('mx-wk-over');
-                                // вибачення — у заголовок; «ми вже поспішаємо» показує живий пульс, а не слова
                                 var ci = wc.querySelector('.mx-card-ico');
                                 if(ci){ ci.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6"/><path d="M12 16.5h.01"/></svg>'; }
                                 var ct = wc.querySelector('.mx-card-t'); if(ct){ ct.textContent = 'Перепрошуємо за затримку'; }
@@ -1512,13 +1621,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                                     lv.innerHTML = '<i></i>Працюємо над кейсом зараз';
                                     ch.appendChild(lv);
                                 }
-                                var nx = wc.querySelector('.mx-wk-next');
-                                if(nx){
-                                    nx.innerHTML = '<div class="mx-wk-sorry">Ваш кейс виявився складнішим за типовий, тому планування зайняло більше 48 годин. ' +
+                                var nx2 = wc.querySelector('.mx-wk-next');
+                                if(nx2){
+                                    nx2.innerHTML = '<div class="mx-wk-sorry">Ваш кейс виявився складнішим за типовий, тому планування зайняло більше 48 годин. ' +
                                         'Доопрацьовуємо його <b>у пріоритеті</b> — надішлемо, щойно буде готове.</div>' +
                                         '<div class="mx-wk-nrow"><span class="mx-wk-nic">' + icoMail + '</span>Повідомимо одразу після завершення</div>';
                                 }
-                                // кнопка в Telegram із готовим текстом: номер замовлення + пацієнт
                                 var ft = wc.querySelector('.mx-wk-foot');
                                 if(ft){
                                     var msg = 'Добрий день! Маю питання щодо замовлення'
@@ -1530,29 +1638,31 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                                         + '<span class="mx-tg-ic">' + icoTg + '</span>Написати нам</a>'
                                         + '<span class="mx-tg-note">Відповідаємо швидко в робочий час</span>';
                                 }
+                                dateEl.textContent = 'Завершуємо'; hourEl.textContent = ''; leftEl.textContent = 'надішлемо найближчим часом';
                             }
                             return;
                         }
-                        // показуємо ЗАЛИШОК РОБОЧОГО часу (без вихідних)
-                        var rem = 0, cur = new Date(now.getTime()), guard = 0;
-                        while(cur < dl && guard++ < 40){
-                            if(!inWindow(cur)){ cur = windowStart(cur); continue; }
-                            var e2 = windowEnd(cur);
-                            if(e2 >= dl){ rem += dl - cur; break; }
-                            rem += e2 - cur; cur = new Date(e2.getTime() + 1000);
+                        dateEl.textContent = 'Готово до ' + fmtDate(dl);
+                        hourEl.textContent = fmtHour(dl);
+                        var rem = dl - now;
+                        var hh = Math.round(rem / 3600000);
+                        if(rem >= 20 * 3600000){
+                            var dd = Math.max(1, Math.round(rem / 86400000));
+                            var word = (dd % 10 === 1 && dd % 100 !== 11) ? 'день' : ((dd % 10 >= 2 && dd % 10 <= 4 && (dd % 100 < 10 || dd % 100 >= 20)) ? 'дні' : 'днів');
+                            leftEl.textContent = 'залишилось ~' + dd + ' ' + word;
+                        } else {
+                            leftEl.textContent = hh >= 1 ? ('залишилось ~' + hh + ' год') : 'залишилось менше години';
                         }
-                        var h = Math.floor(rem / 3600000), mi = Math.floor(rem % 3600000 / 60000), s = Math.floor(rem % 60000 / 1000);
-                        clockEl.textContent = pad(h) + ':' + pad(mi) + ':' + pad(s);
-                        lblEl.textContent = 'залишилось із 48 годин на планування';
                     }
-                    tick(); setInterval(tick, 1000);
+                    tick(); setInterval(tick, 30000);
                 }
             })();
             // ===== ЗГОРТАННЯ ІСТОРІЇ (progressive disclosure) =====
             // Після оплати рішення вже прийнято: пропозиція і дані замовлення стають довідкою.
             // Ховаємо їх під клік, але у згорнутому вигляді лишаємо головний факт.
             (function(){
-                if(!isPaid) return;   // до оплати все це — робочий контент, згортати не можна
+                if(!isPaid) return;              // до оплати все це — робочий контент, згортати не можна
+                if(isWaitData) return;           // на паузі клієнт має одразу бачити поле завантаження
                 var chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
                 function collapsible(card, key, summary){
                     if(!card || card.__col) return;
@@ -1597,7 +1707,121 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 collapsible(cardData, 'ord', sumParts.join(' · '));
                 collapsible(ocCard, 'off', '');   // статус несе зелений бейдж у шапці
             })();
-            // TODO майбутнє: «Погодження проекту» — PDF планування + «Приймаю / Є правки» (потрібні поля процесу)
+            // ================= ЕТАП «ПОГОДЖЕННЯ ПРОЄКТУ»: план + рішення клієнта =================
+            (function(){
+                if(!(isApprove || isFixing)) return;
+                // версія плану — щоб клієнт бачив, що це вже виправлений варіант
+                var ver = 0;
+                Array.prototype.forEach.call(document.querySelectorAll('.js-data-element'), function(e){
+                    var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+                    if(c.indexOf('версі') === -1 || c.indexOf('план') === -1) return;
+                    var dv = e.querySelector('.data-view');
+                    var v = dv ? (dv.textContent || '').trim() : '';
+                    if(!v){ var vi = e.querySelector('input'); if(vi){ v = (vi.value || '').trim(); } }
+                    var n = parseInt(v, 10); if(!isNaN(n)){ ver = n; }
+                    if(lcol.contains(e)){ e.classList.add('mx-rc-empty'); e.style.display = 'none'; }
+                });
+                // поле-коментар до правок (клієнт заповнює у нашій формі)
+                var cmtEl = null;
+                Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(e){
+                    var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+                    if(!cmtEl && c.indexOf('коментар') !== -1 && c.indexOf('правк') !== -1){ cmtEl = e; e.classList.add('mx-rc-empty'); e.style.display = 'none'; }
+                });
+                // файл планування: файлове поле з «план» у назві (наш рядок файлів уже його показує)
+                var planLinks = [];
+                Array.prototype.forEach.call(lcol.querySelectorAll('.js-data-element'), function(e){
+                    var c = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+                    if(c.indexOf('планув') === -1 && c.indexOf('проєкт') === -1 && c.indexOf('проект') === -1) return;
+                    Array.prototype.forEach.call(e.querySelectorAll('.data-view a[href]'), function(a){
+                        var hrf = a.getAttribute('href') || '';
+                        if(hrf && hrf !== '#' && hrf.indexOf('javascript:') !== 0){ planLinks.push({ n: (a.textContent || 'Планування').trim(), h: hrf }); }
+                    });
+                });
+                function findBtn(re){
+                    var f = null;
+                    Array.prototype.forEach.call(document.querySelectorAll('a, button, input[type="button"], input[type="submit"]'), function(x){
+                        if(f) return;
+                        if(x.className && String(x.className).indexOf('mx-') === 0) return;
+                        var t = (x.value || x.textContent || '').replace(/\s+/g, ' ').trim();
+                        if(t && t.length < 60 && re.test(t)){ f = x; }
+                    });
+                    return f;
+                }
+                var btnOk  = findBtn(/приймаю|погоджую|затверджую/i);
+                var btnFix = findBtn(/правк/i);
+                [btnOk, btnFix].forEach(function(b){ if(b){ try{ b.style.setProperty('display','none','important'); }catch(_){ b.style.display = 'none'; } } });
+                var icoPlan = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 11h3"/></svg>';
+                var ap = document.createElement('div'); ap.className = 'mx-card mx-plan-card';
+                var verChip = ver > 1 ? '<span class="mx-plan-ver">версія ' + ver + '</span>' : '';
+                var filesHtml = planLinks.length
+                    ? planLinks.map(function(f){ return '<a class="mx-plan-file" href="' + f.h + '" target="_blank" rel="noopener">' + icoPlan + '<span>' + esc(f.n) + '</span></a>'; }).join('')
+                    : '';
+                if(isFixing){
+                    ap.innerHTML = '<div class="mx-card-h"><span class="mx-card-ico">' + icoPlan + '</span><span class="mx-card-t">Вносимо правки</span>' + verChip +
+                        '<span class="mx-wk-live"><i></i>У роботі зараз</span></div>' +
+                        '<div class="mx-plan-body"><div class="mx-wk-sorry">Ваші зауваження прийнято. Оновимо планування та повернемо його на погодження — ' +
+                        'повідомимо листом, щойно буде готове.</div></div>';
+                    lcol.insertBefore(ap, hero.nextSibling);
+                    return;
+                }
+                ap.innerHTML = '<div class="mx-card-h"><span class="mx-card-ico">' + icoPlan + '</span><span class="mx-card-t">Планування</span>' + verChip + '</div>' +
+                    '<div class="mx-plan-body">' +
+                        (filesHtml ? '<div class="mx-plan-files">' + filesHtml + '</div>' : '') +
+                        '<div class="mx-plan-note">Перегляньте планування позицій імплантатів. Якщо все влаштовує — погодьте, і ми запускаємо виробництво.</div>' +
+                        '<div class="mx-plan-cta"></div>' +
+                        '<div class="mx-plan-fix">' +
+                            '<div class="mx-plan-fix-lbl">Що потрібно змінити?</div>' +
+                            '<textarea class="mx-plan-ta" rows="3" placeholder="Опишіть, що саме поправити — напр.: імплантат 24 змістити дистально на 1 мм"></textarea>' +
+                            '<div class="mx-plan-fix-hint">Скриншоти можна додати у блоці «Замовлення» → «Додаткові файли»</div>' +
+                            '<div class="mx-plan-fix-act"></div>' +
+                        '</div>' +
+                    '</div>';
+                lcol.insertBefore(ap, hero.nextSibling);
+                var cta = ap.querySelector('.mx-plan-cta');
+                var fixBox = ap.querySelector('.mx-plan-fix');
+                var ta = ap.querySelector('.mx-plan-ta');
+                if(btnOk){
+                    var ok = document.createElement('a'); ok.href = 'javascript:void(0)'; ok.className = 'mx-cta-main';
+                    ok.textContent = 'Приймаю планування';
+                    ok.addEventListener('click', function(){
+                        if(ok.__b) return; ok.__b = true; ok.classList.add('mx-cta-busy'); ok.textContent = 'Надсилаємо…';
+                        try{ btnOk.click(); }catch(_){ ok.__b = false; ok.classList.remove('mx-cta-busy'); ok.textContent = 'Приймаю планування'; }
+                    });
+                    cta.appendChild(ok);
+                }
+                if(btnFix){
+                    var fx = document.createElement('a'); fx.href = 'javascript:void(0)'; fx.className = 'mx-cta-sec';
+                    fx.textContent = 'Є правки';
+                    fx.addEventListener('click', function(){ ap.classList.add('mx-plan-fixing'); if(ta){ ta.focus(); } });
+                    cta.appendChild(fx);
+                    var send = document.createElement('a'); send.href = 'javascript:void(0)'; send.className = 'mx-cta-main';
+                    send.textContent = 'Надіслати правки';
+                    send.addEventListener('click', function(){
+                        var txt = (ta && ta.value || '').trim();
+                        if(!txt){ if(ta){ ta.classList.add('mx-ta-miss'); ta.focus(); } return; }
+                        if(send.__b) return; send.__b = true; send.classList.add('mx-cta-busy'); send.textContent = 'Надсилаємо…';
+                        // пишемо коментар у рідне поле процесу (щоб зберігся разом із переходом статусу)
+                        if(cmtEl){
+                            var jt = cmtEl.querySelector('.flex-value .js-text') || cmtEl.querySelector('.js-text');
+                            if(jt){ try{ jt.click(); }catch(_){ } }
+                            var inp = cmtEl.querySelector('.data-edit input, .data-edit textarea, input[type="text"], textarea');
+                            if(inp){ inp.value = txt; try{ inp.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ } }
+                        }
+                        setTimeout(function(){ try{ btnFix.click(); }catch(_){ } }, 250);
+                    });
+                    var cancel = document.createElement('a'); cancel.href = 'javascript:void(0)'; cancel.className = 'mx-cta-sec';
+                    cancel.textContent = 'Скасувати';
+                    cancel.addEventListener('click', function(){ ap.classList.remove('mx-plan-fixing'); });
+                    var act = ap.querySelector('.mx-plan-fix-act');
+                    act.appendChild(send); act.appendChild(cancel);
+                    if(ta){ ta.addEventListener('input', function(){ ta.classList.remove('mx-ta-miss'); }); }
+                }
+                if(!btnOk && !btnFix){
+                    // процедури ще не налаштовані — не показуємо мертвих кнопок
+                    if(cta){ cta.style.display = 'none'; }
+                    if(fixBox){ fixBox.style.display = 'none'; }
+                }
+            })();
         }
         var ptries = 0;
         function renderProc(){
