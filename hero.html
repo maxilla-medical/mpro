@@ -198,6 +198,35 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid .mx-collapsed .mx-card-h{ margin-bottom:0; padding-bottom:0; border-bottom:none; }
 #mxProcGrid .mx-collapsed .mx-card-body{ display:none; }
 #mxProcGrid .mx-card-body{ animation:mxUp .22s ease both; }
+/* ЧИПИ вибору досліджень (мультисписки OneBox) */
+#mxProcGrid .os-block-form .mx-chips{ display:flex; flex-wrap:wrap; gap:calc(8 * var(--u)); margin-top:calc(4 * var(--u)); }
+#mxProcGrid .os-block-form .mx-chip{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(9 * var(--u)) calc(15 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(13 * var(--u)); font-weight:600; color:#334155; cursor:pointer; transition:border-color .14s ease, background .14s ease, color .14s ease; }
+#mxProcGrid .os-block-form .mx-chip::before{ content:''; width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; border:1.5px solid #CBD5E1; border-radius:calc(5 * var(--u)); background:#fff; transition:all .14s ease; }
+#mxProcGrid .os-block-form .mx-chip:hover{ border-color:#C7D2FE; background:#F8FAFF; }
+#mxProcGrid .os-block-form .mx-chip.mx-chip-on{ border-color:#2c3bff; background:#F5F7FF; color:#0F172A; }
+#mxProcGrid .os-block-form .mx-chip.mx-chip-on::before{ background:#2c3bff; border-color:#2c3bff; box-shadow:inset 0 0 0 2px #fff; }
+/* залежні поля: зʼявляються лише коли потрібні */
+#mxProcGrid .os-block-form .element.mx-dep{ display:none; }
+#mxProcGrid .os-block-form .element.mx-dep.mx-dep-on{ display:block; animation:mxUp .2s ease both; }
+#mxProcGrid .os-block-form .element.mx-dep-sub{ margin:calc(12 * var(--u)) 0 0; padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1px solid #EDF1F7; border-radius:calc(10 * var(--u)); }
+#mxProcGrid .os-block-form .element.mx-dep-sub .title{ font-size:calc(12 * var(--u)); color:#64748B; margin-bottom:calc(6 * var(--u)); }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-fnum{ display:none; }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-req-badge{ display:none; }
+/* мʼяка залежність (скан обличчя): доступний лише разом із КТ */
+/* варіанти всередині залежного підполя — компактні пілюлі, а не «голі» радіо */
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow{ display:flex; flex-wrap:wrap; gap:calc(8 * var(--u)); }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow label{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(7 * var(--u)) calc(13 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(999 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:600; color:#334155; cursor:pointer; transition:border-color .14s ease, background .14s ease, color .14s ease; }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow label:hover{ border-color:#C7D2FE; background:#F8FAFF; }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow label.mx-rad-on{ border-color:#2c3bff; background:#F5F7FF; color:#0F172A; }
+#mxProcGrid .os-block-form .element.mx-dep-sub .mx-radrow input[type="radio"]{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); margin:0; accent-color:#2c3bff; }
+#mxProcGrid .os-block-form .element.mx-dep-off{ opacity:.45; pointer-events:none; }
+#mxProcGrid .os-block-form .element.mx-dep-off .description{ display:block !important; }
+/* підказка про готовий комплект */
+#mxProcGrid .os-block-form .mx-bundle-hint{ display:none; align-items:center; flex-wrap:wrap; gap:calc(11 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); }
+#mxProcGrid .os-block-form .mx-bh-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#334155; }
+#mxProcGrid .os-block-form .mx-bh-t b{ color:#0F172A; font-weight:700; }
+#mxProcGrid .os-block-form .mx-bh-btn{ margin-left:auto; padding:calc(7 * var(--u)) calc(14 * var(--u)); background:#2c3bff; color:#fff; border:none; border-radius:calc(9 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:700; cursor:pointer; transition:background .14s ease; }
+#mxProcGrid .os-block-form .mx-bh-btn:hover{ background:#1F2CE0; }
 /* картка «Планування»: файл плану + рішення клієнта */
 #mxProcGrid .mx-plan-card{ border-color:#DDE3FF; box-shadow:0 1px 3px rgba(44,59,255,.07); }
 #mxProcGrid .mx-plan-card .mx-card-ico{ background:#EEF2FF; color:#2c3bff; }
@@ -2520,6 +2549,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     { t:'Передаємо в доставку', s:'Готові бланки направлень одразу вирушають до вас.' },
                     { t:'Направлення у клініці', s:'Отримуєте бланки за вказаною адресою <b>максимально швидко</b>.' }
                 ],
+                '8': [   // Запис пацієнта на дослідження
+                    { t:'Надсилаєте заявку', s:'Телефонуємо пацієнту і записуємо на зручний день та час.', here:true },
+                    { t:'Стежите за записом', s:'Усі записані пацієнти — у вашому кабінеті, із датою візиту.' },
+                    { t:'Знімок у кабінеті', s:'Одразу після візиту — у кабінеті та на email.' }
+                ],
                 '7': [   // 3D-друк зі STL клієнта: без планування, друк одразу після оплати
                     { t:'Спочатку — оцінка', s:'Надсилаєте STL — перевіряємо файл і рахуємо вартість друку. <b>Безкоштовно.</b>', here:true },
                     { t:'Оплата після оцінки', s:'Вносите оплату лише тоді, коли вартість Вас влаштовує.' },
@@ -2528,7 +2562,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             };
             var MX_FORM_FOOT = {
                 '2': 'Готові бланки — доставка у клініку',
-                '7': 'Друк за вашим STL — без планування'
+                '7': 'Друк за вашим STL — без планування',
+                '8': 'Контакти пацієнта зашифровані — співробітник бачить лише останні 4 цифри'
             };
             var MX_STEPS_DEFAULT = [
                 { t:'Спочатку — оцінка', s:'Заповнюєте заявку, надсилаєте КТ — ми аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>', here:true },
@@ -2618,6 +2653,258 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             // «Далі →» окремою пілюлею ПІД карткою (як у F1). Справжній сабміт лишаємо у формі
             // (щоб відправка працювала), ховаємо його і клікаємо через проксі-кнопку.
             var sb = card.querySelector('input[type="submit"], button[type="submit"]');
+            // ================= ФОРМА ЗАПИСУ НА ДОСЛІДЖЕННЯ: чипи + залежні поля =================
+            // Мультисписки OneBox перетворюємо на чипи; поля «Прикус…», «Положення рота»
+            // і «Оптичний скан» показуємо лише тоді, коли вони справді потрібні.
+            var mxStudy = (function(){
+                function escT(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+                // текст заголовка поля без службових бейджів (номер, «Опційно»/«Обов’язково»)
+                function ttlText(el){
+                    var t = el.querySelector('.title'); if(!t) return '';
+                    var s = '';
+                    Array.prototype.forEach.call(t.childNodes, function(n){
+                        if(n.nodeType === 1 && n.classList && (n.classList.contains('mx-fnum') || n.classList.contains('mx-req-badge'))) return;
+                        s += n.textContent || '';
+                    });
+                    return s.replace(/\s+/g, ' ').trim();
+                }
+                var multis = [];
+                Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
+                    var s = el.querySelector('select[multiple]');
+                    if(s){ multis.push({ el: el, sel: s, name: ttlText(el) }); }
+                });
+                if(!multis.length) return null;
+                var api = { multis: multis, deps: [], sync: function(){} };
+                function norm(s){ return String(s || '').toLowerCase().replace(/["'’ʼ`]/g, '').replace(/\s+/g, ' ').trim(); }
+                // 1) чипи замість мультисписку
+                multis.forEach(function(m){
+                    m.sel.style.display = 'none';
+                    var box = document.createElement('div'); box.className = 'mx-chips';
+                    m.opts = [];
+                    Array.prototype.forEach.call(m.sel.options, function(o){
+                        if(!o.value && !o.textContent.trim()) return;
+                        var b = document.createElement('button'); b.type = 'button';
+                        b.className = 'mx-chip' + (o.selected ? ' mx-chip-on' : '');
+                        b.textContent = o.textContent.trim();
+                        b.addEventListener('click', function(){
+                            o.selected = !o.selected;
+                            b.classList.toggle('mx-chip-on', o.selected);
+                            try{ m.sel.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
+                            m.el.classList.remove('mx-req-miss');
+                            api.sync();
+                        });
+                        box.appendChild(b);
+                        m.opts.push({ o: o, b: b, t: norm(o.textContent) });
+                    });
+                    m.chips = box;
+                    m.el.appendChild(box);
+                });
+                function findOpt(re){
+                    var f = null;
+                    multis.forEach(function(m){ m.opts.forEach(function(x){ if(!f && re.test(x.t)) f = { m: m, x: x }; }); });
+                    return f;
+                }
+                function anySel(m){ return m.opts.some(function(x){ return x.o.selected; }); }
+                // одиночні галочки — теж чипами, щоб не було «голого» чекбокса поруч із чипами
+                function chipifyChecks(el){
+                    var cbs = el.querySelectorAll('input[type="checkbox"]');
+                    if(!cbs.length || el.__cbchips) return;
+                    var box = document.createElement('div'); box.className = 'mx-chips';
+                    var tn = norm(ttlText(el));
+                    el.__cbchips = [];
+                    Array.prototype.forEach.call(cbs, function(c){
+                        var l = c.closest('label') || (c.id ? card.querySelector('label[for="' + c.id + '"]') : null);
+                        var txt = l ? l.textContent.replace(/\s+/g, ' ').trim() : '';
+                        if(!txt || norm(txt) === tn){ txt = 'Так, потрібен'; }   // не дублюємо заголовок поля
+                        var b = document.createElement('button'); b.type = 'button';
+                        b.className = 'mx-chip' + (c.checked ? ' mx-chip-on' : '');
+                        b.textContent = txt;
+                        b.addEventListener('click', function(){
+                            c.checked = !c.checked;
+                            b.classList.toggle('mx-chip-on', c.checked);
+                            try{ c.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
+                            api.sync();
+                        });
+                        if(l){ l.style.display = 'none'; } else { c.style.display = 'none'; }
+                        box.appendChild(b);
+                        el.__cbchips.push({ c: c, b: b });
+                    });
+                    el.appendChild(box);
+                }
+                function repaintChecks(el){
+                    if(!el.__cbchips) return;
+                    el.__cbchips.forEach(function(z){ z.b.classList.toggle('mx-chip-on', z.c.checked); });
+                }
+                // 2) залежні поля: прикус (для конкретного дослідження), положення рота, скан обличчя
+                var bites = [];
+                Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
+                    var ttl = ttlText(el);
+                    var low = norm(ttl);
+                    if(low.indexOf('прикус') !== -1){
+                        // «Прикус — КТ двох щелеп» → ключ дослідження = текст після тире
+                        var tail = norm(ttl.split(/[—\-–]/).slice(1).join(' ')).replace(/^кт /, '');
+                        if(tail){ bites.push({ el: el, tail: tail }); }
+                    } else if(low.indexOf('положення рота') !== -1){
+                        var jm = null;
+                        multis.forEach(function(m){ if(!jm && norm(m.name).indexOf('суглоб') !== -1) jm = m; });
+                        if(!jm) return;
+                        el.classList.add('mx-dep', 'mx-dep-sub');
+                        jm.el.appendChild(el);
+                        api.rotEl = el;
+                        api.deps.push({ el: el, kind: 'rot', test: function(){ return anySel(jm); },
+                            onHide: function(){ Array.prototype.forEach.call(el.querySelectorAll('input[type="radio"]'), function(r){ r.checked = false; }); } });
+                    } else if(low.indexOf('скан облич') !== -1){
+                        el.classList.add('mx-dep-soft');
+                        chipifyChecks(el);
+                        api.deps.push({ el: el, kind: 'scan', soft: true, test: function(){
+                            var ok = false;
+                            multis.forEach(function(m){ m.opts.forEach(function(x){
+                                if(x.o.selected && /черепа|пазух|щелеп/.test(x.t)) ok = true;
+                            }); });
+                            return ok;
+                        }, onHide: function(){
+                            var c = el.querySelector('input[type="checkbox"]'); if(c && c.checked){ c.checked = false; }
+                        } });
+                    }
+                });
+                // 2b) прикус ↔ опції: кожній опції — найточніший (найдовший) ключ прикусу,
+                // тому «двох щелеп з суглобами» не тягне за собою прикус «двох щелеп»,
+                // а комплект «КТ двох щелеп + панорамний знімок» — тягне.
+                if(bites.length){
+                    var allOpts = [];
+                    multis.forEach(function(m){ m.opts.forEach(function(x){ allOpts.push({ m: m, x: x, t: x.t.replace(/^кт /, '') }); }); });
+                    allOpts.forEach(function(a){
+                        var best = null;
+                        bites.forEach(function(bt){
+                            if(a.t.indexOf(bt.tail) !== -1 && (!best || bt.tail.length > best.tail.length)){ best = bt; }
+                        });
+                        a.bite = best;
+                    });
+                    bites.forEach(function(bt){
+                        var mine = allOpts.filter(function(a){ return a.bite === bt; });
+                        if(!mine.length) return;
+                        var el = bt.el;
+                        el.classList.add('mx-dep', 'mx-dep-sub');
+                        mine[0].m.el.appendChild(el);
+                        api.deps.push({ el: el, kind: 'bite',
+                            test: function(){ return mine.some(function(a){ return a.x.o.selected; }); },
+                            // поле прикусу «переїжджає» під ту групу, де реально обране дослідження
+                            host: function(){ var h = null; mine.forEach(function(a){ if(!h && a.x.o.selected) h = a.m.el; }); return h; },
+                            onShow: function(){
+                                var rs = el.querySelectorAll('input[type="radio"]');
+                                var any = false;
+                                Array.prototype.forEach.call(rs, function(r){ if(r.checked) any = true; });
+                                if(!any && rs.length){                  // автовибір «Звичний прикус»
+                                    var pick = rs[0];
+                                    Array.prototype.forEach.call(rs, function(r){
+                                        var lbl = norm((r.closest('label') || r.parentElement || {}).textContent || '');
+                                        if(lbl.indexOf('звичн') !== -1){ pick = r; }
+                                    });
+                                    pick.checked = true;
+                                    try{ pick.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
+                                }
+                            },
+                            onHide: function(){
+                                Array.prototype.forEach.call(el.querySelectorAll('input[type="radio"]'), function(r){ r.checked = false; });
+                            } });
+                    });
+                }
+                // 3) підказка про готовий комплект
+                var bundleCT  = findOpt(/двох щелеп.*панорам/);
+                var bundleTRG = findOpt(/трг.*панорам/);
+                var optCT     = findOpt(/^кт двох щелеп$/);
+                var optPano   = findOpt(/панорамний знімок/);
+                var optTrgSide= findOpt(/трг бокова/);
+                var panoM = optPano ? optPano.m : null;
+                var hintBox = null;
+                if(panoM && (bundleCT || bundleTRG)){
+                    hintBox = document.createElement('div'); hintBox.className = 'mx-bundle-hint';
+                    panoM.el.appendChild(hintBox);
+                }
+                function setBundleHint(){
+                    if(!hintBox) return;
+                    var pair = null;
+                    if(bundleCT && optCT && optPano && optCT.x.o.selected && optPano.x.o.selected && !bundleCT.x.o.selected){
+                        pair = { bundle: bundleCT, parts: [optCT, optPano] };
+                    } else if(bundleTRG && optTrgSide && optPano && optTrgSide.x.o.selected && optPano.x.o.selected && !bundleTRG.x.o.selected){
+                        pair = { bundle: bundleTRG, parts: [optTrgSide, optPano] };
+                    }
+                    if(!pair){ hintBox.style.display = 'none'; hintBox.innerHTML = ''; return; }
+                    hintBox.style.display = 'flex';
+                    hintBox.innerHTML = '<span class="mx-bh-t">Є готовий комплект: <b>' + escT(pair.bundle.x.o.textContent.trim()) + '</b></span>' +
+                        '<button type="button" class="mx-bh-btn">Обрати комплект</button>';
+                    hintBox.querySelector('.mx-bh-btn').addEventListener('click', function(){
+                        pair.parts.forEach(function(p){ p.x.o.selected = false; p.x.b.classList.remove('mx-chip-on'); });
+                        pair.bundle.x.o.selected = true; pair.bundle.x.b.classList.add('mx-chip-on');
+                        api.sync();
+                    });
+                }
+                // 4) синхронізація станів
+                api.sync = function(){
+                    api.deps.forEach(function(d){
+                        var on = d.test();
+                        if(d.soft){
+                            d.el.classList.toggle('mx-dep-off', !on);
+                            if(!on && d.onHide){ d.onHide(); }
+                            repaintChecks(d.el);
+                            return;
+                        }
+                        var was = d.el.classList.contains('mx-dep-on');
+                        if(on && d.host){ var hst = d.host(); if(hst && d.el.parentNode !== hst){ hst.appendChild(d.el); } }
+                        d.el.classList.toggle('mx-dep-on', on);
+                        if(on && !was && d.onShow){ d.onShow(); }
+                        if(!on && was && d.onHide){ d.onHide(); }
+                        if(on !== was && d.paint){ d.paint(); }
+                    });
+                    setBundleHint();
+                };
+                api.anyStudy = function(){
+                    var any = false;
+                    multis.forEach(function(m){ if(norm(m.name).indexOf('додатков') !== -1) return; if(anySel(m)) any = true; });
+                    return any;
+                };
+                api.rotMissing = function(){
+                    if(!api.rotEl || !api.rotEl.classList.contains('mx-dep-on')) return false;
+                    var any = false;
+                    Array.prototype.forEach.call(api.rotEl.querySelectorAll('input[type="radio"]'), function(r){ if(r.checked) any = true; });
+                    return !any;
+                };
+                // 5) варіанти залежних підполів — у ряд пілюлями, з підсвіткою обраного
+                function labOf(r){ return r.closest('label') || (r.id ? card.querySelector('label[for="' + r.id + '"]') : null); }
+                api.deps.forEach(function(d){
+                    var rs = d.el.querySelectorAll('input[type="radio"]');
+                    if(!rs.length) return;
+                    var row = document.createElement('div'); row.className = 'mx-radrow';
+                    Array.prototype.forEach.call(rs, function(r){
+                        var l = labOf(r);
+                        row.appendChild(l && l.contains(r) ? l : r);
+                        if(l && !l.contains(r)) row.appendChild(l);
+                    });
+                    d.el.appendChild(row);
+                    function paint(){ Array.prototype.forEach.call(rs, function(r){ var l = labOf(r); if(l) l.classList.toggle('mx-rad-on', r.checked); }); }
+                    d.el.addEventListener('change', function(){ paint(); d.el.classList.remove('mx-req-miss'); });
+                    d.paint = paint;
+                    paint();
+                });
+                api.firstStudyEl = multis[0] ? multis[0].el : null;
+                api.sync();
+                api.deps.forEach(function(d){ if(d.paint) d.paint(); });
+                return api;
+            })();
+
+            // перенумерація: залежні підполя (прикус, положення рота) власних номерів не мають,
+            // тож нумерація верхніх полів має лишитися суцільною 1…N
+            if(mxStudy){
+                var rn = 0;
+                Array.prototype.forEach.call(card.querySelectorAll('.element'), function(el){
+                    var b = el.querySelector(':scope > .title > .mx-fnum');
+                    if(!b) return;
+                    if(el.classList.contains('mx-dep') || el.classList.contains('mx-dep-sub')) return;
+                    rn = rn + 1;
+                    if(b.textContent !== String(rn)){ b.textContent = rn; }
+                });
+            }
+
             if(sb && !document.getElementById('mxNextProxy')){
                 sb.classList.add('mx-realsubmit');
                 var proxy = document.createElement('a');
@@ -2632,6 +2919,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         if(!inp || !inp.offsetParent) return;
                         if(!(inp.value || '').trim()){ el2.classList.remove('mx-req-miss'); void el2.offsetWidth; el2.classList.add('mx-req-miss'); missing.push(el2); }
                     });
+                    // форма дослідження: потрібно вибрати хоча б одне і вказати положення рота
+                    if(mxStudy){
+                        if(!mxStudy.anyStudy() && mxStudy.firstStudyEl){
+                            var e1 = mxStudy.firstStudyEl;
+                            e1.classList.remove('mx-req-miss'); void e1.offsetWidth; e1.classList.add('mx-req-miss');
+                            missing.unshift(e1);
+                        } else if(mxStudy.rotMissing()){
+                            var e2 = mxStudy.rotEl;
+                            e2.classList.remove('mx-req-miss'); void e2.offsetWidth; e2.classList.add('mx-req-miss');
+                            missing.unshift(e2);
+                        }
+                    }
                     if(missing.length){
                         try{ missing[0].scrollIntoView({ behavior:'smooth', block:'center' }); }catch(_){ }
                         var fi2 = missing[0].querySelector('input, textarea'); if(fi2){ try{ fi2.focus({ preventScroll:true }); }catch(_){ } }
