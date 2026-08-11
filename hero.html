@@ -304,6 +304,62 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
   #mxActionBar{ padding:calc(10 * var(--u)) calc(14 * var(--u)); }
   #mxActionBar .mx-next-proxy{ padding:0 calc(20 * var(--u)); }
 }
+/* ── ТИПОГРАФІКА І ГЕОМЕТРІЯ ФОРМИ ЗАПИСУ ─────────────────────────────────────
+   Одна система радіусів: контейнер 18, інтерактив 12, мікро 8. Пігулок більше немає —
+   вибір дослідження це картка, а не тег. Акцент лишається тільки там, де є дія. */
+#mxProcGrid.mx-form-study .mx-col-form .os-block-form{ border-radius:calc(18 * var(--u)) !important; padding:calc(32 * var(--u)) calc(32 * var(--u)) calc(30 * var(--u)) !important; background:#FFFFFF !important; border:1px solid #EEF1F6 !important; box-shadow:0 1px 2px rgba(16,24,40,0.04), 0 calc(12 * var(--u)) calc(30 * var(--u)) rgba(16,24,40,0.05) !important; }
+#mxProcGrid.mx-form-study .mx-fh-h1{ font-size:calc(34 * var(--u)) !important; font-weight:800 !important; letter-spacing:-0.025em !important; line-height:1.1 !important; color:#0B0F1A !important; margin-bottom:calc(9 * var(--u)) !important; }
+#mxProcGrid.mx-form-study .mx-fh-sub{ font-size:calc(15 * var(--u)) !important; font-weight:500 !important; color:#667085 !important; line-height:1.55 !important; max-width:calc(560 * var(--u)); }
+/* заголовок блоку: номер — тиха мітка, а не синє коло */
+#mxProcGrid.mx-form-study .mx-fg-h{ gap:calc(11 * var(--u)); margin-bottom:calc(20 * var(--u)); padding-bottom:calc(13 * var(--u)); border-bottom:1px solid #EDF0F5; }
+#mxProcGrid.mx-form-study .mx-fg-n{ width:auto; height:auto; background:none; border-radius:0; color:#C3CAD6; font-size:calc(12.5 * var(--u)); font-weight:800; letter-spacing:.04em; }
+#mxProcGrid.mx-form-study .mx-fg-t{ font-size:calc(17 * var(--u)); font-weight:800; letter-spacing:-0.015em; color:#0B0F1A; }
+#mxProcGrid.mx-form-study .mx-fg-s{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#98A2B3; }
+#mxProcGrid.mx-form-study .mx-fgroup{ margin-bottom:calc(32 * var(--u)); }
+/* підписи полів: тихий лейбл замість жирного тексту з пігулкою */
+#mxProcGrid.mx-form-study .mx-fgroup-pat .element > .title{ font-size:calc(12.5 * var(--u)) !important; font-weight:600 !important; color:#475569 !important; letter-spacing:0 !important; text-transform:none !important; margin-bottom:calc(7 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-fgroup-pat .element .mx-req-badge{ display:none !important; }
+#mxProcGrid.mx-form-study .mx-fgroup-study > .mx-fg-body > .element > .title{ font-size:calc(11 * var(--u)) !important; letter-spacing:.09em; color:#A2ACBD !important; margin-bottom:calc(8 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-top-lbl{ font-size:calc(11 * var(--u)); letter-spacing:.09em; color:#A2ACBD; margin-bottom:calc(9 * var(--u)); }
+/* вибір дослідження — картка, не пігулка */
+#mxProcGrid .os-block-form .mx-chips{ gap:calc(10 * var(--u)); }
+#mxProcGrid .os-block-form .mx-chip{ border-radius:calc(12 * var(--u)); min-height:calc(54 * var(--u)); padding:calc(13 * var(--u)) calc(16 * var(--u)); font-size:calc(14 * var(--u)); font-weight:600; color:#344054; border:1px solid #E4E8EF; box-shadow:0 1px 1px rgba(16,24,40,0.03); }
+#mxProcGrid .os-block-form .mx-chip:hover{ border-color:#CBD5E1; background:#FFFFFF; box-shadow:0 calc(2 * var(--u)) calc(8 * var(--u)) rgba(16,24,40,0.06); }
+#mxProcGrid .os-block-form .mx-chip.mx-chip-on{ border-color:#2c3bff; background:#F7F8FF; color:#0B0F1A; box-shadow:inset 0 0 0 1px #2c3bff, 0 calc(2 * var(--u)) calc(10 * var(--u)) rgba(44,59,255,0.10); }
+#mxProcGrid .os-block-form .mx-chip .mx-chip-tick{ width:calc(18 * var(--u)); height:calc(18 * var(--u)); padding:calc(3 * var(--u)); box-sizing:border-box; border-radius:calc(999 * var(--u)); background:#2c3bff; color:#fff; }
+#mxProcGrid.mx-form-study .mx-top-chips .mx-chip{ min-height:calc(58 * var(--u)); font-size:calc(14.5 * var(--u)); font-weight:700; }
+/* кнопка «ще» — тихий, але клікабельний рядок */
+#mxProcGrid.mx-form-study .mx-more-btn{ border-radius:calc(12 * var(--u)); border-style:solid; border-color:#E4E8EF; background:#FBFCFE; font-size:calc(13 * var(--u)); font-weight:600; color:#475569; padding:calc(11 * var(--u)) calc(16 * var(--u)); margin-top:calc(12 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-more-btn:hover{ background:#F4F6FB; border-color:#D5DBE6; color:#0B0F1A; }
+#mxProcGrid.mx-form-study .mx-again{ border-radius:calc(12 * var(--u)); }
+/* поля вводу в одному радіусі з картками вибору */
+#mxProcGrid.mx-form-study .os-block-form input[type="text"], #mxProcGrid.mx-form-study .os-block-form input[type="tel"],
+#mxProcGrid.mx-form-study .os-block-form input[type="email"], #mxProcGrid.mx-form-study .os-block-form textarea{ border-radius:calc(12 * var(--u)) !important; font-size:calc(14.5 * var(--u)) !important; }
+/* права панель — та сама геометрія і той самий ритм тексту */
+#mxProcGrid.mx-form-study .mx-side{ border-radius:calc(18 * var(--u)); padding:calc(26 * var(--u)) calc(24 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-side .mx-side-eyebrow, #mxProcGrid.mx-form-study .mx-side .mx-sum-h{ font-size:calc(10.5 * var(--u)); letter-spacing:.14em; color:#7E859B; }
+#mxProcGrid.mx-form-study .mx-side .mx-stp-t{ font-size:calc(14 * var(--u)); font-weight:700; letter-spacing:-0.01em; }
+#mxProcGrid.mx-form-study .mx-side .mx-stp-s{ font-size:calc(12.5 * var(--u)); line-height:1.5; color:#98A0B6; }
+/* панель дії — вага тексту зліва має тримати кнопку справа */
+#mxActionBar{ padding:calc(13 * var(--u)) calc(24 * var(--u)); }
+#mxActionBar .mx-ab-cnt{ font-size:calc(14.5 * var(--u)); font-weight:800; letter-spacing:-0.01em; }
+#mxActionBar .mx-ab-cnt small{ font-size:calc(12.5 * var(--u)); color:#98A2B3; }
+#mxActionBar .mx-next-proxy{ height:calc(50 * var(--u)); padding:0 calc(34 * var(--u)); font-size:calc(15 * var(--u)); font-weight:700; border-radius:calc(12 * var(--u)); letter-spacing:-0.005em; }
+/* комірка вибору: чип і його уточнення — один блок, з видимим звʼязком */
+#mxProcGrid .os-block-form .mx-cell{ display:flex; flex-direction:column; min-width:0; }
+#mxProcGrid .os-block-form .mx-cell > .mx-chip{ width:100%; }
+#mxProcGrid .os-block-form .mx-cell.mx-cell-open > .mx-chip{ border-bottom-left-radius:0; border-bottom-right-radius:0; box-shadow:inset 0 0 0 1px #2c3bff; }
+#mxProcGrid .os-block-form .mx-cell.mx-cell-open .element.mx-dep{ margin:0 !important; padding:calc(12 * var(--u)) calc(15 * var(--u)) calc(13 * var(--u)) !important; background:#F7F8FF !important; border:1px solid #2c3bff !important; border-top:1px solid #DCE0FF !important; border-radius:0 0 calc(12 * var(--u)) calc(12 * var(--u)) !important; }
+#mxProcGrid .os-block-form .mx-cell .element.mx-dep-sub .title{ font-size:calc(11 * var(--u)) !important; font-weight:700 !important; letter-spacing:.07em; text-transform:uppercase; color:#8E97A8 !important; margin-bottom:calc(8 * var(--u)); }
+#mxProcGrid .os-block-form .mx-cell .mx-radrow label{ background:#FFFFFF; }
+/* липка смуга дії: тільки коли кнопки не видно, і по ширині картки */
+#mxActionBar{ transform:translateY(101%); opacity:0; transition:transform .22s ease, opacity .22s ease; pointer-events:none; }
+#mxActionBar.mx-ab-show{ transform:none; opacity:1; pointer-events:auto; }
+#mxActionBar .mx-ab-in{ max-width:none; }
+#mxActionBar .mx-ab-go{ margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; height:calc(46 * var(--u)); padding:0 calc(30 * var(--u)); background:#2c3bff; color:#fff; -webkit-text-fill-color:#fff; font-family:'Manrope',sans-serif; font-size:calc(14.5 * var(--u)); font-weight:700; border-radius:calc(12 * var(--u)); text-decoration:none; cursor:pointer; box-shadow:0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(44,59,255,0.22); transition:background .15s ease; }
+#mxActionBar .mx-ab-go:hover{ background:#1F2CE0; }
+/* справжня кнопка лишається під карткою — там, де їй місце */
+#mxProcGrid.mx-form-study .mx-col-form > .mx-next-proxy{ height:calc(54 * var(--u)); font-size:calc(15.5 * var(--u)); font-weight:700; border-radius:calc(12 * var(--u)); margin-top:calc(18 * var(--u)); }
 /* підказка про готовий комплект */
 #mxProcGrid .os-block-form .mx-bundle-hint{ display:none; order:5; align-items:center; flex-wrap:wrap; gap:calc(11 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); }
 #mxProcGrid .os-block-form .mx-bh-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#334155; }
@@ -2778,10 +2834,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         var oTxt = o.textContent.trim();
                         b.className = 'mx-chip' + (o.selected ? ' mx-chip-on' : '') + (oTxt.length > 40 ? ' mx-chip-wide' : '');
                         b.textContent = oTxt;
-                        if(MX_HOT.indexOf(norm(oTxt)) !== -1){    // частотний варіант — помітно швидший для ока
-                            var hot = document.createElement('span'); hot.className = 'mx-chip-hot'; hot.textContent = 'Найчастіше';
-                            b.appendChild(hot);
-                        }
                         b.insertAdjacentHTML('beforeend', MX_TICK);
                         b.addEventListener('click', function(){
                             o.selected = !o.selected;
@@ -2791,8 +2843,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             m.el.classList.remove('mx-req-miss');
                             api.sync();
                         });
-                        box.appendChild(b);
-                        m.opts.push({ o: o, b: b, t: norm(o.textContent) });
+                        var cell = document.createElement('div');
+                        cell.className = 'mx-cell' + (oTxt.length > 40 ? ' mx-chip-wide' : '');
+                        b.classList.remove('mx-chip-wide');
+                        cell.appendChild(b);
+                        box.appendChild(cell);
+                        m.opts.push({ o: o, b: b, cell: cell, t: norm(o.textContent) });
                     });
                     m.chips = box;
                     m.el.appendChild(box);
@@ -3163,7 +3219,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     if(sb && sb.parentNode === formEl){ formEl.insertBefore(g, sb); } else { formEl.appendChild(g); }
                     return g;
                 }
-                mkGroup(1, 'Пацієнт', '', rows.slice(0, firstMulti), 'mx-fgroup-pat');
+                mkGroup(1, 'Пацієнт', 'обовʼязково', rows.slice(0, firstMulti), 'mx-fgroup-pat');
                 mkGroup(2, 'Що призначаєте', 'одне або кілька', rows.slice(firstMulti, cut), 'mx-fgroup-study');
                 var gMore = mkGroup(3, 'Деталі', 'необовʼязково' + chev, rows.slice(cut), 'mx-fgroup-more mx-fg-closed');
                 if(gMore){
@@ -3210,7 +3266,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var topWrap = null, restWrap = null, moreBtn = null, topChips = null, topDeps = null;
                 if(studyBody){
                     topWrap = document.createElement('div'); topWrap.className = 'mx-top';
-                    topWrap.innerHTML = '<div class="mx-top-lbl">Найчастіше</div><div class="mx-chips mx-top-chips"></div><div class="mx-top-deps"></div>';
+                    topWrap.innerHTML = '<div class="mx-top-lbl">Найчастіші дослідження</div><div class="mx-chips mx-top-chips"></div><div class="mx-top-deps"></div>';
                     topChips = topWrap.querySelector('.mx-top-chips');
                     topDeps = topWrap.querySelector('.mx-top-deps');
                     restWrap = document.createElement('div'); restWrap.className = 'mx-rest';
@@ -3225,14 +3281,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var moved = 0;
                     MX_TOP_LIST.forEach(function(nm){
                         var a = byName[nm];
-                        if(a){ topChips.appendChild(a.x.b); moved++; }
+                        if(a){ topChips.appendChild(a.x.cell || a.x.b); moved++; }
                     });
                     if(!moved){ topWrap.style.display = 'none'; restWrap.classList.add('mx-rest-open'); moreBtn.style.display = 'none'; }
                     else { mxStudy.firstStudyEl = topWrap; }
                     var bhEl = grid.querySelector('.mx-bundle-hint');
                     if(bhEl && moved) topWrap.appendChild(bhEl);
                     // залежні поля топ-чипів живуть під топ-рядком, а не в згорнутій групі
-                    mxStudy.hostOf = function(btn, groupEl){ return (btn && topChips && topChips.contains(btn)) ? topDeps : groupEl; };
+                    // залежне поле живе всередині комірки свого чипа — питання не «вилазить» невідомо де
+                    mxStudy.hostOf = function(btn, groupEl){
+                        var c = btn && btn.parentElement;
+                        return (c && c.classList && c.classList.contains('mx-cell')) ? c : groupEl;
+                    };
                     var chevDown = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
                     var restCount = restWrap.querySelectorAll('.mx-chip').length;
                     function paintMore(){
@@ -3295,11 +3355,29 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var proxyEl = document.getElementById('mxNextProxy');
                 if(proxyEl) proxyEl.textContent = 'Записати пацієнта';
                 var bar = document.createElement('div'); bar.id = 'mxActionBar';
-                bar.innerHTML = '<div class="mx-ab-in"><div class="mx-ab-cnt"><span class="mx-ab-n"></span><small></small></div></div>';
+                bar.innerHTML = '<div class="mx-ab-in"><div class="mx-ab-cnt"><span class="mx-ab-n"></span><small></small></div>'
+                    + '<a class="mx-ab-go" href="javascript:void(0)">Записати пацієнта</a></div>';
                 var statusEl = bar.querySelector('.mx-ab-cnt small');
                 var cntEl = bar.querySelector('.mx-ab-n');
-                if(proxyEl) bar.querySelector('.mx-ab-in').appendChild(proxyEl);
+                bar.querySelector('.mx-ab-go').addEventListener('click', function(){ if(proxyEl) proxyEl.click(); });
                 document.body.appendChild(bar);
+                // смуга зʼявляється лише тоді, коли справжня кнопка пішла з екрана,
+                // і по ширині збігається з карткою форми — інакше вона «сама по собі»
+                function fitBar(){
+                    if(!lcol) return;
+                    var r = lcol.getBoundingClientRect();
+                    bar.style.paddingLeft = Math.max(12, Math.round(r.left)) + 'px';
+                    bar.style.paddingRight = Math.max(12, Math.round(window.innerWidth - r.right)) + 'px';
+                }
+                fitBar();
+                window.addEventListener('resize', fitBar);
+                setTimeout(fitBar, 300); setTimeout(fitBar, 1200);
+                if(proxyEl && window.IntersectionObserver){
+                    var io2 = new IntersectionObserver(function(ents){
+                        ents.forEach(function(e){ bar.classList.toggle('mx-ab-show', !e.isIntersecting); fitBar(); });
+                    }, { rootMargin: '0px 0px -12px 0px' });
+                    io2.observe(proxyEl);
+                } else { bar.classList.add('mx-ab-show'); }
                 mxStudy.onFail = function(kind){
                     bar.classList.add('mx-ab-warn');
                     statusEl.textContent = kind === 'seg' ? 'Вкажіть зуби для сегмента'
@@ -3336,6 +3414,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         if(sumWrap.innerHTML !== h) sumWrap.innerHTML = h;
                     }
                     bar.classList.remove('mx-ab-warn');
+                    Array.prototype.forEach.call(grid.querySelectorAll('.mx-cell'), function(c){
+                        c.classList.toggle('mx-cell-open', !!c.querySelector('.element.mx-dep-on'));
+                    });
                     if(mxStudy.paintMore) mxStudy.paintMore();
                     // червону підсвітку знімаємо, щойно умова виконана
                     if(mxStudy.firstStudyEl && n > 0) mxStudy.firstStudyEl.classList.remove('mx-req-miss');
