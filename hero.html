@@ -623,7 +623,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         print:    { title:'3D-друк', sub:'Друк навігаційних шаблонів' }
     };
     var CTA = {
-        guides: { text:'Замовити шаблон', icon:'plus', href:'#' },
+        guides: { text:'Замовити шаблон', icon:'plus', href:'https://maxilla.pro/client/form/6/' },
         print:  { text:'Замовити друк', icon:'plus', href:'#' }
     };
     var CTA_DEFAULT = { text:'Записати пацієнта', icon:'user-plus', href:'#' };
@@ -2596,6 +2596,34 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             ctaIco.parentNode.replaceChild(ni, ctaIco);
         }
     }
+    // імена пацієнтів у таблицях кабінету — з КАПСУ в людський регістр (лише показ)
+    (function(){
+        function norm(s){
+            s = String(s == null ? '' : s).trim();
+            if(!s || /[a-zа-яіїєґ]/.test(s)) return s;
+            return s.toLowerCase().replace(/[^\s\-]+/g, function(w){
+                if(w.length === 1) return w.toUpperCase();
+                return w.charAt(0).toUpperCase() + w.slice(1);
+            });
+        }
+        function sweep(){
+            Array.prototype.forEach.call(document.querySelectorAll('td, .mx-cell-name'), function(td){
+                if(td.children.length || td.__mxN) return;
+                var t = (td.textContent || '').trim();
+                if(t.length < 4 || t.length > 60) return;
+                if(!/^[A-ZА-ЯІЇЄҐ][A-ZА-ЯІЇЄҐ\s'ʼ’.\-]+$/.test(t)) return;   // лише суцільний КАПС
+                var n = norm(t);
+                if(n !== t){ td.textContent = n; }
+                td.__mxN = 1;
+            });
+        }
+        sweep();
+        var n = 0, t = setInterval(function(){ n++; sweep(); if(n > 12){ clearInterval(t); } }, 400);
+        if(window.MutationObserver){
+            var mo = new MutationObserver(function(){ sweep(); });
+            mo.observe(document.body, { childList:true, subtree:true });
+        }
+    })();
     if(window.lucide) lucide.createIcons();
     var inpRef = null, btnRef = null;
     function placeBtn(){
