@@ -248,8 +248,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* мітка частотного варіанта */
 #mxProcGrid .os-block-form .mx-chip .mx-chip-hot{ margin-left:calc(2 * var(--u)); flex:0 0 auto; font-size:calc(9.5 * var(--u)); font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#2c3bff; background:#EEF2FF; border-radius:calc(999 * var(--u)); padding:calc(2 * var(--u)) calc(7 * var(--u)); }
 /* CTA — акцент бренду + живий рядок стану */
-#mxProcGrid.mx-form-study .mx-col-form > .mx-next-proxy{ height:calc(52 * var(--u)); font-size:calc(15 * var(--u)); font-weight:700; background:#2c3bff; box-shadow:0 calc(6 * var(--u)) calc(18 * var(--u)) rgba(44,59,255,0.22); }
-#mxProcGrid.mx-form-study .mx-col-form > .mx-next-proxy:hover{ background:#1F2CE0; }
+
 #mxProcGrid .mx-cta-status{ margin-top:calc(9 * var(--u)); text-align:center; font-family:'Manrope',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:600; color:#94A3B8; }
 #mxProcGrid .mx-cta-status.mx-cs-ok{ color:#16A34A; }
 /* панель праворуч: липка, по висоті контенту — жодних чорних полотен */
@@ -307,10 +306,8 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* ── ТИПОГРАФІКА І ГЕОМЕТРІЯ ФОРМИ ЗАПИСУ ─────────────────────────────────────
    Одна система радіусів: контейнер 18, інтерактив 12, мікро 8. Пігулок більше немає —
    вибір дослідження це картка, а не тег. Акцент лишається тільки там, де є дія. */
-/* картка в картці — зайва рамка. Поверхня тепер у самих кроків */
-#mxProcGrid.mx-form-study .mx-col-form .os-block-form{ padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important; }
-#mxProcGrid.mx-form-study .mx-fh-h1{ font-size:calc(34 * var(--u)) !important; font-weight:800 !important; letter-spacing:-0.025em !important; line-height:1.1 !important; color:#0B0F1A !important; margin-bottom:calc(9 * var(--u)) !important; }
-#mxProcGrid.mx-form-study .mx-fh-sub{ font-size:calc(15 * var(--u)) !important; font-weight:500 !important; color:#667085 !important; line-height:1.55 !important; max-width:calc(560 * var(--u)); }
+/* єдина біла картка — та сама поверхня, що у формі хірургічних шаблонів */
+
 /* заголовок блоку: номер — тиха мітка, а не синє коло */
 #mxProcGrid.mx-form-study .mx-fg-h{ gap:calc(11 * var(--u)); margin-bottom:calc(20 * var(--u)); padding-bottom:calc(13 * var(--u)); border-bottom:1px solid #EDF0F5; }
 #mxProcGrid.mx-form-study .mx-fg-n{ width:auto; height:auto; background:none; border-radius:0; color:#C3CAD6; font-size:calc(12.5 * var(--u)); font-weight:800; letter-spacing:.04em; }
@@ -319,7 +316,6 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid.mx-form-study .mx-fgroup{ margin-bottom:calc(32 * var(--u)); }
 /* підписи полів: тихий лейбл замість жирного тексту з пігулкою */
 #mxProcGrid.mx-form-study .mx-fgroup-pat .element > .title{ font-size:calc(12.5 * var(--u)) !important; font-weight:600 !important; color:#475569 !important; letter-spacing:0 !important; text-transform:none !important; margin-bottom:calc(7 * var(--u)); }
-#mxProcGrid.mx-form-study .mx-fgroup-pat .element .mx-req-badge{ display:none !important; }
 #mxProcGrid.mx-form-study .mx-fgroup-study > .mx-fg-body > .element > .title{ font-size:calc(11 * var(--u)) !important; letter-spacing:.09em; color:#A2ACBD !important; margin-bottom:calc(8 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-top-lbl{ font-size:calc(11 * var(--u)); letter-spacing:.09em; color:#A2ACBD; margin-bottom:calc(9 * var(--u)); }
 /* вибір дослідження — картка, не пігулка */
@@ -359,8 +355,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxActionBar .mx-ab-in{ max-width:none; }
 #mxActionBar .mx-ab-go{ margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; height:calc(46 * var(--u)); padding:0 calc(30 * var(--u)); background:#2c3bff; color:#fff; -webkit-text-fill-color:#fff; font-family:'Manrope',sans-serif; font-size:calc(14.5 * var(--u)); font-weight:700; border-radius:calc(12 * var(--u)); text-decoration:none; cursor:pointer; box-shadow:0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(44,59,255,0.22); transition:background .15s ease; }
 #mxActionBar .mx-ab-go:hover{ background:#1F2CE0; }
-/* справжня кнопка лишається під карткою — там, де їй місце */
-#mxProcGrid.mx-form-study .mx-col-form > .mx-next-proxy{ height:calc(54 * var(--u)); font-size:calc(15.5 * var(--u)); font-weight:700; border-radius:calc(12 * var(--u)); margin-top:calc(18 * var(--u)); }
+
 /* ── ФІНАЛЬНА ПОЛІРОВКА ФОРМИ ЗАПИСУ ─────────────────────────────────────────
    Три ролі тексту, які не можна сплутати:
    структура — темна й важка; підписи — тихий капс; зміст (назви досліджень) — звичайна вага. */
@@ -415,7 +410,7 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 #mxProcGrid.mx-form-study .mx-time-chips{ margin-bottom:calc(14 * var(--u)); }
 /* ── ПЛОСКА ФОРМА: дві картки-зони, секції-рядки, тихі маркери частотного ── */
 html #mxProcGrid .element.mx-field-off, .mx-field-off{ display:none !important; }
-#mxProcGrid.mx-form-study .mx-fgroup{ background:#FFFFFF; border:1px solid #E9EDF3; border-radius:calc(16 * var(--u)); padding:calc(22 * var(--u)) calc(26 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 2px rgba(16,24,40,0.03); margin:0 0 calc(14 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-fgroup{ background:transparent; border:0; border-radius:0; padding:0; box-shadow:none; margin:0 0 calc(26 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-fgroup .mx-fg-h{ margin:0 0 calc(18 * var(--u)); padding:0 0 calc(13 * var(--u)); border-bottom:1px solid #F0F3F8; cursor:default; }
 #mxProcGrid.mx-form-study .mx-fgroup-more{ background:transparent; border:0; box-shadow:none; padding:calc(4 * var(--u)) calc(8 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-fgroup-more .mx-fg-h{ border-bottom:0; padding:calc(8 * var(--u)) 0; margin:0; cursor:pointer; }
@@ -485,6 +480,43 @@ html #mxProcGrid .element.mx-field-off, .mx-field-off{ display:none !important; 
 /* повідомлення гейта під кнопкою */
 #mxProcGrid .mx-gate-msg{ display:none; margin-top:calc(10 * var(--u)); text-align:center; font-family:'Manrope',sans-serif; font-size:calc(13 * var(--u)); font-weight:600; color:#DC2626; }
 #mxProcGrid .mx-gate-msg.mx-gm-on{ display:block; animation:mxUp .2s ease both; }
+/* ── ШАР ШВИДКИХ ДІЙ + ТЕГИ + ПРОПОЗИЦІЯ СКАНА (мова дизайну форми 6) ────── */
+/* заголовки полів пацієнта — як у формі шаблонів: жирна назва + пілюля */
+#mxProcGrid.mx-form-study .mx-fgroup-pat .element > .title{ font-size:calc(14.5 * var(--u)) !important; font-weight:700 !important; letter-spacing:0 !important; text-transform:none !important; color:#0F172A !important; margin-bottom:calc(8 * var(--u)); }
+/* пʼять швидких карток: 3+2, більші за решту, вся картка клікабельна */
+#mxProcGrid.mx-form-study .mx-promo{ display:grid; grid-template-columns:repeat(auto-fill, minmax(calc(165 * var(--u)), 1fr)); gap:calc(9 * var(--u)); margin:0 0 calc(12 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-pc{ display:flex; align-items:center; gap:calc(10 * var(--u)); min-height:calc(62 * var(--u)); box-sizing:border-box; padding:calc(12 * var(--u)) calc(14 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(12 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(14 * var(--u)); font-weight:700; color:#0F172A; text-align:left; line-height:1.25; letter-spacing:-0.01em; cursor:pointer; box-shadow:0 1px 2px rgba(15,23,42,0.04); transition:border-color .14s ease, box-shadow .14s ease, background .14s ease, transform .1s ease; }
+#mxProcGrid.mx-form-study .mx-pc:hover{ border-color:#C7D2FE; box-shadow:0 calc(3 * var(--u)) calc(12 * var(--u)) rgba(15,23,42,0.08); transform:translateY(calc(-1 * var(--u))); }
+#mxProcGrid.mx-form-study .mx-pc:active{ transform:none; }
+#mxProcGrid.mx-form-study .mx-pc.mx-chip-on{ border-color:#2c3bff; background:#F5F7FF; box-shadow:inset 0 0 0 1px #2c3bff; }
+#mxProcGrid.mx-form-study .mx-pc .mx-ci{ flex:0 0 auto; width:calc(30 * var(--u)); height:calc(30 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-pc .mx-ci svg{ width:100%; height:100%; display:block; }
+#mxProcGrid.mx-form-study .mx-pc .mx-pc-t{ min-width:0; }
+#mxProcGrid.mx-form-study .mx-pc .mx-chip-tick{ margin-left:auto; opacity:1; transform:none; width:calc(20 * var(--u)); height:calc(20 * var(--u)); padding:calc(3.5 * var(--u)); box-sizing:border-box; border-radius:calc(999 * var(--u)); border:1.5px solid #DDE1E9; background:#fff; color:transparent; transition:all .14s ease; }
+#mxProcGrid.mx-form-study .mx-pc.mx-chip-on .mx-chip-tick{ background:#2c3bff; border-color:#2c3bff; color:#fff; }
+/* пропозиція скана — одна тиха строка, зʼявляється лише коли є до чого додавати */
+#mxProcGrid.mx-form-study .mx-scan-offer{ display:none; width:100%; box-sizing:border-box; align-items:center; gap:calc(10 * var(--u)); margin:0 0 calc(14 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1px dashed #CBD5E1; border-radius:calc(12 * var(--u)); font-family:'Manrope',sans-serif; font-size:calc(13.5 * var(--u)); font-weight:600; color:#334155; text-align:left; cursor:pointer; transition:border-color .14s ease, background .14s ease; }
+#mxProcGrid.mx-form-study .mx-scan-offer.mx-so-show{ display:flex; animation:mxUp .2s ease both; }
+#mxProcGrid.mx-form-study .mx-scan-offer:hover{ border-color:#94A3B8; }
+#mxProcGrid.mx-form-study .mx-scan-offer .mx-ci{ flex:0 0 auto; width:calc(24 * var(--u)); height:calc(24 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-scan-offer .mx-ci svg{ width:100%; height:100%; }
+#mxProcGrid.mx-form-study .mx-scan-offer .mx-so-state{ margin-left:auto; flex:0 0 auto; font-size:calc(12.5 * var(--u)); font-weight:700; color:#2c3bff; }
+#mxProcGrid.mx-form-study .mx-scan-offer.mx-chip-on{ background:#F5F7FF; border:1px solid #2c3bff; }
+/* теги «Обрано» над пацієнтом */
+#mxProcGrid.mx-form-study .mx-tags{ display:none; margin:0 0 calc(26 * var(--u)); padding:calc(14 * var(--u)) calc(16 * var(--u)); background:#F8FAFC; border:1px solid #EEF1F6; border-radius:calc(12 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-tags.mx-tags-show{ display:block; animation:mxUp .2s ease both; }
+#mxProcGrid.mx-form-study .mx-tags-l{ font-size:calc(12 * var(--u)); font-weight:700; color:#64748B; margin-bottom:calc(9 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-tags-b{ display:flex; flex-wrap:wrap; gap:calc(7 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-tag{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); padding:calc(7 * var(--u)) calc(8 * var(--u)) calc(7 * var(--u)) calc(12 * var(--u)); background:#FFFFFF; border:1px solid #E2E8F0; border-radius:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:600; color:#0F172A; }
+#mxProcGrid.mx-form-study .mx-tag i{ font-style:normal; font-weight:500; color:#94A3B8; }
+#mxProcGrid.mx-form-study .mx-tag.mx-tag-x{ color:#475569; font-weight:500; }
+#mxProcGrid.mx-form-study .mx-tag-rm{ display:inline-flex; align-items:center; justify-content:center; width:calc(20 * var(--u)); height:calc(20 * var(--u)); border:0; border-radius:calc(6 * var(--u)); background:transparent; color:#94A3B8; font-size:calc(15 * var(--u)); line-height:1; cursor:pointer; transition:background .12s ease, color .12s ease; }
+#mxProcGrid.mx-form-study .mx-tag-rm:hover{ background:#FEF2F2; color:#DC2626; }
+/* іконки: чіткий штрих 2px, зона — акцентом */
+#mxProcGrid .os-block-form .mx-chip .mx-ci .b, #mxProcGrid.mx-form-study .mx-pc .mx-ci .b, #mxProcGrid.mx-form-study .mx-scan-offer .mx-ci .b{ stroke:#B6C0CE; fill:none; }
+#mxProcGrid .os-block-form .mx-chip .mx-ci .a, #mxProcGrid.mx-form-study .mx-pc .mx-ci .a, #mxProcGrid.mx-form-study .mx-scan-offer .mx-ci .a{ stroke:#7A85E8; fill:none; }
+#mxProcGrid.mx-form-study .mx-pc.mx-chip-on .mx-ci .a, #mxProcGrid.mx-form-study .mx-scan-offer.mx-chip-on .mx-ci .a{ stroke:#2c3bff; }
+.mx-cell-off{ display:none !important; }
 /* підказка про готовий комплект */
 #mxProcGrid .os-block-form .mx-bundle-hint{ display:none; order:5; align-items:center; flex-wrap:wrap; gap:calc(11 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(11 * var(--u)) calc(14 * var(--u)); background:#F5F7FF; border:1px solid #E3E8FF; border-radius:calc(10 * var(--u)); }
 #mxProcGrid .os-block-form .mx-bh-t{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#334155; }
@@ -2826,8 +2858,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             };
             var MX_FORM_FOOT = {
                 '2': 'Готові бланки — доставка у клініку',
-                '7': 'Друк за вашим STL — без планування',
-                '8': 'Контакти пацієнта зашифровані — співробітник бачить лише останні 4 цифри'
+                '7': 'Друк за вашим STL — без планування'
             };
             var MX_STEPS_DEFAULT = [
                 { t:'Спочатку — оцінка', s:'Заповнюєте заявку, надсилаєте КТ — ми аналізуємо КТ і надаємо висновок щодо шаблону та аугментації. <b>Безкоштовно.</b>', here:true },
@@ -2982,7 +3013,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     } else if(t.indexOf('розмітка') !== -1){
                         body = '<path class="a" d="M6 20 L20 6"/><path class="b" d="M8.5 14.5 L11 17"/><path class="b" d="M12.5 10.5 L15 13"/><path class="b" d="M16.5 6.5 L19 9"/>';
                     } else { return ''; }
-                    return '<span class="mx-ci"><svg viewBox="0 0 26 26" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg></span>';
+                    return '<span class="mx-ci"><svg viewBox="0 0 26 26" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg></span>';
                 }
                 // 1) чипи замість мультисписку
                 multis.forEach(function(m){
@@ -3000,7 +3031,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         b.className = 'mx-chip' + (o.selected ? ' mx-chip-on' : '') + (oTxt.length > 40 ? ' mx-chip-wide' : '');
                         b.textContent = oTxt;
                         b.insertAdjacentHTML('afterbegin', mxIco(norm(oTxt)));
-                        if(MX_HOT.indexOf(norm(oTxt)) !== -1){ b.classList.add('mx-hot'); }
                         b.insertAdjacentHTML('beforeend', MX_TICK);
                         b.addEventListener('click', function(){
                             o.selected = !o.selected;
@@ -3075,9 +3105,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var ttl = ttlText(el);
                     var low = norm(ttl);
                     if(low.indexOf('прикус') !== -1){
-                        // «Прикус — КТ двох щелеп» → ключ дослідження = текст після тире
-                        var tail = norm(ttl.split(/[—\-–]/).slice(1).join(' ')).replace(/^кт /, '');
-                        if(tail){ bites.push({ el: el, tail: tail }); }
+                        // прикус прибрано з форми повністю: кому важливо — пише в коментарі.
+                        // Поле лишається в OneBox і в DOM, але не рендериться і не заповнюється.
+                        el.classList.add('mx-field-off');
                     } else if(low.indexOf('положення рота') !== -1){
                         var jm = null;
                         multis.forEach(function(m){ if(!jm && norm(m.name).indexOf('суглоб') !== -1) jm = m; });
@@ -3090,6 +3120,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     } else if(low.indexOf('скан облич') !== -1){
                         el.classList.add('mx-dep-soft');
                         chipifyChecks(el);
+                        if(el.__cbchips && el.__cbchips[0]){ api.scan = { c: el.__cbchips[0].c, b: el.__cbchips[0].b, el: el, name: ttlText(el) }; }
                         api.deps.push({ el: el, kind: 'scan', soft: true, test: function(){
                             var ok = false;
                             multis.forEach(function(m){ m.opts.forEach(function(x){
@@ -3101,52 +3132,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         } });
                     }
                 });
-                // 2b) прикус ↔ опції: кожній опції — найточніший (найдовший) ключ прикусу,
-                // тому «двох щелеп з суглобами» не тягне за собою прикус «двох щелеп»,
-                // а комплект «КТ двох щелеп + панорамний знімок» — тягне.
-                if(bites.length){
-                    var allOpts = [];
-                    multis.forEach(function(m){ m.opts.forEach(function(x){ allOpts.push({ m: m, x: x, t: x.t.replace(/^кт /, '') }); }); });
-                    allOpts.forEach(function(a){
-                        var best = null;
-                        bites.forEach(function(bt){
-                            if(a.t.indexOf(bt.tail) !== -1 && (!best || bt.tail.length > best.tail.length)){ best = bt; }
-                        });
-                        a.bite = best;
-                    });
-                    bites.forEach(function(bt){
-                        var mine = allOpts.filter(function(a){ return a.bite === bt; });
-                        if(!mine.length) return;
-                        var el = bt.el;
-                        el.classList.add('mx-dep', 'mx-dep-sub');
-                        mine[0].m.el.appendChild(el);
-                        api.deps.push({ el: el, kind: 'bite',
-                            test: function(){ return mine.some(function(a){ return a.x.o.selected; }); },
-                            // поле прикусу «переїжджає» під ту групу, де реально обране дослідження
-                            host: function(){
-                                var a = null; mine.forEach(function(z){ if(!a && z.x.o.selected) a = z; });
-                                if(!a) return null;
-                                return api.hostOf ? api.hostOf(a.x.b, a.m.el) : a.m.el;
-                            },
-                            onShow: function(){
-                                var rs = el.querySelectorAll('input[type="radio"]');
-                                var any = false;
-                                Array.prototype.forEach.call(rs, function(r){ if(r.checked) any = true; });
-                                if(!any && rs.length){                  // автовибір «Звичний прикус»
-                                    var pick = rs[0];
-                                    Array.prototype.forEach.call(rs, function(r){
-                                        var lbl = norm((r.closest('label') || r.parentElement || {}).textContent || '');
-                                        if(lbl.indexOf('звичн') !== -1){ pick = r; }
-                                    });
-                                    pick.checked = true;
-                                    try{ pick.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
-                                }
-                            },
-                            onHide: function(){
-                                Array.prototype.forEach.call(el.querySelectorAll('input[type="radio"]'), function(r){ r.checked = false; });
-                            } });
-                    });
-                }
                 // 3) підказка про готовий комплект
                 var bundleCT  = findOpt(/двох щелеп.*панорам/);
                 var bundleTRG = findOpt(/трг.*панорам/);
@@ -3306,6 +3291,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 });
                 api.ttlText = ttlText;
                 api.norm = norm;
+                api.ico = mxIco;
+                api.tick = MX_TICK;
                 api.allOpts = function(){
                     var out = [];
                     multis.forEach(function(m){ m.opts.forEach(function(x){ out.push({ m: m, x: x, t: x.t }); }); });
@@ -3426,9 +3413,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 [timeEl, bundleEl].forEach(function(el){ if(el){ el.classList.add('mx-field-off'); } });
                 if(bundleEl){ mxStudy.multis.forEach(function(m){ if(m.el === bundleEl) m.off = true; }); }
                 function without(arr){ return arr.filter(function(e){ return e !== timeEl && e !== bundleEl; }); }
-                var gPat  = mkGroup('', 'Пацієнт', '', without(rows.slice(0, firstMulti)), 'mx-fgroup-pat');
                 var gStudy = mkGroup('', 'Дослідження', '', without(rows.slice(firstMulti, cut)), 'mx-fgroup-study');
                 var gMore = mkGroup('', 'Інші побажання', 'необовʼязково' + chev, without(rows.slice(cut)), 'mx-fgroup-more mx-fg-closed');
+                var gPat  = mkGroup('', 'Пацієнт', '', without(rows.slice(0, firstMulti)), 'mx-fgroup-pat');
                 if(gMore){
                     gMore.querySelector('.mx-fg-h').addEventListener('click', function(){ gMore.classList.toggle('mx-fg-closed'); if(window.__mxAlignFn) window.__mxAlignFn(); });
                 }
@@ -3531,6 +3518,102 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var g = el.closest('.mx-fgroup-more'); if(g){ g.classList.remove('mx-fg-closed'); }
                 };
 
+                // ---- 3b2. верхній шар швидких дій: пʼять найчастіших досліджень великими картками.
+                // Це НЕ копії: картка керує тим самим <option>, що й чип у категорії нижче.
+                var MX_PROMO = ['кт двох щелеп', 'кт двох щелеп з суглобами', 'кт черепа + 3d ceph',
+                                'панорамний знімок зубів', 'трг бокова проекція'];
+                var MX_SCAN_HOSTS = ['кт двох щелеп', 'кт двох щелеп з суглобами', 'кт черепа + 3d ceph'];
+                var promoWrap = null, scanOffer = null, promoRefs = [];
+                if(studyBody && mxStudy.allOpts){
+                    var byT = {};
+                    mxStudy.allOpts().forEach(function(a){ if(!a.m.off && !byT[a.t]) byT[a.t] = a; });
+                    promoWrap = document.createElement('div'); promoWrap.className = 'mx-promo';
+                    MX_PROMO.forEach(function(nm){
+                        var a = byT[nm]; if(!a) return;
+                        var pb = document.createElement('button'); pb.type = 'button'; pb.className = 'mx-pc';
+                        pb.innerHTML = mxStudy.ico(nm) + '<span class="mx-pc-t">' + esc2(a.x.o.textContent.trim()) + '</span>' + mxStudy.tick;
+                        pb.addEventListener('click', function(){ a.x.b.click(); });
+                        promoWrap.appendChild(pb);
+                        // у категоріях нижче лишаються «інші» — продубльована позиція зникає зі списку,
+                        // але її справжній чип живе далі: промо-картка керує саме ним
+                        if(a.x.cell){ a.x.cell.classList.add('mx-cell-off'); }
+                        promoRefs.push({ a: a, pb: pb, scanHost: MX_SCAN_HOSTS.indexOf(nm) !== -1 });
+                    });
+                    if(promoRefs.length){
+                        studyBody.insertBefore(promoWrap, studyBody.firstChild);
+                        // пропозиція скана: одна тиха строка під верхнім блоком,
+                        // зʼявляється, коли обрано КТ щелеп/суглобів/черепа
+                        if(mxStudy.scan){
+                            scanOffer = document.createElement('button');
+                            scanOffer.type = 'button'; scanOffer.className = 'mx-scan-offer';
+                            scanOffer.innerHTML = mxStudy.ico('скан обличчя') + '<span class="mx-so-t">Додати оптичний скан обличчя</span><span class="mx-so-state"></span>';
+                            scanOffer.addEventListener('click', function(){
+                                var c = mxStudy.scan.c;
+                                c.checked = !c.checked;
+                                try{ c.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
+                                mxStudy.sync();
+                            });
+                            promoWrap.parentNode.insertBefore(scanOffer, promoWrap.nextSibling);
+                        }
+                    } else { promoWrap = null; }
+                }
+                function paintPromo(){
+                    var anyHost = false;
+                    promoRefs.forEach(function(r){
+                        r.pb.classList.toggle('mx-chip-on', r.a.x.o.selected);
+                        if(r.scanHost && r.a.x.o.selected) anyHost = true;
+                    });
+                    if(scanOffer && mxStudy.scan){
+                        scanOffer.classList.toggle('mx-so-show', anyHost);
+                        var on = mxStudy.scan.c.checked;
+                        scanOffer.classList.toggle('mx-chip-on', on);
+                        scanOffer.querySelector('.mx-so-state').textContent = on ? 'Додано' : 'Додати';
+                    }
+                }
+                mxStudy.paintPromo = paintPromo;
+                Array.prototype.forEach.call(grid.querySelectorAll('.mx-fgroup-study > .mx-fg-body > .element'), function(el){
+                    var box = el.querySelector('.mx-chips');
+                    if(!box) return;
+                    var alive = false;
+                    Array.prototype.forEach.call(box.querySelectorAll('.mx-chip'), function(c){
+                        if(!c.closest('.mx-cell-off')) alive = true;
+                    });
+                    if(!alive){ el.classList.add('mx-field-off'); }
+                });
+
+                // ---- 3b3. «Обрано» — теги-чеки над блоком пацієнта, зняти зайве — один клік
+                var tagsWrap = document.createElement('div'); tagsWrap.className = 'mx-tags';
+                tagsWrap.innerHTML = '<div class="mx-tags-l">Обрано:</div><div class="mx-tags-b"></div>';
+                if(typeof gPat !== 'undefined' && gPat && gPat.parentNode){ gPat.parentNode.insertBefore(tagsWrap, gPat); }
+                var tagsBody = tagsWrap.querySelector('.mx-tags-b');
+                function paintTags(){
+                    var list = mxStudy.selected();
+                    tagsWrap.classList.toggle('mx-tags-show', !!list.length);
+                    var h = '';
+                    list.forEach(function(it, i){
+                        h += '<span class="mx-tag' + (it.extra ? ' mx-tag-x' : '') + '" data-i="' + i + '">' + esc2(it.n)
+                           + (it.sub ? '<i>' + esc2(it.sub) + '</i>' : '')
+                           + '<button type="button" class="mx-tag-rm" aria-label="Прибрати">&times;</button></span>';
+                    });
+                    if(tagsBody.innerHTML !== h) tagsBody.innerHTML = h;
+                }
+                tagsBody.addEventListener('click', function(ev){
+                    var rm = ev.target.closest ? ev.target.closest('.mx-tag-rm') : null;
+                    if(!rm) return;
+                    var i = parseInt(rm.parentNode.getAttribute('data-i'), 10);
+                    var it = mxStudy.selected()[i]; if(!it) return;
+                    // знімаємо саме той елемент, який стоїть за тегом
+                    var done = false;
+                    mxStudy.allOpts().forEach(function(a){ if(!done && !a.m.off && a.x.o.selected && a.x.o.textContent.trim() === it.n){ a.x.b.click(); done = true; } });
+                    if(!done && mxStudy.segEls){ mxStudy.segEls.forEach(function(sg){ if(!done && sg.on() && sg.name === it.n){ sg.b.click(); done = true; } }); }
+                    if(!done && mxStudy.scan && mxStudy.scan.name === it.n && mxStudy.scan.c.checked){
+                        mxStudy.scan.c.checked = false;
+                        try{ mxStudy.scan.c.dispatchEvent(new Event('change', { bubbles:true })); }catch(_){ }
+                        mxStudy.sync(); done = true;
+                    }
+                });
+                mxStudy.paintTags = paintTags;
+
                 // ---- 3c. повтор минулої заявки: друга заявка має займати секунди, а не хвилину
                 var LAST_KEY = 'mxLastStudy8';
                 function readLast(){
@@ -3609,6 +3692,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     }
                     gmsg.classList.remove('mx-gm-on');
                     if(mxStudy.paintSecs) mxStudy.paintSecs();
+                    if(mxStudy.paintPromo) mxStudy.paintPromo();
+                    if(mxStudy.paintTags) mxStudy.paintTags();
                     // червону підсвітку знімаємо, щойно умова виконана
                     if(mxStudy.firstStudyEl && n > 0) mxStudy.firstStudyEl.classList.remove('mx-req-miss');
                     if(mxStudy.rotEl && !mxStudy.rotMissing()) mxStudy.rotEl.classList.remove('mx-req-miss');
