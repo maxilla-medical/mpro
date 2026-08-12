@@ -4103,15 +4103,19 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 </script>
 
 
+
+
 <!-- ============================================================================
      MX-RES — екран «Перегляд дослідження» у кабінеті (БП «Дослідження»).
 
-     Дані бере з прихованого блока #mxResData, який віддає OneBox
-     (блок 5 «Вставка коду» в центральній колонці сторінки перегляду процесу).
-     Уся верстка живе тут — у OneBox лишається тільки список полів.
+     ЗВІДКИ ДАНІ. Блок «Вставка коду» в цьому кабінеті НЕ проганяється через
+     шаблонізатор OneBox — {|$...|} лишаються текстом (перевірено на бою
+     2026-08-12, три різні синтаксиси). Тому значення читаємо з «Універсального
+     блока», який OneBox рендерить сам: .js-data-element → .flex-caption (назва
+     поля) + .flex-value (значення, для файлів — посилання).
 
-     Плейсхолдер, який OneBox не зміг підставити ({|$...|} або [...]),
-     вважається порожнім значенням — рядок просто не показується.
+     Блок 5 (#mxResData) лишається як МІТКА сторінки: він є лише в налаштуваннях
+     БП «Дослідження», отже екрани шаблонів і 3D-друку ми не чіпаємо.
 
      КУДИ: окремим блоком у кінці hero.html.
 ============================================================================ -->
@@ -4239,14 +4243,66 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     (document.head || document.documentElement).appendChild(st);
   }
 
-  function read(src){
-    var d = { patient: pick(src,'patient'), date: pick(src,'date'), done: pick(src,'done'),
-              num: pick(src,'num'), statusid: pick(src,'statusid'), items: [] };
-    Array.prototype.forEach.call(src.querySelectorAll('[data-k="item"]'), function(it){
-      var o = { name: pick(it,'name'), url: pick(it,'url'), cmt: pick(it,'cmt'), spec: pick(it,'spec') };
-      if(o.url || o.name) d.items.push(o);
+  // ── дані з «Універсального блока» OneBox ──────────────────────────────────
+  function blockData(){
+    var d = { patient:'', date:'', done:'', status:'', statusid:'', items:[] };
+    var by = {};
+    function item(n){ if(!by[n]) by[n] = { n:+n, name:'', url:'', cmt:'', spec:'' }; return by[n]; }
+
+    Array.prototype.forEach.call(document.querySelectorAll('.js-data-element'), function(el){
+      var cap = el.querySelector('.flex-caption'), v = el.querySelector('.flex-value');
+      if(!cap || !v) return;
+      var c = norm(cap.textContent).replace(/[:?]/g, ' ').replace(/\s+/g, ' ').trim();
+      var txt = (v.textContent || '').replace(/\s+/g, ' ').trim();
+      var a = v.querySelector('a[href]');
+      var url = a ? a.getAttribute('href') : '';
+      var m;
+      if(!c || (!txt && !url)) return;
+      if(/^статус/.test(c)){ if(!d.status) d.status = txt; return; }
+      if(/тип виконаного|тип знімка|виконано дослідження/.test(c)){ if(!d.done) d.done = txt; return; }
+      if(/дата виконання|дата дослідження/.test(c)){ if(!d.date) d.date = txt; return; }
+      if(/(пацієнт|пациент|піб)/.test(c) && !/телефон|email|поштa|пошта/.test(c)){ if(!d.patient) d.patient = txt; return; }
+      if((m = c.match(/послуга\s*(\d)/)) && !/коментар/.test(c)){ item(m[1]).name = txt; return; }
+      if((m = c.match(/результат\s+досліджен\S*\s*№?\s*(\d)/))){ var it = item(m[1]); it.url = url || (/^https?:/i.test(txt) ? txt : ''); return; }
+      if((m = c.match(/коментар\s+послуга\s*(\d)/))){ item(m[1]).cmt = txt; return; }
+      if((m = c.match(/особливост\S*\s+досліджен\S*\s*(\d)/))){ item(m[1]).spec = txt; return; }
     });
+
+    Object.keys(by).sort().forEach(function(k){ var it = by[k]; if(it.url || it.name) d.items.push(it); });
+    // номер процесу беремо з URL — не залежимо від жодної змінної OneBox
+    var mo = location.pathname.match(/\/client\/order\/(\d+)/);
+    d.num = mo ? mo[1] : '';
     return d;
+  }
+
+  // блок 5 може колись почати підставляти змінні — тоді його значення мають перевагу
+  function read(src){
+    var d = blockData();
+    if(src){
+      ['patient','date','done','statusid'].forEach(function(k){ var v = pick(src, k); if(v) d[k] = v; });
+      var over = [];
+      Array.prototype.forEach.call(src.querySelectorAll('[data-k="item"]'), function(it){
+        var o = { name: pick(it,'name'), url: pick(it,'url'), cmt: pick(it,'cmt'), spec: pick(it,'spec') };
+        if(o.url || o.name) over.push(o);
+      });
+      if(over.length) d.items = over;
+    }
+    // «Виконано» — якщо окремого поля немає, збираємо з назв послуг
+    if(!d.done && d.items.length){
+      d.done = d.items.map(function(it){ return it.name; }).filter(Boolean).join(', ');
+    }
+    return d;
+  }
+
+  // етап за текстом статусу (id — лише якщо колись знадобиться інший показ)
+  function stageOf(d){
+    if(d.statusid && STAGE_BY_ID[d.statusid]) return STAGE_BY_ID[d.statusid];
+    var t = norm(d.status);
+    if(!t) return 3;
+    if(/готов|видано|відправлен|завантаж/.test(t)) return 3;
+    if(/email/.test(t)) return 2;
+    if(/виконан/.test(t)) return 1;
+    return 3;
   }
 
   function pills(stage){
@@ -4279,7 +4335,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   }
 
   function build(d){
-    var stage = STAGE_BY_ID[d.statusid] || 3;
+    var stage = stageOf(d);
     var chips = '';
     if(d.date) chips += '<span class="mxr-chip">Дата: <b>' + esc(dateUA(d.date)) + '</b></span>';
     if(d.done) chips += '<span class="mxr-chip mxr-chip-g">' + CHECK + 'Виконано: <b>' + esc(d.done) + '</b></span>';
@@ -4330,6 +4386,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         ['mxProcTop', 'mxProcGrid'].forEach(function(id){
           var e = document.getElementById(id); if (e) e.style.setProperty('display', 'none', 'important');
         });
+        // сирі блоки OneBox (джерело даних) у центральній колонці — не для очей клієнта
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element, .client-cell-body:not(.aside-left):not(.aside-right) .os-block-form'),
+          function(e){ if (!e.closest('#mxResView')) e.style.setProperty('display', 'none', 'important'); }
+        );
         if (n > 60) clearInterval(h);
       }, 150);
     })();
