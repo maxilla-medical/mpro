@@ -4001,3 +4001,103 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   }, true);                                              // true = capture, до обробників OneBox
 })();
 </script>
+
+<!-- ============================================================================
+     MX-DONE — екран подяки після відправки форми.
+
+     ПРОБЛЕМА: OneBox після сабміту віддає лише <div class="nc-message-success">
+     з текстом подяки, а наше правило
+       #mxProcGrid .mx-col-form .os-block-form > :not(form){ display:none }
+     ховає в картці форми все, крім <form> — тому картка порожня.
+     Плюс права панель лишалась на кроці 1 («Ви тут»), хоча заявку вже надіслано.
+
+     РІШЕННЯ: цей блок вмикає повідомлення назад, оформлює його як екран
+     «Готово» (значок, текст із OneBox, кнопка «Записати ще одного пацієнта»),
+     ховає плашку «Крок 1 з 2», ставить у шапці «Заявку надіслано» і зсуває
+     «Ви тут» на другий крок, а перший позначає зеленою галкою.
+
+     КУДИ: окремим блоком у кінці hero.html — від решти коду не залежить.
+============================================================================ -->
+<script>
+(function(){
+  if (window.__mxDone) return; window.__mxDone = true;
+
+  var HERE_TXT = 'Ви тут';
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  (function(){
+    if (document.getElementById('mxDoneCss')) return;
+    var st = document.createElement('style'); st.id = 'mxDoneCss';
+    st.textContent = ''
+      /* повертаємо повідомлення, яке ховало правило «у картці форми лишається тільки form» */
+      + '#mxProcGrid .mx-col-form .os-block-form > .nc-message-success,'
+      + '#mxProcGrid .mx-col-form .os-block-form > .nc-message-error{ display:block !important; }'
+      /* знімаємо системне оформлення OneBox (зелена рамка + спрайт-іконка) */
+      + '#mxProcGrid .nc-message-success.mx-done{ border:0 !important; color:#0F172A !important; margin:0 !important; padding:calc(4 * var(--u)) 0 calc(2 * var(--u)) !important; font-family:\'Manrope\',sans-serif; }'
+      + '#mxProcGrid .nc-message-success.mx-done::before{ display:none !important; }'
+      + '.mx-done-ico{ width:calc(46 * var(--u)); height:calc(46 * var(--u)); border-radius:50%; background:#ECFDF5; color:#16A34A; display:flex; align-items:center; justify-content:center; margin:0 0 calc(15 * var(--u)); }'
+      + '.mx-done-ico svg{ width:calc(23 * var(--u)); height:calc(23 * var(--u)); }'
+      + '.mx-done-s{ font-size:calc(15 * var(--u)); font-weight:600; line-height:1.55; color:#0F172A; letter-spacing:-0.01em; margin:0 0 calc(20 * var(--u)); max-width:calc(520 * var(--u)); }'
+      + '.mx-done-cta{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); height:calc(44 * var(--u)); padding:0 calc(20 * var(--u)); box-sizing:border-box; background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(11 * var(--u)); transition:background .15s ease; }'
+      + '.mx-done-cta:hover{ background:#1E293B; }';
+    (document.head || document.documentElement).appendChild(st);
+  })();
+
+  function esc(x){ return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function apply(){
+    var grid = document.getElementById('mxProcGrid');
+    if (!grid) return false;
+    var msg = grid.querySelector('.mx-col-form .os-block-form > .nc-message-success');
+    if (!msg) return false;                       // це не екран подяки
+    if (msg.classList.contains('mx-done')) return true;
+
+    // 1) картка: значок + текст подяки з OneBox + одна дія
+    var txt = msg.textContent.replace(/\s+/g, ' ').trim();
+    var fid = (location.pathname.match(/\/client\/form\/(\d+)/) || [])[1] || '';
+    var cta = (fid === '8') ? 'Записати ще одного пацієнта' : 'Заповнити ще одну заявку';
+    msg.classList.add('mx-done');
+    msg.innerHTML = '<div class="mx-done-ico">' + CHECK + '</div>'
+      + '<div class="mx-done-s">' + esc(txt) + '</div>'
+      + '<a class="mx-done-cta" href="' + esc(location.pathname) + '">' + cta + '</a>';
+
+    // 2) шапка: кроку більше немає, заголовок говорить про результат
+    var fill = grid.querySelector('.mx-fill'); if (fill) fill.style.display = 'none';
+    var h1 = grid.querySelector('.mx-fh-h1'); if (h1) h1.textContent = 'Заявку надіслано';
+    var sub = grid.querySelector('.mx-fh-sub');
+    if (sub){
+      sub.textContent = (fid === '8')
+        ? 'Далі все на нас: телефонуємо пацієнту і записуємо на зручний час.'
+        : 'Ми вже отримали заявку і беремо її в роботу.';
+      sub.setAttribute('data-mx-lock', '1');      // щоб опис форми не перезаписав рядок
+    }
+
+    // 3) права панель: крок 1 виконано, «Ви тут» переїжджає на наступний
+    var stps = grid.querySelectorAll('.mx-col-side .mx-stp');
+    if (stps.length > 1){
+      var s0 = stps[0], s1 = stps[1];
+      s0.classList.remove('mx-stp-act'); s0.classList.add('mx-stp-done');
+      var n0 = s0.querySelector('.mx-stp-n'); if (n0) n0.innerHTML = CHECK;
+      var here0 = s0.querySelector('.mx-stp-here'); if (here0 && here0.parentNode) here0.parentNode.removeChild(here0);
+      s1.classList.add('mx-stp-act');
+      if (!s1.querySelector('.mx-stp-here')){
+        var tx = s1.querySelector('.mx-stp-txt');
+        if (tx) tx.insertAdjacentHTML('afterbegin', '<div class="mx-stp-here">' + HERE_TXT + '</div>');
+      }
+    }
+    return true;
+  }
+
+  // сітку будує основний код hero.html — чекаємо її появи (і після партіал-навігації теж)
+  function watch(){
+    var tries = 0;
+    var t = setInterval(function(){
+      tries++;
+      if (apply() || tries > 40) clearInterval(t);   // ~6 с
+    }, 150);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
+  window.addEventListener('mx:navigated', watch);
+})();
+</script>
