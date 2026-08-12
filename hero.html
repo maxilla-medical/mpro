@@ -924,6 +924,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* сітка чипів у картці: два стовпці; рядки з однією позицією — на всю ширину */
 #mxProcGrid.mx-form-study .mx-c9 .mx-chips{ grid-template-columns:1fr 1fr; margin-top:0; }
 #mxProcGrid.mx-form-study .mx-c9 .mx-cell-full{ grid-column:1 / -1; }
+/* «Найчастіше призначають»: акцентна картка — тонований фон, значок, підзаголовок */
+#mxProcGrid.mx-form-study .mx-c9-fav{ background:#F8F9FF; border-color:#D9DFFA; box-shadow:0 1px 3px rgba(44,59,255,0.07); }
+#mxProcGrid.mx-form-study .mx-c9-fav .mx-c9-h{ display:flex; align-items:center; gap:calc(7 * var(--u)); margin-bottom:calc(4 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9-fav .mx-c9-h svg{ flex:0 0 auto; width:calc(14 * var(--u)); height:calc(14 * var(--u)); color:#2c3bff; }
+#mxProcGrid.mx-form-study .mx-c9-sub{ font-family:'Manrope',sans-serif; font-size:calc(12 * var(--u)); font-weight:500; line-height:1.45; color:#64748B; margin:0 0 calc(13 * var(--u)); }
 /* «Найчастіше»: більші картки-кнопки у тій самій сітці рядків */
 #mxProcGrid.mx-form-study .mx-favgrid{ display:grid; grid-template-columns:1fr 1fr; gap:calc(10 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-favgrid .mx-pc-full{ grid-column:1 / -1; }
@@ -2900,8 +2905,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     { t:'Направлення у клініці', s:'Отримуєте бланки за вказаною адресою <b>максимально швидко</b>.' }
                 ],
                 '8': [   // Запис пацієнта на дослідження
-                    { t:'Надсилаєте заявку', s:'Телефонуємо пацієнту і записуємо на зручний день та час.', here:true },
-                    { t:'Запис на візит', s:'Ми швидко звʼяжемось з пацієнтом та підберемо зручний час візиту.' },
+                    { t:'Надсилаєте заявку', s:'Вказуєте яке дослідження необхідно зробити та контакти пацієнта.', here:true },
+                    { t:'Запис на візит', s:'Ми телефонуємо пацієнту і записуємо на зручний день та час.' },
                     { t:'Знімок у кабінеті', s:'Одразу після візиту — у кабінеті та на email.' }
                 ],
                 '7': [   // 3D-друк зі STL клієнта: без планування, друк одразу після оплати
@@ -3471,7 +3476,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     (els || []).forEach(function(e){ if(e) b.appendChild(e); });
                 }
                 var cPat = mkCard('Пацієнт', 'mx-c9-pat'); put(cPat, [elName, elPhone]);
-                var cFav = mkCard('Найчастіше', 'mx-c9-fav');
+                // «Найчастіше призначають» — акцентна картка швидкого вибору: значок,
+                // тонований фон і тихий підзаголовок, що пояснює суть без крику
+                var cFav = mkCard('Найчастіше призначають', 'mx-c9-fav');
+                cFav.querySelector('.mx-c9-h').insertAdjacentHTML('afterbegin',
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>');
+                cFav.querySelector('.mx-c9-h').insertAdjacentHTML('afterend',
+                    '<div class="mx-c9-sub">Пʼять досліджень, з яких складається більшість направлень — оберіть одним кліком.</div>');
                 var cPano = mPano ? mkCard('Звичайні знімки 2D') : null; put(cPano, mPano ? [mPano.el] : []);
                 var cHead = mHead ? mkCard('КТ Голови 3D') : null; put(cHead, mHead ? [mHead.el] : []);
                 var cJaw = mJaw ? mkCard('КТ Щелеп 3D') : null; put(cJaw, mJaw ? [mJaw.el] : []);
@@ -3671,7 +3682,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                             h += '<div class="mx-sum-row">' + tickSvg + '<span>' + esc2(it.n)
                                + (it.sub ? '<span class="mx-sum-sub">' + esc2(it.sub) + '</span>' : '') + '</span></div>';
                         });
-                        h += '<div class="mx-sum-note">Ми швидко звʼяжемось з пацієнтом та підберемо зручний час візиту.</div>';
+                        h += '<div class="mx-sum-note">Ми телефонуємо пацієнту і записуємо на зручний день та час.</div>';
                         if(sumWrap.innerHTML !== h) sumWrap.innerHTML = h;
                     }
                     gmsg.classList.remove('mx-gm-on');
