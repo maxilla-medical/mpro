@@ -909,8 +909,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     background:transparent !important; border:0 !important; box-shadow:none !important;
     padding:0 !important; border-radius:0 !important;
 }
-#mxProcGrid.mx-form-study .mx-c9{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)) calc(20 * var(--u)); margin:0 0 calc(12 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); }
-#mxProcGrid.mx-form-study .mx-c9-h{ font-size:calc(14.5 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#0F172A; margin:0 0 calc(13 * var(--u)); font-family:'Manrope',sans-serif; }
+#mxProcGrid.mx-form-study .mx-c9{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(20 * var(--u)) calc(20 * var(--u)) calc(20 * var(--u)); margin:0 0 calc(12 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); }
+/* заголовок блока — display-рівень (Apple/Notion): помітно більший і важчий за пункти,
+   щільний трекінг; пункти лишаються 13/500 — ієрархія зчитується миттєво */
+#mxProcGrid.mx-form-study .mx-c9-h{ font-size:calc(18 * var(--u)); font-weight:800; letter-spacing:-0.022em; line-height:1.2; color:#0F172A; margin:0 0 calc(14 * var(--u)); font-family:'Manrope',sans-serif; }
 /* назви полів усередині карток дублюють заголовок картки — ховаємо (лише прямі діти тіла:
    ящик «Положення рота» всередині чипів лишається з власним підписом) */
 #mxProcGrid.mx-form-study .mx-c9 .mx-c9-b > .element > .title{ display:none !important; }
@@ -3468,7 +3470,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     if(el.classList.contains('mx-seg') || el.classList.contains('mx-field-off') || el.classList.contains('mx-dep')) return;
                     // «Комментар» (рос., поки George не перейменував) і «Коментар» — обидва варіанти
                     if(!elComment && /комм?ент/.test(t) && el.querySelector('textarea, input[type="text"]')){ elComment = el; return; }
-                    if(!elName && (t.indexOf('п.і.б') !== -1 || t.indexOf('піб') !== -1 || t.indexOf('імʼя') !== -1 || t.indexOf('пацієнт') !== -1) && el.querySelector('input[type="text"], input[type="tel"]')){ elName = el; return; }
+                    if(!elName && (t.indexOf('п.і.б') !== -1 || t.indexOf('піб') !== -1 || t.indexOf('імя') !== -1 || t.indexOf('пацієнт') !== -1) && el.querySelector('input[type="text"], input[type="tel"]')){ elName = el; return; }
                 });
                 if(mBundle){ mBundle.off = true; mBundle.el.classList.add('mx-field-off'); }
                 if(elTime){ elTime.classList.add('mx-field-off'); }
@@ -3495,8 +3497,21 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     c9.querySelector('.mx-c9-h').insertAdjacentHTML('beforeend', '<span class="mx-c9-badge ' + cls + '">' + text + '</span>');
                 }
                 var SUB_3D = 'Максимум деталей: КТ дає до 100% діагностичної інформації.';
-                var cPat = mkCard('Пацієнт', 'mx-c9-pat'); put(cPat, [elName, elPhone]);
+                // власний підпис поля замість назви з OneBox (текстові вузли міняємо, бейджі лишаються)
+                function retitle(el, txt){
+                    if(!el) return;
+                    var t = el.querySelector('.title'); if(!t) return;
+                    var done = false;
+                    Array.prototype.slice.call(t.childNodes).forEach(function(n){
+                        if(n.nodeType !== 3) return;
+                        if(!done && n.textContent.trim()){ n.textContent = txt + ' '; done = true; }
+                        else if(n.textContent.trim()){ n.textContent = ' '; }
+                    });
+                }
+                var cPat = mkCard('Дані пацієнта', 'mx-c9-pat'); put(cPat, [elName, elPhone]);
                 subLine(cPat, 'Вкажіть, будь ласка, контакти пацієнта — усе інше ми візьмемо на себе.');
+                retitle(elName, 'Повне імʼя');
+                retitle(elPhone, 'Телефон');
                 // «Найчастіше призначають» — акцентна картка швидкого вибору: значок,
                 // тонований фон і тихий підзаголовок, що пояснює суть без крику
                 var cFav = mkCard('Найчастіше призначають', 'mx-c9-fav');
@@ -3514,7 +3529,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 hBadge(cJoint, '3D Знімки', 'mx-b3'); subLine(cJoint, SUB_3D);
                 var cPano = mPano ? mkCard('Звичайні знімки') : null; put(cPano, mPano ? [mPano.el] : []);
                 hBadge(cPano, '2D Знімки', 'mx-b2');
-                subLine(cPano, 'Швидкий базовий огляд: 2D-знімок передає до 25% інформації порівняно з КТ — для багатьох завдань цього достатньо.');
+                subLine(cPano, '2D-знімок передає до 25% інформації від того що можна побачити на КТ');
                 var cExtra = mExtra ? mkCard('Опис знімків') : null; put(cExtra, mExtra ? [mExtra.el] : []);
                 subLine(cExtra, 'Опис готуємо до трьох робочих днів — найчастіше він готовий значно раніше.');
                 var cCmt = elComment ? mkCard('Коментар', 'mx-c9-cmt') : null; put(cCmt, elComment ? [elComment] : []);
@@ -3730,7 +3745,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         var f = el.querySelector('input[type="text"], input[type="tel"]');
                         if(!f) return;
                         if(!phoneEl && t.indexOf('телефон') !== -1) phoneEl = { el: el, f: f };
-                        if(!nameEl2 && (t.indexOf('п.і.б') !== -1 || t.indexOf('піб') !== -1 || t.indexOf('імʼя') !== -1 || t.indexOf('ім\'я') !== -1)) nameEl2 = { el: el, f: f };
+                        // 'імя' — бо nrm зрізає апострофи; ловить і рідну назву OneBox, і наш retitle «Повне імʼя»
+                        if(!nameEl2 && (t.indexOf('п.і.б') !== -1 || t.indexOf('піб') !== -1 || t.indexOf('імя') !== -1)) nameEl2 = { el: el, f: f };
                     });
                     if(nameEl2){ nameEl2.f.setAttribute('placeholder', 'Прізвище та імʼя'); mxStudy.nameField = nameEl2.f;
  }
