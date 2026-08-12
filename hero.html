@@ -924,11 +924,20 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* сітка чипів у картці: два стовпці; рядки з однією позицією — на всю ширину */
 #mxProcGrid.mx-form-study .mx-c9 .mx-chips{ grid-template-columns:1fr 1fr; margin-top:0; }
 #mxProcGrid.mx-form-study .mx-c9 .mx-cell-full{ grid-column:1 / -1; }
-/* «Найчастіше призначають»: акцентна картка — тонований фон, значок, підзаголовок */
+/* заголовок картки: рядок із плашкою; тихий підзаголовок одразу під ним */
+#mxProcGrid.mx-form-study .mx-c9 .mx-c9-h{ display:flex; align-items:center; gap:calc(8 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9-badge{ flex:0 0 auto; font-size:calc(10.5 * var(--u)); font-weight:700; letter-spacing:.02em; line-height:1.3; padding:calc(3 * var(--u)) calc(9 * var(--u)); border-radius:calc(999 * var(--u)); white-space:nowrap; }
+#mxProcGrid.mx-form-study .mx-c9-badge.mx-b2{ background:#F1F5F9; color:#64748B; }
+#mxProcGrid.mx-form-study .mx-c9-badge.mx-b3{ background:#EEF2FF; color:#2c3bff; }
+#mxProcGrid.mx-form-study .mx-c9-sub{ font-family:'Manrope',sans-serif; font-size:calc(12 * var(--u)); font-weight:500; line-height:1.45; color:#64748B; margin:calc(-7 * var(--u)) 0 calc(13 * var(--u)); }
+/* «Найчастіше призначають»: акцентна картка — тонований фон, значок */
 #mxProcGrid.mx-form-study .mx-c9-fav{ background:#F8F9FF; border-color:#D9DFFA; box-shadow:0 1px 3px rgba(44,59,255,0.07); }
-#mxProcGrid.mx-form-study .mx-c9-fav .mx-c9-h{ display:flex; align-items:center; gap:calc(7 * var(--u)); margin-bottom:calc(4 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-c9-fav .mx-c9-h svg{ flex:0 0 auto; width:calc(14 * var(--u)); height:calc(14 * var(--u)); color:#2c3bff; }
-#mxProcGrid.mx-form-study .mx-c9-sub{ font-family:'Manrope',sans-serif; font-size:calc(12 * var(--u)); font-weight:500; line-height:1.45; color:#64748B; margin:0 0 calc(13 * var(--u)); }
+/* висока фав-картка (череп): два рядки грида, назва + тихий підзаголовок */
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc-tall{ grid-row:span 2; }
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-pc-tx{ display:flex; flex-direction:column; gap:calc(3 * var(--u)); min-width:0; }
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-pc-tx .mx-pc-t{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-pc-s{ font-size:calc(11 * var(--u)); font-weight:500; color:#64748B; line-height:1.35; white-space:normal; }
 /* «Найчастіше»: більші картки-кнопки у тій самій сітці рядків */
 #mxProcGrid.mx-form-study .mx-favgrid{ display:grid; grid-template-columns:1fr 1fr; gap:calc(10 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-favgrid .mx-pc-full{ grid-column:1 / -1; }
@@ -959,6 +968,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 @media (max-width: 900px){
   #mxProcGrid.mx-form-study .mx-c9 .mx-chips{ grid-template-columns:1fr; }
   #mxProcGrid.mx-form-study .mx-favgrid{ grid-template-columns:1fr; }
+  #mxProcGrid.mx-form-study .mx-favgrid .mx-pc-tall{ grid-row:auto; }
 }
 </style>
 <div id="mxHero" style="
@@ -3475,22 +3485,40 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var b = c9.querySelector('.mx-c9-b');
                     (els || []).forEach(function(e){ if(e) b.appendChild(e); });
                 }
+                // підзаголовок картки (тихий конверсійний рядок) і плашка 2D/3D у заголовку
+                function subLine(c9, text){
+                    if(!c9) return;
+                    c9.querySelector('.mx-c9-h').insertAdjacentHTML('afterend', '<div class="mx-c9-sub">' + text + '</div>');
+                }
+                function hBadge(c9, text, cls){
+                    if(!c9) return;
+                    c9.querySelector('.mx-c9-h').insertAdjacentHTML('beforeend', '<span class="mx-c9-badge ' + cls + '">' + text + '</span>');
+                }
+                var SUB_3D = 'Максимум деталей: КТ дає до 100% діагностичної інформації.';
                 var cPat = mkCard('Пацієнт', 'mx-c9-pat'); put(cPat, [elName, elPhone]);
+                subLine(cPat, 'Вкажіть, будь ласка, контакти пацієнта — усе інше ми візьмемо на себе.');
                 // «Найчастіше призначають» — акцентна картка швидкого вибору: значок,
                 // тонований фон і тихий підзаголовок, що пояснює суть без крику
                 var cFav = mkCard('Найчастіше призначають', 'mx-c9-fav');
                 cFav.querySelector('.mx-c9-h').insertAdjacentHTML('afterbegin',
                     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>');
-                cFav.querySelector('.mx-c9-h').insertAdjacentHTML('afterend',
-                    '<div class="mx-c9-sub">Пʼять досліджень, з яких складається більшість направлень — оберіть одним кліком.</div>');
-                var cPano = mPano ? mkCard('Звичайні знімки 2D') : null; put(cPano, mPano ? [mPano.el] : []);
-                var cHead = mHead ? mkCard('КТ Голови 3D') : null; put(cHead, mHead ? [mHead.el] : []);
-                var cJaw = mJaw ? mkCard('КТ Щелеп 3D') : null; put(cJaw, mJaw ? [mJaw.el] : []);
+                subLine(cFav, 'Пʼять досліджень, з яких складається більшість направлень — оберіть одним кліком.');
+                var cHead = mHead ? mkCard('КТ Голови') : null; put(cHead, mHead ? [mHead.el] : []);
+                hBadge(cHead, '3D Знімки', 'mx-b3'); subLine(cHead, SUB_3D);
+                var cJaw = mJaw ? mkCard('КТ Щелеп') : null; put(cJaw, mJaw ? [mJaw.el] : []);
+                hBadge(cJaw, '3D Знімки', 'mx-b3'); subLine(cJaw, SUB_3D);
                 var segRows = (mxStudy.segEls || []).map(function(sg){ return sg.el; });
-                var cSeg = segRows.length ? mkCard('КТ Сегментів 3D') : null; put(cSeg, segRows);
-                var cJoint = mJoint ? mkCard('КТ Суглобів 3D') : null; put(cJoint, mJoint ? [mJoint.el] : []);
+                var cSeg = segRows.length ? mkCard('КТ Сегментів') : null; put(cSeg, segRows);
+                hBadge(cSeg, '3D Знімки', 'mx-b3'); subLine(cSeg, SUB_3D);
+                var cJoint = mJoint ? mkCard('КТ Суглобів') : null; put(cJoint, mJoint ? [mJoint.el] : []);
+                hBadge(cJoint, '3D Знімки', 'mx-b3'); subLine(cJoint, SUB_3D);
+                var cPano = mPano ? mkCard('Звичайні знімки') : null; put(cPano, mPano ? [mPano.el] : []);
+                hBadge(cPano, '2D Знімки', 'mx-b2');
+                subLine(cPano, 'Швидкий базовий огляд: 2D-знімок передає до 25% інформації порівняно з КТ — для багатьох завдань цього достатньо.');
                 var cExtra = mExtra ? mkCard('Опис знімків') : null; put(cExtra, mExtra ? [mExtra.el] : []);
+                subLine(cExtra, 'Опис готуємо до трьох робочих днів — найчастіше він готовий значно раніше.');
                 var cCmt = elComment ? mkCard('Коментар', 'mx-c9-cmt') : null; put(cCmt, elComment ? [elComment] : []);
+                subLine(cCmt, 'Якщо є щось важливе для дослідження — напишіть, ми обовʼязково врахуємо.');
 
                 // ---- 3. рядки всередині карток — точно за ТЗ (одна позиція в рядку = на всю ширину)
                 function layoutRows(m, spec){
@@ -3564,24 +3592,27 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var byT = {};
                     mxStudy.allOpts().forEach(function(a){ if(!a.m.off && a.m !== mExtra && !byT[a.t]) byT[a.t] = a; });
                     function pick(){ for(var i = 0; i < arguments.length; i++){ if(byT[arguments[i]]) return byT[arguments[i]]; } return null; }
-                    var FAV_ROWS = [
-                        [pick('кт двох щелеп'), pick('кт черепа + 3d ceph')],
-                        [pick('кт двох щелеп з суглобами')],
-                        [pick('панорамний знімок зубів'), pick('трг бічна проекція', 'трг бокова проекція')]
+                    // сітка 2×3 (макет George 2026-08-12): череп — висока картка праворуч (span 2)
+                    // з підзаголовком про 3D Ceph; «з суглобами» — ліворуч під «двох щелеп»
+                    var FAV_LIST = [
+                        { a: pick('кт двох щелеп') },
+                        { a: pick('кт черепа + 3d ceph'), tall: true, sub: 'Уже включає 3D-цефалометричний аналіз' },
+                        { a: pick('кт двох щелеп з суглобами') },
+                        { a: pick('панорамний знімок зубів') },
+                        { a: pick('трг бічна проекція', 'трг бокова проекція') }
                     ];
                     var wrap = document.createElement('div'); wrap.className = 'mx-favgrid';
-                    FAV_ROWS.forEach(function(row){
-                        row = row.filter(Boolean);
-                        if(!row.length) return;
-                        var full = row.length === 1;
-                        row.forEach(function(a){
-                            var pb = document.createElement('button'); pb.type = 'button';
-                            pb.className = 'mx-pc' + (full ? ' mx-pc-full' : '');
-                            pb.innerHTML = mxStudy.ico(a.t) + '<span class="mx-pc-t">' + esc2(a.x.o.textContent.trim()) + '</span>' + mxStudy.tick;
-                            pb.addEventListener('click', function(){ a.x.b.click(); });
-                            wrap.appendChild(pb);
-                            favRefs.push({ a: a, pb: pb });
-                        });
+                    FAV_LIST.forEach(function(it){
+                        var a = it.a; if(!a) return;
+                        var pb = document.createElement('button'); pb.type = 'button';
+                        pb.className = 'mx-pc' + (it.tall ? ' mx-pc-tall' : '');
+                        var ttl = '<span class="mx-pc-t">' + esc2(a.x.o.textContent.trim()) + '</span>';
+                        pb.innerHTML = mxStudy.ico(a.t)
+                            + (it.sub ? '<span class="mx-pc-tx">' + ttl + '<span class="mx-pc-s">' + it.sub + '</span></span>' : ttl)
+                            + mxStudy.tick;
+                        pb.addEventListener('click', function(){ a.x.b.click(); });
+                        wrap.appendChild(pb);
+                        favRefs.push({ a: a, pb: pb });
                     });
                     if(favRefs.length){ cFav.querySelector('.mx-c9-b').appendChild(wrap); }
                     else { cFav.classList.add('mx-field-off'); }
