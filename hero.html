@@ -4107,6 +4107,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
 
+
+
 <!-- ============================================================================
      MX-RES v3 — екран «Перегляд дослідження» (БП «Дослідження»).
 
@@ -4128,6 +4130,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   var BACK_URL  = '/client/custompage/40/';
   var FORM_OPYS = '/client/form/9/';
   var FORM_GUID = '/client/form/6/';
+  var MX_TG     = 'https://t.me/dlmaxilla';
   var KEEP_M    = 24;                       // скільки місяців зберігаємо файли
 
   var STAGE_BY_ID = { };
@@ -4177,7 +4180,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
   // ── дані з «Універсального блока» OneBox ──────────────────────────────────
   function blockData(){
-    var d = { patient:'', date:'', done:'', status:'', statusid:'', items:[] };
+    var d = { patient:'', date:'', done:'', status:'', statusid:'', phone:'', branch:'', zone:'', items:[] };
     var by = {};
     function item(n){ if(!by[n]) by[n] = { n:+n, name:'', url:'', cmt:'', spec:'' }; return by[n]; }
 
@@ -4193,6 +4196,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       if(/^статус/.test(c)){ if(!d.status) d.status = txt; return; }
       if(/тип виконаного|тип знімка|виконано дослідження/.test(c)){ if(!d.done) d.done = txt; return; }
       if(/дата виконання|дата дослідження/.test(c)){ if(!d.date) d.date = txt; return; }
+      if(/телефон/.test(c)){ if(!d.phone) d.phone = txt; return; }
+      if(/філія|филиал|відділення/.test(c)){ if(!d.branch) d.branch = txt; return; }
+      if(/зона інтересу|зона интереса/.test(c)){ if(!d.zone) d.zone = txt; return; }
       if(/(пацієнт|пациент|піб)/.test(c) && !/телефон|email|поштa|пошта/.test(c)){ if(!d.patient) d.patient = txt; return; }
       if((m = c.match(/послуга\s*(\d)/)) && !/коментар/.test(c)){ item(m[1]).name = txt; return; }
       if((m = c.match(/результат\s+досліджен\S*\s*№?\s*(\d)/))){ var it = item(m[1]); it.url = url || (/^https?:/i.test(txt) ? txt : ''); return; }
@@ -4200,7 +4206,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       if((m = c.match(/особливост\S*\s+досліджен\S*\s*(\d)/))){ item(m[1]).spec = txt; return; }
     });
 
-    Object.keys(by).sort().forEach(function(k){ var it = by[k]; if(it.url || it.name) d.items.push(it); });
+    Object.keys(by).sort().forEach(function(k){ var it = by[k]; if(it.url || it.name){ it.no = d.items.length + 1; d.items.push(it); } });
     // номер процесу беремо з URL — не залежимо від жодної змінної OneBox
     var mo = location.pathname.match(/\/client\/order\/(\d+)/);
     d.num = mo ? mo[1] : '';
@@ -4211,10 +4217,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   function read(src){
     var d = blockData();
     if(src){
-      ['patient','date','done','statusid'].forEach(function(k){ var v = pick(src, k); if(v) d[k] = v; });
+      ['patient','date','done','statusid','phone','branch','zone'].forEach(function(k){ var v = pick(src, k); if(v) d[k] = v; });
       var over = [];
       Array.prototype.forEach.call(src.querySelectorAll('[data-k="item"]'), function(it){
-        var o = { name: pick(it,'name'), url: pick(it,'url'), cmt: pick(it,'cmt'), spec: pick(it,'spec') };
+        var o = { name: pick(it,'name'), url: pick(it,'url'), cmt: pick(it,'cmt'), spec: pick(it,'spec'), no: over.length + 1 };
         if(o.url || o.name) over.push(o);
       });
       if(over.length) d.items = over;
@@ -4222,6 +4228,17 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     // «Виконано» — якщо окремого поля немає, збираємо з назв послуг
     if(!d.done && d.items.length){
       d.done = d.items.map(function(it){ return it.name; }).filter(Boolean).join(', ');
+    }
+    // СТАРІ ПРОЦЕСИ: є лише посилання «Файл №1..5», назв послуг немає.
+    // Тоді беремо назви з поля «Назва дослідження» — якщо їх рівно стільки ж,
+    // скільки файлів, розкладаємо по порядку; інакше нумеруємо чесно.
+    var noNames = d.items.length && d.items.every(function(it){ return !it.name; });
+    if(noNames){
+      var names = String(d.done || '').split(/[,;]/).map(function(x){ return x.trim(); }).filter(Boolean);
+      d.items.forEach(function(it, i){
+        it.name = (names.length === d.items.length) ? names[i] : '';
+        it.legacy = true;
+      });
     }
     return d;
   }
@@ -4282,11 +4299,28 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-note-t{ font-size:calc(13 * var(--u)); font-weight:500; line-height:1.5; color:#334155; }'
       /* технічна деталь — тихо */
       + '#mxResView .mxr-spec{ display:flex; align-items:center; gap:calc(7 * var(--u)); margin-top:calc(9 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; }'
+      /* теги типу: 3D/2D і формат файла — лікар класифікує знімок за пів секунди */
+      + '#mxResView .mxr-tags{ display:flex; gap:calc(6 * var(--u)); margin-top:calc(7 * var(--u)); }'
+      + '#mxResView .mxr-tag{ display:inline-flex; align-items:center; height:calc(20 * var(--u)); padding:0 calc(8 * var(--u)); border-radius:calc(6 * var(--u)); background:#F1F5F9; color:#64748B; font-size:calc(10.5 * var(--u)); font-weight:800; letter-spacing:.04em; }'
+      + '#mxResView .mxr-tag.mxr-tag-3d{ background:#EEF2FF; color:#2c3bff; }'
+      + '#mxResView .mxr-tag.mxr-tag-2d{ background:#F1F5F9; color:#64748B; }'
+      /* дії картки */
+      + '#mxResView .mxr-acts{ flex:0 0 auto; display:flex; flex-direction:column; align-items:stretch; gap:calc(7 * var(--u)); align-self:center; }'
+      + '#mxResView .mxr-view{ text-align:center; font-size:calc(12.5 * var(--u)); font-weight:600; color:#64748B !important; text-decoration:none !important; transition:color .15s ease; }'
+      + '#mxResView .mxr-view:hover{ color:#2c3bff !important; }'
+      + '#mxResView .mxr-sec-h.mxr-sec-2{ margin-top:calc(22 * var(--u)); }'
+      + '#mxResView .mxr-row-col{ flex-direction:column; gap:calc(5 * var(--u)); }'
+      + '#mxResView .mxr-row-col .mxr-v{ text-align:left; }'
+      + '#mxResView .mxr-tel{ text-decoration:none !important; border-bottom:1px dashed rgba(255,255,255,0.35); }'
+      + '#mxResView .mxr-tel:hover{ border-bottom-color:#fff; }'
+      + '#mxResView .mxr-foot-top{ margin-top:0 !important; padding-top:0 !important; border-top:none !important; }'
+      + '#mxResView .mxr-help{ display:block; margin-top:calc(14 * var(--u)); padding-top:calc(14 * var(--u)); border-top:1px solid rgba(255,255,255,0.07); font-size:calc(12 * var(--u)); font-weight:600; color:#8B9CFF !important; text-decoration:none !important; }'
+      + '#mxResView .mxr-help:hover{ color:#fff !important; }'
+      + '#mxResView .mxr-spec b{ color:#64748B; font-weight:700; }'
       + '#mxResView .mxr-spec svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); flex:0 0 auto; }'
       + '#mxResView .mxr-dl{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(9 * var(--u)); height:calc(46 * var(--u)); padding:0 calc(22 * var(--u)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(12 * var(--u)); box-shadow:0 4px 12px rgba(15,23,42,0.16); transition:background .15s ease, box-shadow .15s ease, transform .12s ease; }'
       + '#mxResView .mxr-dl:hover{ background:#1E293B; box-shadow:0 8px 20px rgba(15,23,42,0.22); transform:translateY(-1px); }'
       + '#mxResView .mxr-dl svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); }'
-      + '#mxResView .mxr-dl{ align-self:center; }'
       + '#mxResView .mxr-empty{ background:#FFFFFF; border:1px dashed #DDE3EC; border-radius:calc(18 * var(--u)); padding:calc(26 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; color:#64748B; }'
       /* кросс-сейл: світло, спокійно, під результатом — не перебиває його */
       + '#mxResView .mxr-offer{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); }'
@@ -4315,6 +4349,23 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + 'body:has(#mxResData) #mxProcTop, body:has(#mxResData) #mxProcGrid{ display:none !important; }'
       + '@media (max-width: 900px){ #mxResView .mxr-grid{ flex-direction:column; } #mxResView .mxr-side-col{ width:100%; flex-basis:auto; position:static; } #mxResView .mxr-r{ flex-wrap:wrap; } #mxResView .mxr-dl{ width:100%; justify-content:center; } #mxResView .mxr-of{ flex-wrap:wrap; } #mxResView .mxr-of-b{ width:100%; justify-content:center; } }';
     (document.head || document.documentElement).appendChild(st);
+  }
+
+  // тип файла з посилання: лікар одразу бачить, що саме завантажує
+  function fileKind(url){
+    var m = String(url || '').split('?')[0].match(/\.([a-z0-9]{2,4})$/i);
+    var e = m ? m[1].toLowerCase() : '';
+    if(e === 'jpeg') e = 'jpg';
+    var viewable = (e === 'jpg' || e === 'png' || e === 'pdf');
+    return { ext: e ? e.toUpperCase() : '', view: viewable };
+  }
+  // 3D / 2D — миттєва класифікація дослідження
+  function dim(name){
+    var t = norm(name);
+    if(/опис|ceph|цефалометр|аналіз/.test(t)) return '';
+    if(/^кт|кт /.test(t) || /сегмент|суглоб|черепа|пазух/.test(t)) return '3D';
+    if(/панорам|трг/.test(t)) return '2D';
+    return '';
   }
 
   function plural(n, a, b, c){
@@ -4351,39 +4402,65 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var files = d.items.filter(function(it){ return !!it.url; });
 
     // мета-рядок під імʼям: що зробили, коли, номер
+    // якщо назви досліджень уже стоять на картках — не дублюємо їх у шапці;
+    // у старих процесах карток без назв — навпаки, шапка єдине місце, де вони є
+    var legacy = d.items.some(function(it){ return it.legacy; });
     var meta = [];
-    if(files.length > 1) meta.push(files.length + ' ' + plural(files.length, 'дослідження', 'дослідження', 'досліджень'));
+    if(!legacy && files.length > 1) meta.push(files.length + ' ' + plural(files.length, 'дослідження', 'дослідження', 'досліджень'));
     else if(d.done) meta.push(esc(d.done));
     if(d.date) meta.push(esc(dateUA(d.date)));
     if(d.num)  meta.push('№' + esc(d.num));
     var metaHtml = meta.length ? '<div class="mxr-meta">' + meta.join('<i></i>') + '</div>' : '';
 
+    function card(it){
+      var k = fileKind(it.url), dm = dim(it.name), tags = [];
+      if(dm) tags.push('<span class="mxr-tag mxr-tag-' + dm.toLowerCase() + '">' + dm + '</span>');
+      if(k.ext) tags.push('<span class="mxr-tag">' + k.ext + '</span>');
+      var sub = tags.length ? '<div class="mxr-tags">' + tags.join('') + '</div>' : '';
+      if(it.cmt)  sub += '<div class="mxr-note"><div class="mxr-note-h">Примітка MAXILLA</div><div class="mxr-note-t">' + esc(it.cmt) + '</div></div>';
+      if(it.spec) sub += '<div class="mxr-spec">' + INFO + '<span><b>Особливість виконання:</b> ' + esc(it.spec) + '</span></div>';
+      var ttl = it.name || (it.legacy ? 'Файл ' + it.no : 'Результат дослідження');
+      return '<div class="mxr-r">' + ico(it.name)
+        + '<div class="mxr-r-tx"><div class="mxr-r-t">' + esc(ttl) + '</div>' + sub + '</div>'
+        + '<div class="mxr-acts">'
+          + '<a class="mxr-dl" href="' + esc(it.url) + '" target="_blank" rel="noopener">' + DL + 'Завантажити</a>'
+          + (k.view ? '<a class="mxr-view" href="' + esc(it.url) + '" target="_blank" rel="noopener">Переглянути</a>' : '')
+        + '</div></div>';
+    }
+    // знімки і документи — різні за суттю речі, не мішаємо в одну купу.
+    // документ — це те, що читають (опис, висновок, цефалометрія); решта — знімки.
+    function isDoc(n){ return /опис|висновок|цефалометр|ceph|аналіз/.test(norm(n)); }
+    var docs  = files.filter(function(it){ return it.name && isDoc(it.name); });
+    var shots = files.filter(function(it){ return docs.indexOf(it) === -1; });
     var list = '';
-    files.forEach(function(it){
-      var sub = '';
-      if(it.cmt)  sub += '<div class="mxr-note"><div class="mxr-note-h">Примітка рентгенолога</div><div class="mxr-note-t">' + esc(it.cmt) + '</div></div>';
-      if(it.spec) sub += '<div class="mxr-spec">' + INFO + '<span>' + esc(it.spec) + '</span></div>';
-      list += '<div class="mxr-r">' + ico(it.name)
-        + '<div class="mxr-r-tx"><div class="mxr-r-t">' + esc(it.name || 'Результат дослідження') + '</div>' + sub + '</div>'
-        + '<a class="mxr-dl" href="' + esc(it.url) + '" target="_blank" rel="noopener">' + DL + 'Завантажити</a>'
-        + '</div>';
-    });
+    if(shots.length && docs.length){
+      list  = '<div class="mxr-sec-h">Знімки<b>' + shots.length + '</b></div>' + shots.map(card).join('');
+      list += '<div class="mxr-sec-h mxr-sec-2">Документи<b>' + docs.length + '</b></div>' + docs.map(card).join('');
+    } else {
+      list = files.map(card).join('');
+    }
 
     var main;
     if(files.length){
-      main = '<div class="mxr-sec-h">Результат<b>' + files.length + ' ' + plural(files.length, 'файл', 'файли', 'файлів') + '</b></div>' + list;
+      var split = (shots.length && docs.length);
+      main = (split ? '' : '<div class="mxr-sec-h">Результат<b>' + files.length + ' ' + plural(files.length, 'файл', 'файли', 'файлів') + '</b></div>') + list;
     } else {
       main = '<div class="mxr-empty">Файли ще готуються — щойно результат буде завантажено, він зʼявиться тут.</div>';
     }
 
-    var side = '<div class="mxr-side"><div class="mxr-eyebrow">Про дослідження</div>'
-      + (d.date ? '<div class="mxr-row"><span class="mxr-k">Дата</span><span class="mxr-v">' + esc(dateUA(d.date)) + '</span></div>' : '')
-      + (d.num ? '<div class="mxr-row"><span class="mxr-k">Номер</span><span class="mxr-v">№' + esc(d.num) + '</span></div>' : '')
-      + (files.length ? '<div class="mxr-row"><span class="mxr-k">Файлів</span><span class="mxr-v">' + files.length + '</span></div>' : '')
-      + '<div class="mxr-foot">'
+    var rows = '';
+    if(d.phone)  rows += '<div class="mxr-row"><span class="mxr-k">Телефон</span><a class="mxr-v mxr-tel" href="tel:' + esc(d.phone.replace(/[^\d+]/g, '')) + '">' + esc(d.phone) + '</a></div>';
+    if(d.branch) rows += '<div class="mxr-row"><span class="mxr-k">Виконано</span><span class="mxr-v">' + esc(d.branch) + '</span></div>';
+    if(d.zone)   rows += '<div class="mxr-row mxr-row-col"><span class="mxr-k">Зона інтересу</span><span class="mxr-v">' + esc(d.zone) + '</span></div>';
+
+    var side = '<div class="mxr-side">'
+      + (rows ? '<div class="mxr-eyebrow">Пацієнт</div>' + rows : '')
+      + '<div class="mxr-foot' + (rows ? '' : ' mxr-foot-top') + '">'
         + '<div class="mxr-ft">' + CHECK + 'Зберігаємо ' + KEEP_M + ' ' + plural(KEEP_M, 'місяць', 'місяці', 'місяців') + '</div>'
         + '<div class="mxr-ft">' + CHECK + 'Дані пацієнта захищені</div>'
-      + '</div></div>';
+      + '</div>'
+      + '<a class="mxr-help" href="' + MX_TG + '?text=' + encodeURIComponent('Питання щодо дослідження' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener">Питання щодо знімка? Напишіть нам</a>'
+      + '</div>';
 
     return '<div id="mxResView">'
       + '<div class="mxr-top">'
@@ -4393,7 +4470,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '<div class="mxr-head"><div>'
         + '<h1 class="mxr-h1">' + esc(d.patient || 'Рентгенологічне дослідження') + '</h1>'
         + metaHtml
-      + '</div><span class="mxr-badge">' + CHECK + esc(STAGES[stage - 1]) + '</span></div>'
+      + '</div><span class="mxr-badge">' + CHECK + (stage === 3 ? 'Готово' : esc(STAGES[stage - 1])) + '</span></div>'
       + proof(stage)
       + '<div class="mxr-grid"><div class="mxr-main">' + main
         + (files.length ? '<div style="height:calc(10 * var(--u))"></div>' + offers() : '')
