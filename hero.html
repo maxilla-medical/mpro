@@ -3553,8 +3553,54 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 }
                 layoutRows(mPano, [[/панорамн/], [/трг (бокова|бічна)/, /трг пряма/]]);
                 layoutRows(mHead, [[/череп/, /пазух/]]);
-                layoutRows(mJaw, [[/^кт двох щелеп$/], [/щелеп з суглобами/], [/верхн/, /нижн/]]);
+                // «двох щелеп» і «двох щелеп з суглобами» — поруч у першому рядку, обидва з поясненням
+                layoutRows(mJaw, [[/^кт двох щелеп$/, /щелеп з суглобами/], [/верхн/, /нижн/]]);
                 layoutRows(mJoint, [[/двох суглобів/], [/лівого/], [/правого/]]);
+
+                // ---- 3b. пояснення під назвою дослідження: що саме входить у знімок.
+                // Стилі кладемо тут-таки, щоб уся ця правка жила одним блоком коду.
+                var DESC_JAW  = 'Включає дві щелепи, бухти гайморових пазух та гілки нижньої щелепи без суглобів';
+                var DESC_JAWJ = 'Включає дві щелепи, бухти гайморових пазух, гілки нижньої щелепи та суглоби';
+                var DESC_CEPH = 'Включає 3D-цефалометричний аналіз з розрахунками за 10+ авторами';
+                var NOTE_JAWJ = 'Якщо потрібні ще й суглоби';
+                (function(){
+                    if(document.getElementById('mxC9Desc')) return;
+                    var st = document.createElement('style'); st.id = 'mxC9Desc';
+                    st.textContent = ''
+                        /* картки одного рядка тягнуться на висоту найвищої */
+                        + '#mxProcGrid.mx-form-study .mx-c9 .mx-cell > .mx-chip{ flex:1 1 auto; }'
+                        /* чип із поясненням: назва + тихий другий рядок */
+                        + '#mxProcGrid.mx-form-study .mx-c9 .mx-chip.mx-chip-desc{ padding-top:calc(13 * var(--u)); padding-bottom:calc(13 * var(--u)); }'
+                        + '#mxProcGrid.mx-form-study .mx-c9 .mx-chip .mx-pc-tx{ display:flex; flex-direction:column; gap:calc(4 * var(--u)); min-width:0; flex:1 1 auto; }'
+                        + '#mxProcGrid.mx-form-study .mx-c9 .mx-chip .mx-pc-t{ font-weight:600; }'
+                        + '#mxProcGrid.mx-form-study .mx-c9 .mx-chip .mx-pc-s{ font-size:calc(11.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.4; letter-spacing:0; }'
+                        /* тиха ремарка праворуч у широкій картці «Найчастіше» */
+                        + '#mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-pc-note{ margin-left:auto; padding-left:calc(12 * var(--u)); font-size:calc(11.5 * var(--u)); font-weight:500; color:#8A93A5; white-space:nowrap; }'
+                        + '@media (max-width: 900px){ #mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-pc-note{ display:none; } }';
+                    (document.head || document.documentElement).appendChild(st);
+                })();
+                function optOf(m, re){
+                    var f = null;
+                    if(m){ m.opts.forEach(function(x){ if(!f && re.test(x.t)) f = x; }); }
+                    return f;
+                }
+                // другий рядок усередині чипа: текстовий вузол → «назва + пояснення»
+                function chipSub(x, text){
+                    if(!x || !x.b || x.b.querySelector('.mx-pc-s')) return;
+                    var b = x.b, tnode = null;
+                    Array.prototype.slice.call(b.childNodes).forEach(function(n){
+                        if(!tnode && n.nodeType === 3 && n.textContent.trim()) tnode = n;
+                    });
+                    var ttl = tnode ? tnode.textContent.trim() : (x.o ? x.o.textContent.trim() : '');
+                    var tx = document.createElement('span'); tx.className = 'mx-pc-tx';
+                    tx.innerHTML = '<span class="mx-pc-t">' + esc2(ttl) + '</span>'
+                                 + '<span class="mx-pc-s">' + esc2(text) + '</span>';
+                    if(tnode){ b.replaceChild(tx, tnode); }
+                    else { b.insertBefore(tx, b.querySelector('.mx-chip-tick')); }
+                    b.classList.add('mx-chip-desc');
+                }
+                chipSub(optOf(mJaw, /^кт двох щелеп$/), DESC_JAW);
+                chipSub(optOf(mJaw, /щелеп з суглобами/), DESC_JAWJ);
 
                 // ---- 4. «Опис знімків»: дві послуги, кожна доступна лише коли є що описувати.
                 // Опис рентгенолога — не для 2D (панорама/ТРГ так не описуються);
@@ -3607,12 +3653,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var byT = {};
                     mxStudy.allOpts().forEach(function(a){ if(!a.m.off && a.m !== mExtra && !byT[a.t]) byT[a.t] = a; });
                     function pick(){ for(var i = 0; i < arguments.length; i++){ if(byT[arguments[i]]) return byT[arguments[i]]; } return null; }
-                    // сітка 2×3 (макет George 2026-08-12): череп — висока картка праворуч (span 2)
-                    // з підзаголовком про 3D Ceph; «з суглобами» — ліворуч під «двох щелеп»
+                    // макет George 2026-08-12: перший рядок — дві високі картки (щелепи / череп),
+                    // кожна з поясненням; «з суглобами» — окремим широким рядком із тихою ремаркою
+                    // праворуч; далі панорама і ТРГ
                     var FAV_LIST = [
-                        { a: pick('кт двох щелеп') },
-                        { a: pick('кт черепа + 3d ceph'), tall: true, sub: 'Уже включає 3D-цефалометричний аналіз' },
-                        { a: pick('кт двох щелеп з суглобами') },
+                        { a: pick('кт двох щелеп'), tall: true, sub: DESC_JAW },
+                        { a: pick('кт черепа + 3d ceph'), tall: true, sub: DESC_CEPH },
+                        { a: pick('кт двох щелеп з суглобами'), full: true, note: NOTE_JAWJ },
                         { a: pick('панорамний знімок зубів') },
                         { a: pick('трг бічна проекція', 'трг бокова проекція') }
                     ];
@@ -3620,10 +3667,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     FAV_LIST.forEach(function(it){
                         var a = it.a; if(!a) return;
                         var pb = document.createElement('button'); pb.type = 'button';
-                        pb.className = 'mx-pc' + (it.tall ? ' mx-pc-tall' : '');
+                        pb.className = 'mx-pc' + (it.tall ? ' mx-pc-tall' : '') + (it.full ? ' mx-pc-full' : '');
                         var ttl = '<span class="mx-pc-t">' + esc2(a.x.o.textContent.trim()) + '</span>';
                         pb.innerHTML = mxStudy.ico(a.t)
-                            + (it.sub ? '<span class="mx-pc-tx">' + ttl + '<span class="mx-pc-s">' + it.sub + '</span></span>' : ttl)
+                            + (it.sub ? '<span class="mx-pc-tx">' + ttl + '<span class="mx-pc-s">' + esc2(it.sub) + '</span></span>' : ttl)
+                            + (it.note ? '<span class="mx-pc-note">' + esc2(it.note) + '</span>' : '')
                             + mxStudy.tick;
                         pb.addEventListener('click', function(){ a.x.b.click(); });
                         wrap.appendChild(pb);
