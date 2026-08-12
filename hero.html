@@ -720,7 +720,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* порожні спейсери під фіксовану панель статусу дають фантомний скрол — ховаємо */
 .nc-block-change-status-place:not(:has(.nc-block-change-status)){ display:none !important; }
 /* права панель «Що ви отримаєте» */
-.mx-side{ background:#0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(24 * var(--u)) calc(22 * var(--u)); color:#fff; font-family:'Manrope',sans-serif; box-shadow:0 10px 34px rgba(15,23,42,0.14); display:flex; flex-direction:column; box-sizing:border-box; }
+.mx-side{ background:radial-gradient(115% 150% at 100% 0%, rgba(44,59,255,0.22) 0%, rgba(44,59,255,0) 58%), #0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(24 * var(--u)) calc(22 * var(--u)); color:#fff; font-family:'Manrope',sans-serif; box-shadow:0 10px 34px rgba(15,23,42,0.14); display:flex; flex-direction:column; box-sizing:border-box; }
 .mx-side .mx-side-hero{ background:linear-gradient(135deg,#1B2BFF,#4B39EF); border-radius:calc(14 * var(--u)); padding:calc(16 * var(--u)); margin-bottom:calc(18 * var(--u)); display:flex; align-items:center; gap:calc(11 * var(--u)); }
 .mx-side .mx-side-hero svg{ width:calc(26 * var(--u)); height:calc(26 * var(--u)); color:#fff; flex-shrink:0; }
 .mx-side .mx-side-hero .mx-sh-t{ font-size:calc(14 * var(--u)); font-weight:700; color:#fff; line-height:1.2; }
@@ -4128,6 +4128,16 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
 
+
+
+
+
+
+
+
+
+
+
 <!-- ============================================================================
      MX-RES v13 — екран «Перегляд дослідження» (БП «Дослідження»).
 
@@ -4193,9 +4203,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return '';
   }
   function norm(x){ return String(x || '').toLowerCase().replace(/["'’ʼ`]/g, '').trim(); }
+  var MONTHS = ['січня','лютого','березня','квітня','травня','червня',
+                'липня','серпня','вересня','жовтня','листопада','грудня'];
   function dateUA(s){
     var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
-    return m ? (m[3] + '.' + m[2] + '.' + m[1]) : s;
+    if(!m) return s;
+    return (+m[3]) + ' ' + MONTHS[(+m[2]) - 1] + ' ' + m[1];
   }
   // значок типу дослідження — та сама мова, що у формі запису
   function ico(t){
@@ -4302,39 +4315,40 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-safe{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; }'
       + '#mxResView .mxr-safe svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'   /* 300 панель + 22 проміжок */
       /* сітка */   /* 300 панель + 22 проміжок */
-      + '#mxResView .mxr-head{ display:flex; gap:calc(22 * var(--u)); align-items:stretch; margin-bottom:calc(22 * var(--u)); }'
       /* картка гарантії — ширина чорної панелі, та сама вертикаль */
-      /* ── верхній ряд: ті самі картки, що й нижче ── */
-      + '#mxResView .mxr-head{ display:flex; gap:calc(22 * var(--u)); align-items:stretch; margin-bottom:calc(22 * var(--u)); }'
-      + '#mxResView .mxr-box{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); padding:calc(18 * var(--u)) calc(20 * var(--u)); }'
-      + '#mxResView .mxr-p{ flex:1 1 auto; min-width:0; }'
-      + '#mxResView .mxr-g{ flex:0 0 calc(300 * var(--u)); }'
       /* метка · значення — той самий прийом, що в картках результату */
       /* підписи блоків — завжди НАД карткою, один прийом на весь екран */
       + '#mxResView .mxr-lbl, #mxResView .mxr-sec-h{ font-size:calc(11 * var(--u)); font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#A9B2C1; margin-bottom:calc(10 * var(--u)); }'
       + '#mxResView .mxr-sec-h{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin-right:calc(322 * var(--u)); }'
       + '#mxResView .mxr-qc{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:.04em; text-transform:none; color:#64748B; }'
       + '#mxResView .mxr-qc svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); color:#16A34A; }'
-      + '#mxResView .mxr-col{ display:flex; flex-direction:column; min-width:0; }'
-      + '#mxResView .mxr-col:first-child{ flex:1 1 auto; }'
-      + '#mxResView .mxr-col-v{ flex:0 0 calc(300 * var(--u)); }'
-      + '#mxResView .mxr-box{ flex:1 1 auto; background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); padding:calc(20 * var(--u)); }'
       /* пацієнт: титульний розворот — імʼя по центру блока */
-      + '#mxResView .mxr-p{ display:flex; flex-direction:column; justify-content:center; }'
       + '#mxResView .mxr-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
       + '#mxResView .mxr-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:600; color:#94A3B8; }'
       + '#mxResView .mxr-p-sub b{ color:#0F172A; font-weight:700; }'
       /* візит: специфікація — значення вирівняні по одній вертикалі */
+      + '#mxResView .mxr-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
+      /* ── шапка: пацієнт ліворуч, візит праворуч ── */
+      + '#mxResView .mxr-head{ display:flex; gap:calc(22 * var(--u)); align-items:stretch; margin-bottom:calc(22 * var(--u)); }'
+      + '#mxResView .mxr-col{ display:flex; flex-direction:column; min-width:0; }'
+      + '#mxResView .mxr-col:first-child{ flex:1 1 auto; }'
+      + '#mxResView .mxr-col-v{ flex:0 0 calc(300 * var(--u)); }'
+      + '#mxResView .mxr-box{ flex:1 1 auto; background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(20 * var(--u)) calc(22 * var(--u)); }'
+      + '#mxResView .mxr-p{ display:flex; flex-direction:column; justify-content:center; }'
+      + '#mxResView .mxr-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
+      + '#mxResView .mxr-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
+      + '#mxResView .mxr-p-sub b{ color:#0F172A; font-weight:700; }'
+      + '#mxResView .mxr-g{ display:flex; flex-direction:column; justify-content:center; }'
       + '#mxResView .mxr-v{ display:grid; grid-template-columns:max-content 1fr; column-gap:calc(14 * var(--u)); row-gap:calc(9 * var(--u)); align-items:baseline; }'
       + '#mxResView .mxr-v-k{ font-size:calc(12.5 * var(--u)); font-weight:600; color:#94A3B8; }'
-      + '#mxResView .mxr-v-v{ font-size:calc(13 * var(--u)); font-weight:600; color:#334155; letter-spacing:0; }'
+      + '#mxResView .mxr-v-v{ font-size:calc(13 * var(--u)); font-weight:500; color:#334155; }'
       + '#mxResView .mxr-grid{ display:flex; gap:calc(22 * var(--u)); align-items:flex-start; }'
-      + '#mxResView .mxr-main{ flex:1 1 auto; min-width:0; }'
-      + '#mxResView .mxr-side-col{ flex:0 0 calc(300 * var(--u)); position:sticky; top:calc(18 * var(--u)); }'
+      + '#mxResView .mxr-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:calc(10 * var(--u)); }'
+      + '#mxResView .mxr-side-col{ flex:0 0 calc(300 * var(--u)); align-self:flex-start; position:sticky; top:calc(18 * var(--u)); }'
       /* ── картка дослідження: усі рівні ── */
-      + '#mxResView .mxr-card{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)); margin-bottom:calc(10 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); display:flex; align-items:flex-start; gap:calc(16 * var(--u)); transition:border-color .16s ease, box-shadow .16s ease; }'
+      + '#mxResView .mxr-card{ background:#F7F9FC; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); display:flex; align-items:flex-start; gap:calc(16 * var(--u)); transition:border-color .16s ease, box-shadow .16s ease; }'
       + '#mxResView .mxr-card:hover{ border-color:#D7DEEA; box-shadow:0 6px 20px rgba(15,23,42,0.06); }'
-      + '#mxResView .mxr-card:last-child{ margin-bottom:0; }'
+      
       + '#mxResView .mxr-card-ic{ flex:0 0 auto; width:calc(44 * var(--u)); height:calc(44 * var(--u)); border-radius:calc(13 * var(--u)); background:#F3F5FF; display:flex; align-items:center; justify-content:center; }'
       + '#mxResView .mxr-card-ic svg{ width:calc(24 * var(--u)); height:calc(24 * var(--u)); }'
       + '#mxResView .mxr-card-ic .b{ stroke:#9AA6BA; } #mxResView .mxr-card-ic .a{ stroke:#2c3bff; }'
@@ -4343,6 +4357,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-card.mxr-plain{ align-items:center; }'
       + '#mxResView .mxr-card.mxr-plain .mxr-dl{ align-self:center; }'
       + '#mxResView .mxr-solo{ padding:calc(22 * var(--u)); }'
+      + '#mxResView .mxr-note{ background:linear-gradient(180deg,#FFFFFF 0%,#FBFCFE 100%); }'
       + '#mxResView .mxr-solo .mxr-card-ic{ width:calc(50 * var(--u)); height:calc(50 * var(--u)); border-radius:calc(15 * var(--u)); }'
       + '#mxResView .mxr-solo .mxr-card-ic svg{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); }'
       + '#mxResView .mxr-solo .mxr-card-t{ font-size:calc(19 * var(--u)); font-weight:800; letter-spacing:-0.025em; }'
@@ -4380,11 +4395,43 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-gone-b svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); color:#2AABEE; }'
       + '#mxResView .mxr-empty{ background:#FFFFFF; border:1px dashed #DDE3EC; border-radius:calc(18 * var(--u)); padding:calc(26 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; color:#64748B; }'
       /* ── права панель ── */
-      + '#mxResView .mxr-side{ background:#0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(22 * var(--u)); color:#fff; box-shadow:0 10px 34px rgba(15,23,42,0.14); }'
+      /* широка смуга пропозиції — композиція для одного-двох досліджень */
+      /* ── широка смуга пропозиції: композиція для одного-двох досліджень ── */
+      + '#mxResView .mxr-grid-wide .mxr-main{ margin-right:calc(322 * var(--u)); }'
+      + '#mxResView.mxr-wide .mxr-band{ margin-right:calc(322 * var(--u)); }'
+      + '#mxResView .mxr-band{ margin-top:calc(22 * var(--u)); border-radius:calc(20 * var(--u)); color:#fff; overflow:hidden;'
+        + ' background:radial-gradient(115% 150% at 100% 0%, rgba(44,59,255,0.22) 0%, rgba(44,59,255,0) 58%), #0B0B0C;'
+        + ' box-shadow:0 10px 34px rgba(15,23,42,0.14); }'
+      + '#mxResView .mxr-band-body{ display:flex; align-items:stretch; }'
+      + '#mxResView .mxr-band-body .mxr-band-top{ flex:1 1 auto; min-width:0; }'
+      + '#mxResView .mxr-band-side{ flex:0 0 38%; border-left:1px solid rgba(255,255,255,0.09); padding:calc(18 * var(--u)) calc(24 * var(--u)); display:flex; flex-direction:column; justify-content:center; }'
+      + '#mxResView .mxr-band-side .mxr-alt{ padding:calc(12 * var(--u)) 0; }'
+      + '#mxResView .mxr-band-side .mxr-alt:first-child{ padding-top:0; }'
+      + '#mxResView .mxr-band-side .mxr-alt:last-child{ padding-bottom:0; border-bottom:none; }'
+      + '#mxResView .mxr-band-split .mxr-o-s{ max-width:calc(430 * var(--u)); }'
+      + '@media (max-width: 900px){ #mxResView .mxr-band-body{ flex-direction:column; } #mxResView .mxr-band-side{ flex-basis:auto; border-left:none; border-top:1px solid rgba(255,255,255,0.09); } }'
+      + '#mxResView .mxr-band-foot{ display:flex; align-items:center; justify-content:space-between; gap:calc(18 * var(--u)); flex-wrap:wrap; padding:calc(13 * var(--u)) calc(26 * var(--u)); border-top:1px solid rgba(255,255,255,0.07); background:rgba(255,255,255,0.02); }'
+      + '#mxResView .mxr-band-foot .mxr-help{ margin-top:0; padding-top:0; border-top:none; }'
+      + '#mxResView .mxr-band-top{ display:block; text-decoration:none !important; color:inherit !important; transition:background .18s ease; padding:calc(24 * var(--u)) calc(26 * var(--u)); }'
+      + '#mxResView .mxr-band-top .mxr-o-t{ font-size:calc(19 * var(--u)); }'
+      + '#mxResView .mxr-band-top .mxr-o-s{ max-width:calc(600 * var(--u)); }'
+      + '#mxResView .mxr-band-top .mxr-o-link{ margin-top:calc(15 * var(--u)); }'
+      + '#mxResView .mxr-band-top:hover{ background:rgba(255,255,255,0.04); }'
+      + '#mxResView .mxr-band-top:hover .mxr-o-b{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
+      + '#mxResView .mxr-band .mxr-o-b{ margin-top:0; height:calc(44 * var(--u)); padding:0 calc(22 * var(--u)); font-size:calc(13.5 * var(--u)); }'
+      + '@media (max-width: 900px){ #mxResView .mxr-grid-wide .mxr-main{ margin-right:0; } #mxResView.mxr-wide .mxr-band{ margin-right:0; } #mxResView .mxr-band-top{ flex-direction:column; align-items:stretch; } #mxResView .mxr-band-act{ padding-left:0; border-left:none; } #mxResView .mxr-band .mxr-o-b{ width:100%; justify-content:center; } }'
+      + '#mxResView .mxr-side{ background:radial-gradient(115% 150% at 100% 0%, rgba(44,59,255,0.22) 0%, rgba(44,59,255,0) 58%), #0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(22 * var(--u)); color:#fff; box-shadow:0 10px 34px rgba(15,23,42,0.14); }'
       + '#mxResView .mxr-eyebrow{ font-size:calc(10.5 * var(--u)); font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8A8FA3; margin-bottom:calc(13 * var(--u)); }'
+      + '#mxResView .mxr-o-t, #mxResView .mxr-o-s, #mxResView .mxr-band-tx, #mxResView .mxr-band-top .mxr-eyebrow{ display:block; }'
       + '#mxResView .mxr-o-t{ font-size:calc(16 * var(--u)); font-weight:800; color:#fff; letter-spacing:-0.02em; line-height:1.25; }'
       + '#mxResView .mxr-o-s{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#9AA0B4; line-height:1.55; margin-top:calc(8 * var(--u)); }'
       + '#mxResView .mxr-o-q{ color:#D6DAE4; font-weight:600; }'
+      + '#mxResView .mxr-o-zone{ display:block; margin:calc(-6 * var(--u)) calc(-8 * var(--u)) 0; padding:calc(6 * var(--u)) calc(8 * var(--u)) calc(10 * var(--u)); border-radius:calc(12 * var(--u)); text-decoration:none !important; color:inherit !important; transition:background .18s ease; }'
+      + '#mxResView .mxr-o-zone:hover{ background:rgba(255,255,255,0.04); }'
+      + '#mxResView .mxr-o-zone:hover .mxr-o-b{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
+      + '#mxResView .mxr-o-link{ display:inline-flex; align-items:center; gap:calc(9 * var(--u)); font-size:calc(14 * var(--u)); font-weight:700; color:#FFFFFF; letter-spacing:-0.01em; white-space:nowrap; }'
+      + '#mxResView .mxr-o-link svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); transition:transform .16s ease; }'
+      + '#mxResView .mxr-band-top:hover .mxr-o-link svg{ transform:translateX(calc(4 * var(--u))); }'
       + '#mxResView .mxr-o-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(15 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(17 * var(--u)); border-radius:calc(10 * var(--u)); background:#FFFFFF; color:#0F172A !important; text-decoration:none !important; font-size:calc(13 * var(--u)); font-weight:700; transition:transform .12s ease, box-shadow .15s ease; }'
       + '#mxResView .mxr-o-b:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
       + '#mxResView .mxr-o-b svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
@@ -4439,15 +4486,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return day + '.' + (mo < 10 ? '0' + mo : mo) + '.' + y;
   }
   function head(d, files, stage){
-    // місто без номера філії: «Дніпро №1» → «Дніпро». Лікарю потрібна географія,
-    // а не привід порівнювати центри між собою
     var city = String(d.branch || '').replace(/\s*№\s*\d+\s*$/, '').trim();
 
     var rows = '';
     function kv(k, v){ rows += '<span class="mxr-v-k">' + k + '</span><span class="mxr-v-v">' + v + '</span>'; }
-    if(d.date) kv('Дата', esc(dateUA(d.date)));
+    if(d.date) kv('Дата візиту', esc(dateUA(d.date)));
     if(city)   kv('Місто', esc(city));
-    if(d.num)  kv('Номер', esc(d.num));
+    if(d.num)  kv('Номер візиту', esc(d.num));
 
     return '<div class="mxr-head">'
       + '<div class="mxr-col">'
@@ -4463,15 +4508,14 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '</div>';
   }
 
-  // ── апселли: один контекстний головний, решта — рядком ──
-  function offers(d, files){
+  function offerData(d, files){
     var all = norm(files.map(function(it){ return it.name; }).join(' ') + ' ' + (d.done || ''));
     var hasCT   = /\bкт\b|кт |сегмент|суглоб|череп|пазух|конусно/.test(all);
     var hasPano = /панорам|ортопантом/.test(all);
     var hasTRG  = /трг|ceph|цефалометр/.test(all);
 
     var GUID_CT   = { t:'Хірургічний шаблон', h:FORM_GUID, p:PRICE_GUID,
-                      s:'Плануємо імплантацію за цим знімком і виготовляємо шаблон за 48 годин після погодження.',
+                      s:'Сплануємо та виготовимо шаблон протягом 48 годин після погодження.',
                       short:'планування імплантації за цим знімком' };
     var GUID_PANO = { t:'Хірургічний шаблон', h:FORM_GUID, p:PRICE_GUID,
                       s:'Плануєте імплантацію? Зробимо КТ і виготовимо шаблон за ним.',
@@ -4483,7 +4527,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                       s:'Лікар-рентгенолог опише виконане дослідження письмово — до трьох робочих днів.',
                       short:'письмовий висновок рентгенолога' };
 
-    // головним іде те, що дає лікарю наступний клінічний крок, а не документ
     var main = null, rest = [];
     if(hasCT || hasPano){
       main = hasCT ? GUID_CT : GUID_PANO;
@@ -4492,22 +4535,58 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     } else if(hasTRG){
       main = CEPH;
     }
-    if(!main) return '';
+    return { main: main, rest: rest };
+  }
 
-    var h = '<div class="mxr-eyebrow">Що ще можемо</div>'
-      + '<div class="mxr-o-t">' + main.t + '</div>'
-      + '<div class="mxr-o-s">' + main.s + '</div>'
-      + '<a class="mxr-o-b" href="' + main.h + '">' + (main.p ? 'Замовити — ' + esc(main.p) : 'Замовити') + ARR + '</a>';
+  function altRows(rest){
+    return rest.map(function(o){
+      return '<a class="mxr-alt" href="' + o.h + '">'
+        + '<span class="mxr-alt-tx"><span class="mxr-alt-t">Також ' + o.t.toLowerCase() + '</span>'
+        + '<span class="mxr-alt-s">' + o.short + (o.p ? ' · ' + esc(o.p) : '') + '</span></span>'
+        + '<span class="mxr-alt-go">' + ARR + '</span></a>';
+    }).join('');
+  }
+  function cta(o, flat){
+    var t = (o.p ? 'Замовити — ' + esc(o.p) : 'Замовити');
+    return '<span class="' + (flat ? 'mxr-o-link' : 'mxr-o-b') + '">' + t + ARR + '</span>';
+  }
+  function guarantees(d){
+    return '<div class="mxr-ft">' + CHECK + 'Дані пацієнта захищені</div>'
+      + '<a class="mxr-help" href="' + MX_TG + '?text=' + encodeURIComponent('Питання щодо дослідження' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener">Питання щодо знімка? Напишіть нам</a>';
+  }
 
-    if(rest.length){
-      h += '<div class="mxr-o-alt">' + rest.map(function(o){
-        return '<a class="mxr-alt" href="' + o.h + '">'
-          + '<span class="mxr-alt-tx"><span class="mxr-alt-t">Також ' + o.t.toLowerCase() + '</span>'
-          + '<span class="mxr-alt-s">' + o.short + (o.p ? ' · ' + esc(o.p) : '') + '</span></span>'
-          + '<span class="mxr-alt-go">' + ARR + '</span></a>';
-      }).join('') + '</div>';
-    }
-    return h;
+  // вузька колонка — коли карток багато і висоти зіставні
+  function sidePanel(d, o){
+    if(!o.main) return '';
+    return '<div class="mxr-side">'
+      + '<div class="mxr-eyebrow">Що ще можемо</div>'
+      + '<a class="mxr-o-zone" href="' + o.main.h + '">'
+        + '<span class="mxr-o-t">' + o.main.t + '</span>'
+        + '<span class="mxr-o-s">' + o.main.s + '</span>'
+        + cta(o.main)
+      + '</a>'
+      + (o.rest.length ? '<div class="mxr-o-alt">' + altRows(o.rest) + '</div>' : '')
+      + '<div class="mxr-foot">' + guarantees(d) + '</div>'
+      + '</div>';
+  }
+
+  // широка смуга під результатами — коли досліджень одне-два і колонка була б
+  // коротшою за панель. Порожнеча зникає не розтягуванням, а зміною композиції
+  function bandPanel(d, o){
+    if(!o.main) return '';
+    var split = o.rest.length > 0;                    // є вторинні пропозиції → дві зони
+    return '<div class="mxr-band">'
+      + '<div class="mxr-band-body' + (split ? ' mxr-band-split' : '') + '">'
+        + '<a class="mxr-band-top" href="' + o.main.h + '">'
+          + '<span class="mxr-eyebrow">Що ще можемо</span>'
+          + '<span class="mxr-o-t">' + o.main.t + '</span>'
+          + '<span class="mxr-o-s">' + o.main.s + '</span>'
+          + cta(o.main, true)
+        + '</a>'
+        + (split ? '<div class="mxr-band-side">' + altRows(o.rest) + '</div>' : '')
+      + '</div>'
+      + '<div class="mxr-band-foot">' + guarantees(d) + '</div>'
+      + '</div>';
   }
 
   function build(d){
@@ -4544,7 +4623,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var months = monthsSince(d.date);
     var expired = (months !== null && months >= KEEP_M);
 
-    var secH = files.length ? '<div class="mxr-sec-h">Результати<span class="mxr-qc">' + CHECK + 'якість перевірено</span></div>' : '';
+    var secH = files.length ? '<div class="mxr-sec-h">' + (files.length === 1 ? 'Результат' : 'Результати') + '<span class="mxr-qc">' + CHECK + 'якість перевірено</span></div>' : '';
     var main = '';
     if(files.length === 1){
       main = card(files[0], true);
@@ -4569,23 +4648,20 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     }
 
 
-    var side = '<div class="mxr-side">'
-      + offers(d, files)
-      + '<div class="mxr-foot">'
-        + '<div class="mxr-ft">' + CHECK + 'Дані пацієнта захищені</div>'
-      + '</div>'
-      + '<a class="mxr-help" href="' + MX_TG + '?text=' + encodeURIComponent('Питання щодо дослідження' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener">Питання щодо знімка? Напишіть нам</a>'
-      + '</div>';
+    var od = offerData(d, files);
+    var wide = files.length <= 2;                     // одне-два дослідження → смуга, а не колонка
 
-    return '<div id="mxResView">'
+    return '<div id="mxResView"' + (wide ? ' class="mxr-wide"' : '') + '>'
       + '<div class="mxr-top">'
         + '<a class="mxr-back" href="' + BACK_URL + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Мої пацієнти</a>'
         + '<span class="mxr-safe">' + SHIELD + 'Дані захищені</span>'
       + '</div>'
       + head(d, files, stage)
       + secH
-      + '<div class="mxr-grid"><div class="mxr-main">' + main + '</div>'
-      + '<div class="mxr-side-col">' + side + '</div></div>'
+      + (wide
+          ? '<div class="mxr-grid mxr-grid-wide"><div class="mxr-main">' + main + '</div></div>' + bandPanel(d, od)
+          : '<div class="mxr-grid"><div class="mxr-main">' + main + '</div>'
+            + '<div class="mxr-side-col">' + sidePanel(d, od) + '</div></div>')
       + '</div>';
   }
 
