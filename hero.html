@@ -902,15 +902,23 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 #mxProcGrid .mx-filefield.mx-multi:not(.mx-req-field) .mx-dz-sub::after{ content:' · можна кілька файлів · або пізніше'; }
 #mxProcGrid .mx-filefield:not(.mx-multi):not(.mx-req-field) .mx-dz-sub::after{ content:' · можна пізніше'; }
 /* ── ФОРМА 8, КЛАСИКА v3: дев'ять блоків-карток (мова форми хірургічних шаблонів) ── */
-#mxProcGrid.mx-form-study .mx-c9{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(14 * var(--u)); padding:calc(18 * var(--u)) calc(18 * var(--u)) calc(20 * var(--u)); margin:0 0 calc(14 * var(--u)); box-shadow:0 1px 2px rgba(15,23,42,0.03); }
-#mxProcGrid.mx-form-study .mx-c9-h{ font-size:calc(15.5 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#0F172A; margin:0 0 calc(14 * var(--u)); font-family:'Manrope',sans-serif; }
+/* картки — САМОСТІЙНІ блоки на тлі кабінету: зовнішня біла карта форми стає прозорою,
+   щоб не було «картки в картці» */
+#mxProcGrid.mx-form-study .mx-col-form .os-block-form,
+.client-cell-body:not(.aside-left):not(.aside-right) #mxProcGrid.mx-form-study .os-block-form:not(.params-form){
+    background:transparent !important; border:0 !important; box-shadow:none !important;
+    padding:0 !important; border-radius:0 !important;
+}
+#mxProcGrid.mx-form-study .mx-c9{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)) calc(20 * var(--u)); margin:0 0 calc(12 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); }
+#mxProcGrid.mx-form-study .mx-c9-h{ font-size:calc(14.5 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#0F172A; margin:0 0 calc(13 * var(--u)); font-family:'Manrope',sans-serif; }
 /* назви полів усередині карток дублюють заголовок картки — ховаємо (лише прямі діти тіла:
    ящик «Положення рота» всередині чипів лишається з власним підписом) */
 #mxProcGrid.mx-form-study .mx-c9 .mx-c9-b > .element > .title{ display:none !important; }
 /* пацієнт і нерозпізнані поля: жирна назва + пілюля, як у формі 6 */
 #mxProcGrid.mx-form-study .mx-c9-pat .mx-c9-b > .element > .title,
 #mxProcGrid.mx-form-study .mx-c9-rest .mx-c9-b > .element > .title{ display:flex !important; align-items:center; gap:calc(8 * var(--u)); font-size:calc(13.5 * var(--u)) !important; font-weight:700 !important; letter-spacing:0 !important; text-transform:none !important; color:#0F172A !important; margin-bottom:calc(8 * var(--u)); }
-#mxProcGrid.mx-form-study .mx-c9-pat .mx-c9-b{ display:grid; grid-template-columns:1fr 1fr; gap:calc(14 * var(--u)); }
+/* пацієнт: імʼя — перший рядок, телефон — другий, обидва на всю ширину */
+#mxProcGrid.mx-form-study .mx-c9-pat .mx-c9-b{ display:grid; grid-template-columns:1fr; gap:calc(14 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-c9 .mx-c9-b > .element{ margin:0 0 calc(10 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-c9 .mx-c9-b > .element:last-child{ margin-bottom:0; }
 /* сітка чипів у картці: два стовпці; рядки з однією позицією — на всю ширину */
@@ -919,6 +927,14 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* «Найчастіше»: більші картки-кнопки у тій самій сітці рядків */
 #mxProcGrid.mx-form-study .mx-favgrid{ display:grid; grid-template-columns:1fr 1fr; gap:calc(10 * var(--u)); }
 #mxProcGrid.mx-form-study .mx-favgrid .mx-pc-full{ grid-column:1 / -1; }
+/* компактніший шрифт скрізь у формі: назви досліджень мають вміщатися одним рядком */
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc{ font-size:calc(12.5 * var(--u)); gap:calc(9 * var(--u)); min-height:calc(54 * var(--u)); padding:calc(10 * var(--u)) calc(12 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-ci{ width:calc(26 * var(--u)); height:calc(26 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-pc-t{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#mxProcGrid.mx-form-study .mx-favgrid .mx-pc .mx-chip-tick{ width:calc(18 * var(--u)); height:calc(18 * var(--u)); padding:calc(3 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9 .mx-chip{ font-size:calc(13 * var(--u)); min-height:calc(48 * var(--u)); padding:calc(11 * var(--u)) calc(13 * var(--u)); gap:calc(9 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9 .mx-chip .mx-ci{ width:calc(24 * var(--u)); height:calc(24 * var(--u)); }
+#mxProcGrid.mx-form-study .mx-c9 .mx-chip .mx-chip-tick{ width:calc(18 * var(--u)); height:calc(18 * var(--u)); padding:calc(3 * var(--u)); }
 /* сегменти: чип на всю ширину, поле «які зуби» під ним */
 #mxProcGrid.mx-form-study .mx-c9 .element.mx-seg .mx-chips{ grid-template-columns:1fr; }
 /* заблокована послуга: видно, але недоступно, поки не обрано відповідне дослідження */
@@ -936,7 +952,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 /* CTA «Надіслати →» */
 #mxProcGrid .mx-col-form > .mx-next-proxy .mx-np-arr{ margin-left:calc(6 * var(--u)); }
 @media (max-width: 900px){
-  #mxProcGrid.mx-form-study .mx-c9-pat .mx-c9-b{ grid-template-columns:1fr; }
   #mxProcGrid.mx-form-study .mx-c9 .mx-chips{ grid-template-columns:1fr; }
   #mxProcGrid.mx-form-study .mx-favgrid{ grid-template-columns:1fr; }
 }
@@ -3625,7 +3640,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     gmsg.textContent = kind === 'seg' ? 'Вкажіть зуби для сегмента'
                         : (kind === 'rot' ? 'Оберіть положення рота'
                         : (kind === 'study' ? 'Оберіть хоча б одне дослідження'
-                        : (kind === 'phone' ? 'Перевірте номер телефону' : 'Заповніть підсвічені поля')));
+                        : (kind === 'phone' ? 'Вкажіть телефон пацієнта' : 'Заповніть підсвічені поля')));
                     gmsg.classList.add('mx-gm-on');
                 };
                 mxStudy.clearFail = function(){ gmsg.classList.remove('mx-gm-on'); };
@@ -3679,38 +3694,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
  }
                     if(phoneEl){
                         var pf = phoneEl.f;
-                        pf.setAttribute('placeholder', '+380 XX XXX XX XX');
                         pf.setAttribute('inputmode', 'tel');
                         pf.setAttribute('autocomplete', 'tel');
-                        function fmt(v){
-                            // лікарі вставляють номер у будь-якому вигляді: +380…, 0…, з подвійним префіксом
-                            // після автопідстановки. Зрізаємо все зайве, поки не лишиться 9 цифр номера.
-                            // «380» на початку — це завжди код країни (операторських кодів, що з нього
-                            // починаються, не існує), тож зрізаємо його завжди, а не лише коли цифр забагато:
-                            // інакше наш власний префікс «+380 » при наборі зчитується як частина номера
-                            var d = String(v || '').replace(/\D/g, '');
-                            var guard = 0;
-                            while(guard++ < 8){
-                                if(d.indexOf('380') === 0){ d = d.slice(3); continue; }
-                                if(d.charAt(0) === '0'){ d = d.slice(1); continue; }
-                                break;
-                            }
-                            d = d.slice(0, 9);
-                            var out = '+380';
-                            if(d.length) out += ' ' + d.slice(0, 2);
-                            if(d.length > 2) out += ' ' + d.slice(2, 5);
-                            if(d.length > 5) out += ' ' + d.slice(5, 7);
-                            if(d.length > 7) out += ' ' + d.slice(7, 9);
-                            return { t: out, ok: d.length === 9, empty: !d.length };
-                        }
-                        pf.addEventListener('input', function(){
-                            var r = fmt(pf.value);
-                            pf.value = r.empty ? '+380 ' : r.t;
-                            try{ pf.setSelectionRange(pf.value.length, pf.value.length); }catch(_){ }
-                            if(r.ok) phoneEl.el.classList.remove('mx-req-miss');
-                        });
-                        pf.addEventListener('blur', function(){ if((pf.value || '').replace(/\D/g, '') === '380'){ pf.value = ''; } });
-                        mxStudy.phoneBad = function(){ var r = fmt(pf.value); return r.ok ? null : phoneEl.el; };
+                        // маску прибрано (рішення 2026-08-12): пишуть як зручно, перевіряємо лише що не порожньо
+                        pf.addEventListener('input', function(){ if((pf.value || '').trim()){ phoneEl.el.classList.remove('mx-req-miss'); } });
+                        mxStudy.phoneBad = function(){ return (pf.value || '').trim() ? null : phoneEl.el; };
                         mxStudy.phoneField = pf;
                     }
                     if(nameEl2){
