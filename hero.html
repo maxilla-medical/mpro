@@ -4102,6 +4102,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 })();
 </script>
 
+
 <!-- ============================================================================
      MX-RES — екран «Перегляд дослідження» у кабінеті (БП «Дослідження»).
 
@@ -4133,13 +4134,19 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   var DL    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>';
 
   function esc(x){ return String(x == null ? '' : x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  // значення поля: підставлений плейсхолдер OneBox → порожньо
+  // значення поля: непідставлений плейсхолдер OneBox → порожньо
   function val(node){
     if(!node) return '';
     var t = (node.textContent || '').replace(/\s+/g, ' ').trim();
     if(!t) return '';
-    if(t.indexOf('{|') !== -1 || /^\[[a-z_]+\]$/i.test(t)) return '';
+    if(t.indexOf('{|') !== -1 || t.indexOf('{$') !== -1 || /^\[[a-z_]+\]$/i.test(t)) return '';
     return t;
+  }
+  // блок даних дублює кожне поле кількома синтаксисами — беремо перший, що підставився
+  function pick(parent, k){
+    var list = parent.querySelectorAll(':scope > [data-k="' + k + '"]');
+    for(var i = 0; i < list.length; i++){ var v = val(list[i]); if(v) return v; }
+    return '';
   }
   function norm(x){ return String(x || '').toLowerCase().replace(/["'’ʼ`]/g, '').trim(); }
   function dateUA(s){
@@ -4225,20 +4232,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-stp-b:hover{ background:rgba(255,255,255,0.16); }'
       + '#mxResView .mxr-foot{ margin-top:calc(18 * var(--u)); padding-top:calc(16 * var(--u)); border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:calc(8 * var(--u)); font-size:calc(12 * var(--u)); color:#9AA0B4; }'
       + '#mxResView .mxr-foot svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); color:#22C55E; flex:0 0 auto; }'
+      /* стандартний рендер процесу (сценарій шаблонів) на цьому екрані не потрібен —
+         ховаємо стилем, бо hero.html будує його ПІЗНІШЕ за нас */
+      + 'body:has(#mxResData) #mxProcTop, body:has(#mxResData) #mxProcGrid{ display:none !important; }'
       + '@media (max-width: 900px){ #mxResView .mxr-grid{ flex-direction:column; } #mxResView .mxr-side-col{ width:100%; flex-basis:auto; position:static; } #mxResView .mxr-r{ flex-wrap:wrap; } #mxResView .mxr-dl{ width:100%; justify-content:center; } }';
     (document.head || document.documentElement).appendChild(st);
   }
 
   function read(src){
-    function one(k){ return val(src.querySelector(':scope > [data-k="' + k + '"]')); }
-    var d = { patient: one('patient'), date: one('date'), done: one('done'), num: one('num'), statusid: one('statusid'), items: [] };
+    var d = { patient: pick(src,'patient'), date: pick(src,'date'), done: pick(src,'done'),
+              num: pick(src,'num'), statusid: pick(src,'statusid'), items: [] };
     Array.prototype.forEach.call(src.querySelectorAll('[data-k="item"]'), function(it){
-      var o = {
-        name: val(it.querySelector('[data-k="name"]')),
-        url:  val(it.querySelector('[data-k="url"]')),
-        cmt:  val(it.querySelector('[data-k="cmt"]')),
-        spec: val(it.querySelector('[data-k="spec"]'))
-      };
+      var o = { name: pick(it,'name'), url: pick(it,'url'), cmt: pick(it,'cmt'), spec: pick(it,'spec') };
       if(o.url || o.name) d.items.push(o);
     });
     return d;
@@ -4316,9 +4321,18 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var d = read(src);
     css();
 
-    // стандартний рендер процесу (шаблони/друк) цьому екрану не потрібен
-    var top = document.getElementById('mxProcTop'); if (top) top.style.display = 'none';
-    var old = document.getElementById('mxProcGrid'); if (old) old.style.display = 'none';
+    // стандартний рендер процесу (шаблони/друк) цьому екрану не потрібен.
+    // hero.html будує його асинхронно — глушимо кілька секунд поспіль, не лише зараз
+    (function(){
+      var n = 0;
+      var h = setInterval(function(){
+        n++;
+        ['mxProcTop', 'mxProcGrid'].forEach(function(id){
+          var e = document.getElementById(id); if (e) e.style.setProperty('display', 'none', 'important');
+        });
+        if (n > 60) clearInterval(h);
+      }, 150);
+    })();
 
     var host = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)') || src.parentNode;
     var wrap = document.createElement('div');
