@@ -3909,3 +3909,47 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     setTimeout(placeBtn, 1500);
 })();
 </script>
+
+<!-- ============================================================================
+     MX-MFIX — сабміт мультисписків OneBox (форма 8 та будь-яка інша).
+
+     ПРОБЛЕМА: власний Select2 OneBox називає поле name="select2_67[]".
+     Браузер чесно кладе значення в POST, але приймач OneBox читає ключ
+     select2_67 БЕЗ дужок і чекає рядок «А,Б». Масив із [] він мовчки
+     ігнорує → у процесі поле порожнє.
+
+     РІШЕННЯ: на submit у capture-фазі (раніше за будь-який обробник OneBox)
+     дублюємо значення прихованим input із ключем без дужок і комою-роздільником.
+     Старий select2_NN[] теж іде — сервер його ігнорує, конфлікту немає.
+
+     КУДИ: окремим блоком у кінці hero.html — від решти коду не залежить.
+     Перевірено на бою 2026-08-12: POST містить select2_67=«А,Б» → процес
+     показує обидва значення (заявки 444295 / 444299).
+============================================================================ -->
+<script>
+(function(){
+  if (window.__mxMfix) return; window.__mxMfix = true;   // PJAX переінжектує hero.html — не дублюємо
+
+  document.addEventListener('submit', function(e){
+    var f = e.target;
+    if (!f || f.tagName !== 'FORM') return;
+
+    // прибрати дублі з попередньої (невдалої) спроби відправки
+    Array.prototype.forEach.call(f.querySelectorAll('input.mx-mfix'), function(n){ n.remove(); });
+
+    Array.prototype.forEach.call(f.querySelectorAll('select[multiple][name$="[]"]'), function(sel){
+      var vals = Array.prototype.filter.call(sel.options, function(o){ return o.selected; })
+                      .map(function(o){ return o.value; })
+                      .filter(function(v){ return v !== ''; });
+      if (!vals.length) return;                          // порожні списки не дублюємо
+
+      var i = document.createElement('input');
+      i.type      = 'hidden';
+      i.className = 'mx-mfix';
+      i.name      = sel.name.replace(/\[\]$/, '');       // select2_67[] → select2_67
+      i.value     = vals.join(',');                      // «А,Б» — саме рядок, не кілька ключів
+      f.appendChild(i);
+    });
+  }, true);                                              // true = capture, до обробників OneBox
+})();
+</script>
