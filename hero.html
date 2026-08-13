@@ -5019,6 +5019,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var t = norm(status);
     if(!t) return 1;
     if(t === 'виконано' || /^виконано\b/.test(t)) return 3;
+    if(t.indexOf('готов') !== -1) return 3;   // «дослідження готове» — фінальний статус
     if(t.indexOf('обробц') !== -1 || t.indexOf('обработ') !== -1) return 1;
     return 2;   // «в роботі», «опис виконано», «узгодження», «узгоджено», «повідомлення надіслано»
   }
@@ -5209,13 +5210,21 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '</div></div>';
   }
 
-  function resultCard(d, stage, ready){
+  function resultCard(d, stage, ready, archived){
     if(ready){
       return '<div class="mxo-card">'
         + '<div class="mxo-card-ic">' + DOC + '</div>'
         + '<div class="mxo-card-tx"><div class="mxo-card-t">Рентгенологічний опис готовий</div>'
           + '<div class="mxo-card-s">PDF-висновок лікаря-рентгенолога' + (d.zone ? ' · ' + esc(d.zone) : '') + '</div></div>'
         + '<a class="mxo-dl" href="' + esc(d.pdf) + '" target="_blank" rel="noopener" data-mx-dl="1">' + DL + 'Завантажити</a>'
+      + '</div>';
+    }
+    if(archived){
+      return '<div class="mxo-card mxo-wait">'
+        + '<div class="mxo-card-ic mxo-card-ic-wait"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="4" rx="1"/><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M10 12h4"/></svg></div>'
+        + '<div class="mxo-card-tx"><div class="mxo-card-t">Файл більше не зберігається</div>'
+          + '<div class="mxo-card-s">Опис знято зі зберігання після 2 років. Якщо він потрібен — напишіть, надішлемо повторно.</div></div>'
+        + '<a class="mxo-dl" href="' + MX_TG_FILE + '?text=' + encodeURIComponent('Потрібен опис знімка' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.5-7.7c.4-.3-.1-.5-.6-.2L6.6 13.2 2 11.8c-1-.3-1-1 .2-1.5l18.4-7.1c.8-.3 1.6.2 1.3 1.1Z"/></svg>Написати</a>'
       + '</div>';
     }
     var t, s;
@@ -5265,6 +5274,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   function build(d){
     var stage = stageOf(d.status);
     var ready = (stage === 3 && !!d.pdf);
+    var archived = (stage === 3 && !d.pdf);   // фінал, а PDF немає → знято зі зберігання (строк 2 роки)
     var secH = '<div class="mxo-sec-h">Результат опису' + (ready ? '<span class="mxo-qc">' + CHECK + 'якість перевірено</span>' : '') + '</div>';
     return '<div id="mxOpisView">'
       + '<div class="mxo-top">'
@@ -5275,7 +5285,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '<div class="mxo-grid"><div class="mxo-main">'
         + orderBlock(d, stage)
         + secH
-        + resultCard(d, stage, ready)
+        + resultCard(d, stage, ready, archived)
         + viewCard(ready)
       + '</div>'
       // праворуч — свій заголовок-секція (єдиний для всіх екранів процесів), панель опускається до рівня картки
@@ -5459,6 +5469,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var t = norm(status);
     if(!t) return 1;
     if(t === 'виконано' || /^виконано\b/.test(t)) return 3;
+    if(t.indexOf('готов') !== -1) return 3;   // «дослідження готове» — фінальний статус
     if(t.indexOf('обробц') !== -1 || t.indexOf('обработ') !== -1) return 1;
     return 2;   // «в роботі», «опис виконано», «узгодження», «узгоджено», «повідомлення надіслано»
   }
@@ -5649,13 +5660,21 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '</div></div>';
   }
 
-  function resultCard(d, stage, ready){
+  function resultCard(d, stage, ready, archived){
     if(ready){
       return '<div class="mxc-card">'
         + '<div class="mxc-card-ic">' + DOC + '</div>'
         + '<div class="mxc-card-tx"><div class="mxc-card-t">3D Ceph аналіз готовий</div>'
           + '<div class="mxc-card-s">PDF-звіт цефалометричного аналізу' + '</div></div>'
         + '<a class="mxc-dl" href="' + esc(d.pdf) + '" target="_blank" rel="noopener" data-mx-dl="1">' + DL + 'Завантажити</a>'
+      + '</div>';
+    }
+    if(archived){
+      return '<div class="mxc-card mxc-wait">'
+        + '<div class="mxc-card-ic mxc-card-ic-wait"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="4" rx="1"/><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M10 12h4"/></svg></div>'
+        + '<div class="mxc-card-tx"><div class="mxc-card-t">Файл більше не зберігається</div>'
+          + '<div class="mxc-card-s">Звіт знято зі зберігання після 2 років. Якщо він потрібен — напишіть, надішлемо повторно.</div></div>'
+        + '<a class="mxc-dl" href="' + MX_TG_FILE + '?text=' + encodeURIComponent('Потрібен 3D Ceph аналіз' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.5-7.7c.4-.3-.1-.5-.6-.2L6.6 13.2 2 11.8c-1-.3-1-1 .2-1.5l18.4-7.1c.8-.3 1.6.2 1.3 1.1Z"/></svg>Написати</a>'
       + '</div>';
     }
     var t, s;
@@ -5705,6 +5724,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   function build(d){
     var stage = stageOf(d.status);
     var ready = (stage === 3 && !!d.pdf);
+    var archived = (stage === 3 && !d.pdf);   // фінал, а PDF немає → знято зі зберігання (строк 2 роки)
     var secH = '<div class="mxc-sec-h">Результат аналізу' + (ready ? '<span class="mxc-qc">' + CHECK + 'якість перевірено</span>' : '') + '</div>';
     return '<div id="mxCephView">'
       + '<div class="mxc-top">'
@@ -5715,7 +5735,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '<div class="mxc-grid"><div class="mxc-main">'
         + orderBlock(d, stage)
         + secH
-        + resultCard(d, stage, ready)
+        + resultCard(d, stage, ready, archived)
         + viewCard(ready)
       + '</div>'
       // праворуч — свій заголовок-секція (єдиний для всіх екранів процесів), панель опускається до рівня картки
