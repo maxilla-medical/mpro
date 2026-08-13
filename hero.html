@@ -1031,6 +1031,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         if(p.indexOf('custompage/58') !== -1) return 'guides';
         if(p.indexOf('custompage/59') !== -1) return 'print';
         if(p.indexOf('mybonus') !== -1) return 'bonus';
+        if(p.indexOf('client/setting') !== -1) return 'setting';
         if(p.indexOf('/order/') !== -1) return 'process';
         if(p.indexOf('/form/') !== -1) return 'form';
         return 'home';
@@ -1042,7 +1043,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         superimp: { title:'Суперімпозиція', sub:'Накладання знімків до і після лікування' },
         guides:   { title:'Шаблони', sub:'Хірургічні навігаційні шаблони' },
         print:    { title:'3D-друк', sub:'Друк навігаційних шаблонів' },
-        bonus:    { title:'Мої бонуси', sub:'Баланс та нарахування' }
+        bonus:    { title:'Мої бонуси', sub:'Баланс та нарахування' },
+        setting:  { title:'Налаштування', sub:'Профіль та безпека' }
     };
     var CTA = {
         guides:   { text:'Замовити шаблон', icon:'plus', href:'https://maxilla.pro/client/form/6/' },
@@ -3897,8 +3899,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     // page-aware CTA (закриває PENDING #2)
     var ctaCfg = CTA[key] || CTA_DEFAULT;
     var ctaEl = document.getElementById('mxHeroCta');
-    if(key === 'bonus'){
-        // на сторінці бонусів немає дії «замовити» — ховаємо кнопку
+    if(key === 'bonus' || key === 'setting'){
+        // на сторінках бонусів/налаштувань немає дії «замовити» — ховаємо кнопку
         if(ctaEl) ctaEl.style.display = 'none';
     } else if(ctaEl){
         ctaEl.style.display = '';
@@ -6026,6 +6028,215 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
     decorate(table, mainCol);
     host.setAttribute('data-mxb', '1');
+    return true;
+  }
+
+  function watch(){
+    var tries = 0;
+    var t = setInterval(function(){ tries++; if(apply() || tries > 80) clearInterval(t); }, 150);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
+  window.addEventListener('mx:navigated', watch);
+})();
+</script>
+
+<!-- ============================================================================
+     MX-SET — екран «Налаштування» (/client/setting/).
+
+     Кабінет = статичний пароль. Робимо сторінку-перегляд: імʼя / e-mail / телефон
+     показуємо ТІЛЬКИ для читання (їх змінює менеджер), єдине редаговане — зміна
+     пароля (рідна форма OneBox лишається живою, сабмітиться штатно). Решту полів
+     ховаємо, але їхні input лишаються у формі з поточними значеннями — тож при
+     зміні пароля нічого не затирається. Праворуч — темна панель + контакт менеджера
+     (MX_MANAGER, єдине джерело). Самодостатній блок.
+============================================================================ -->
+<script>
+(function(){
+  if(location.pathname.indexOf('client/setting') === -1) return;
+  window.__mxSet = true;
+
+  function css(){
+    if(document.getElementById('mxSetCss')) return;
+    var st = document.createElement('style'); st.id = 'mxSetCss';
+    st.textContent = `
+#mxSetView{ font-family:'Manrope',sans-serif; margin-top:calc(10 * var(--u)); width:100%; flex:1 1 auto; min-width:0; align-self:stretch; max-width:calc(1120 * var(--u)); margin-left:0; margin-right:auto; animation:mxSUp .35s ease both; }
+@keyframes mxSUp{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+#mxSetView .mxs-grid{ display:grid; grid-template-columns:minmax(0,1fr) calc(360 * var(--u)); gap:calc(24 * var(--u)); align-items:start; }
+@media (max-width:900px){ #mxSetView .mxs-grid{ grid-template-columns:1fr; } }
+#mxSetView .mxs-main{ display:flex; flex-direction:column; gap:calc(20 * var(--u)); min-width:0; }
+
+#mxSetView .mxs-card{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); padding:calc(24 * var(--u)) calc(26 * var(--u)); }
+#mxSetView .mxs-card-t{ font-size:calc(16.5 * var(--u)); font-weight:800; letter-spacing:-0.02em; color:#0F172A; margin:0 0 calc(4 * var(--u)); }
+#mxSetView .mxs-card-s{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; margin:0 0 calc(18 * var(--u)); }
+
+#mxSetView .mxs-row{ display:flex; align-items:center; justify-content:space-between; gap:calc(16 * var(--u)); padding:calc(13 * var(--u)) 0; border-bottom:1px solid #F1F4F9; }
+#mxSetView .mxs-row:last-child{ border-bottom:0; padding-bottom:0; }
+#mxSetView .mxs-row:first-of-type{ padding-top:calc(4 * var(--u)); }
+#mxSetView .mxs-lbl{ font-size:calc(12.5 * var(--u)); font-weight:600; color:#94A3B8; letter-spacing:0.01em; flex:0 0 auto; }
+#mxSetView .mxs-val{ font-size:calc(14 * var(--u)); font-weight:700; color:#0F172A; text-align:right; letter-spacing:-0.01em; word-break:break-word; }
+#mxSetView .mxs-val.mxs-empty{ color:#A9B2C1; font-weight:600; }
+
+/* поля пароля (рідні input OneBox) */
+#mxSetView .mxs-pw{ display:flex; flex-direction:column; gap:calc(13 * var(--u)); }
+#mxSetView .mxs-pw .element > .title,
+#mxSetView .mxs-pw .title{ display:none !important; }
+#mxSetView .mxs-pw .wrap{ display:block !important; width:100% !important; }
+#mxSetView .mxs-pw .w-element{ display:block !important; width:100% !important; padding:0 !important; }
+#mxSetView .mxs-pw .w-element + .w-element{ margin-top:calc(13 * var(--u)); }
+#mxSetView .mxs-field{ display:flex; flex-direction:column; gap:calc(7 * var(--u)); }
+#mxSetView .mxs-flbl{ font-size:calc(12.5 * var(--u)); font-weight:700; color:#0F172A; letter-spacing:-0.01em; }
+#mxSetView input[name="oldpassword"], #mxSetView input[name="password"]{ width:100% !important; box-sizing:border-box; height:calc(46 * var(--u)) !important; padding:0 calc(14 * var(--u)) !important; font-family:'Manrope',sans-serif; font-size:calc(13.5 * var(--u)) !important; color:#0F172A !important; background:#FFFFFF !important; border:1.5px solid #E2E8F0 !important; border-radius:calc(12 * var(--u)) !important; outline:none; transition:border-color .15s ease, box-shadow .15s ease; margin:0 !important; }
+#mxSetView input[name="oldpassword"]:focus, #mxSetView input[name="password"]:focus{ border-color:#2c3bff !important; box-shadow:0 0 0 calc(3 * var(--u)) rgba(44,59,255,0.12) !important; }
+#mxSetView .mxs-btn{ display:inline-flex; align-items:center; justify-content:center; height:calc(46 * var(--u)); padding:0 calc(22 * var(--u)); margin-top:calc(4 * var(--u)) !important; background:#0F172A !important; color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF; font-family:'Manrope',sans-serif; font-size:calc(14 * var(--u)) !important; font-weight:600 !important; border:0 !important; border-radius:calc(12 * var(--u)) !important; box-shadow:0 1px 3px rgba(15,23,42,0.12); cursor:pointer; transition:background .15s ease, transform .06s ease; width:auto !important; }
+#mxSetView .mxs-btn:hover{ background:#1E293B !important; }
+#mxSetView .mxs-btn:active{ transform:translateY(1px); }
+
+/* темна панель */
+#mxSetView .mxs-aside{ position:sticky; top:calc(16 * var(--u)); align-self:start; }
+#mxSetView .mxs-panel{ position:relative; overflow:hidden; background:linear-gradient(158deg,#151D30 0%,#0B1120 100%); border:1px solid rgba(255,255,255,0.06); border-radius:calc(20 * var(--u)); padding:calc(26 * var(--u)) calc(24 * var(--u)); color:#E7ECF5; box-shadow:0 calc(18 * var(--u)) calc(40 * var(--u)) rgba(11,17,32,0.26); }
+#mxSetView .mxs-panel::before{ content:""; position:absolute; top:calc(-70 * var(--u)); right:calc(-55 * var(--u)); width:calc(190 * var(--u)); height:calc(190 * var(--u)); background:radial-gradient(circle, rgba(44,59,255,0.34), transparent 68%); pointer-events:none; }
+#mxSetView .mxs-panel > *{ position:relative; }
+#mxSetView .mxs-pan-t{ font-size:calc(15.5 * var(--u)); font-weight:800; letter-spacing:-0.015em; color:#FFFFFF; margin:0 0 calc(10 * var(--u)); }
+#mxSetView .mxs-pan-p{ font-size:calc(13 * var(--u)); font-weight:500; line-height:1.6; color:#B8C2D9; margin:0; }
+#mxSetView .mxs-div{ height:1px; background:rgba(255,255,255,0.09); margin:calc(20 * var(--u)) 0; }
+#mxSetView .mxs-pan-st{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#8A97B4; margin:0 0 calc(8 * var(--u)); }
+
+#mxSetView .mxs-mgr{ margin-top:calc(18 * var(--u)); padding-top:calc(18 * var(--u)); border-top:1px solid rgba(255,255,255,0.09); }
+#mxSetView .mxs-mgr-lbl{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#8A97B4; margin-bottom:calc(10 * var(--u)); }
+#mxSetView .mxs-mgr-name{ font-size:calc(15 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#FFFFFF; margin-bottom:calc(12 * var(--u)); }
+#mxSetView .mxs-mgr-row{ display:flex; flex-direction:column; gap:calc(8 * var(--u)); }
+#mxSetView .mxs-mgr-a{ display:inline-flex; align-items:center; gap:calc(9 * var(--u)); width:fit-content; max-width:100%; padding:calc(9 * var(--u)) calc(13 * var(--u)); font-size:calc(13 * var(--u)); font-weight:600; color:#E7ECF5 !important; text-decoration:none !important; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:calc(11 * var(--u)); transition:background .15s ease, border-color .15s ease; }
+#mxSetView .mxs-mgr-a:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.18); }
+#mxSetView .mxs-mgr-a svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); color:#8FA0FF; flex:0 0 auto; }
+`;
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  function titleCase(s){
+    s = String(s == null ? '' : s).trim();
+    if(!s || /[a-zа-яіїєґ]/.test(s)) return s;
+    return s.toLowerCase().replace(/[^\s\-]+/g, function(w){ return w.length === 1 ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1); });
+  }
+
+  function darkPanel(){
+    var m = window.MX_MANAGER || {};
+    var name = (m.name || '').trim();
+    var phone = (m.phone || '').trim();
+    var tg = (m.tg || 'abmaxilla').trim().replace(/^@/, '');
+    var icoPhone = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg>';
+    var icoTg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.5-7.7c.4-.3-.1-.5-.6-.2L6.6 13.2 2 11.8c-1-.3-1-1 .2-1.5l18.4-7.1c.8-.3 1.6.2 1.3 1.1Z"/></svg>';
+    var links = '';
+    if(phone) links += '<a class="mxs-mgr-a" href="tel:' + phone.replace(/[^\d+]/g, '') + '">' + icoPhone + '<span>' + phone + '</span></a>';
+    links += '<a class="mxs-mgr-a" href="https://t.me/' + tg + '" target="_blank" rel="noopener">' + icoTg + '<span>Telegram · @' + tg + '</span></a>';
+    var mgr = '<div class="mxs-mgr"><div class="mxs-mgr-lbl">Ваш менеджер</div>'
+      + (name ? '<div class="mxs-mgr-name">' + name + '</div>' : '')
+      + '<div class="mxs-mgr-row">' + links + '</div></div>';
+    return '<div class="mxs-panel">'
+      + '<div class="mxs-pan-t">Безпека акаунту</div>'
+      + '<p class="mxs-pan-p">Імʼя, e-mail і телефон у кабінеті змінює ваш менеджер — так ми захищаємо акаунт від помилкових правок. Пароль ви можете змінити самі тут.</p>'
+      + '<div class="mxs-div"></div>'
+      + '<div class="mxs-pan-st">Потрібно оновити дані?</div>'
+      + '<p class="mxs-pan-p">Напишіть або зателефонуйте — і ми внесемо зміни.</p>'
+      + mgr
+      + '</div>';
+  }
+
+  function apply(){
+    var main = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+    if(!main) return false;
+    var form = main.querySelector('form');
+    if(!form || !form.querySelector('[name="oldpassword"]')) return false;
+    if(main.getAttribute('data-mxs')) return true;
+    css();
+
+    function val(n){ var e = form.querySelector('[name="' + n + '"]'); return e ? (e.value || '').trim() : ''; }
+    var fullName = [val('namelast'), val('name'), val('namemiddle')].filter(Boolean).map(titleCase).join(' ');
+    var email = val('email');
+    var phone = val('phone');
+    var pd = phone.replace(/\D/g, '');
+    if(!pd || /0{6,}/.test(pd)) phone = '';   // порожня маска +38 (0__) 000-00-00
+
+    // приховуємо рідний заголовок сторінки «Мои настройки»
+    Array.prototype.forEach.call(main.querySelectorAll('h1, h2, .os-block-name, .block-name, .block-title'), function(h){
+      var t = (h.textContent || '').trim().toLowerCase();
+      if(t === 'мои настройки' || t === 'мої настройки' || t === 'налаштування' || t === 'мої налаштування'){ h.style.display = 'none'; }
+    });
+
+    var oldEl = form.querySelector('[name="oldpassword"]');
+    var newEl = form.querySelector('[name="password"]');
+    var save = form.querySelector('[name="ok"], input[type="submit"], button[type="submit"]');
+    var pwRow = oldEl.closest('.element') || oldEl.parentElement;
+    // OneBox тримає .element на display:flex !important — ховаємо через setProperty important.
+    // Лишаємо видимими лише рядок пароля (та його нащадків) і ланцюжок кнопки «Зберегти».
+    var pwAnc = []; (function(){ var e = pwRow; while(e && e !== form){ pwAnc.push(e); e = e.parentElement; } })();
+    var saveAnc = []; if(save){ var e2 = save; while(e2 && e2 !== form){ saveAnc.push(e2); e2 = e2.parentElement; } }
+    function keepNode(r){
+      return r === pwRow || pwRow.contains(r) || pwAnc.indexOf(r) !== -1 || saveAnc.indexOf(r) !== -1 || (save && r.contains && r.contains(save));
+    }
+    Array.prototype.forEach.call(form.querySelectorAll('.element'), function(r){
+      if(keepNode(r)) return;
+      r.style.setProperty('display', 'none', 'important');
+    });
+    // залишкові input поза .element (напр. чекбокс згоди) — ховаємо
+    var keep = { oldpassword:1, password:1, ok:1 };
+    Array.prototype.forEach.call(form.querySelectorAll('input,select,textarea'), function(i){
+      if(keep[i.name] || i.type === 'submit' || i.type === 'button' || i === oldEl || i === newEl) return;
+      var row = i.closest('.element');
+      if(row){ if(!keepNode(row)) row.style.setProperty('display', 'none', 'important'); return; }
+      i.style.setProperty('display', 'none', 'important');
+      var sib = i.nextElementSibling;
+      if(sib && sib.tagName !== 'INPUT') sib.style.setProperty('display', 'none', 'important');
+    });
+
+    // поля пароля: укр. підписи + плейсхолдери
+    pwRow.classList.add('mxs-pw');
+    function wrapField(inp, lbl, ph){
+      if(!inp || inp.__mxs) return; inp.__mxs = 1;
+      inp.setAttribute('placeholder', ph);
+      inp.setAttribute('autocomplete', inp.name === 'oldpassword' ? 'current-password' : 'new-password');
+      var w = document.createElement('div'); w.className = 'mxs-field';
+      var l = document.createElement('div'); l.className = 'mxs-flbl'; l.textContent = lbl;
+      inp.parentNode.insertBefore(w, inp); w.appendChild(l); w.appendChild(inp);
+    }
+    wrapField(oldEl, 'Поточний пароль', 'Введіть поточний пароль');
+    wrapField(newEl, 'Новий пароль', 'Введіть новий пароль');
+    if(save){ if(save.value !== undefined) save.value = 'Зберегти'; else save.textContent = 'Зберегти'; save.classList.add('mxs-btn'); }
+
+    // будуємо каркас
+    var view = document.createElement('div'); view.id = 'mxSetView';
+    var grid = document.createElement('div'); grid.className = 'mxs-grid';
+    var col = document.createElement('div'); col.className = 'mxs-main';
+    var aside = document.createElement('div'); aside.className = 'mxs-aside';
+
+    // 1) картка «Профіль» (лише перегляд)
+    function row(lbl, v){
+      var e = v ? '' : ' mxs-empty';
+      return '<div class="mxs-row"><span class="mxs-lbl">' + lbl + '</span><span class="mxs-val' + e + '">' + (v || 'не вказано') + '</span></div>';
+    }
+    var prof = document.createElement('div'); prof.className = 'mxs-card';
+    prof.innerHTML = '<div class="mxs-card-t">Профіль</div>'
+      + '<div class="mxs-card-s">Ці дані змінює ваш менеджер</div>'
+      + row('Імʼя', fullName) + row('E-mail', email) + row('Телефон', phone);
+    col.appendChild(prof);
+
+    // 2) картка «Безпека» — обгортаємо рідну форму
+    var sec = document.createElement('div'); sec.className = 'mxs-card';
+    var secHead = document.createElement('div');
+    secHead.innerHTML = '<div class="mxs-card-t">Змінити пароль</div><div class="mxs-card-s">Єдине, що можна змінити самостійно</div>';
+    var slot = form.parentNode;
+    sec.appendChild(secHead);
+    sec.appendChild(form);
+    col.appendChild(sec);
+
+    aside.innerHTML = darkPanel();
+    grid.appendChild(col); grid.appendChild(aside);
+    view.appendChild(grid);
+    // монтуємо на всю ширину головної колонки; стару (вузьку) обгортку форми ховаємо
+    main.appendChild(view);
+    if(slot && slot !== main && !slot.contains(view)) slot.style.setProperty('display', 'none', 'important');
+
+    main.setAttribute('data-mxs', '1');
     return true;
   }
 
