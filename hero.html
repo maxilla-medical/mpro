@@ -78,9 +78,9 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* стандартні повідомлення OneBox не потрібні — стан показуємо самі */
 #mxProcGrid .os-block-form .required-message{ display:none !important; }
 #mxProcGrid .mx-col-form{ flex:1 1 calc(600 * var(--u)); min-width:0; max-width:calc(600 * var(--u)); display:flex; flex-direction:column; }
-#mxProcGrid .mx-col-side{ flex:0 0 calc(300 * var(--u)); display:flex; flex-direction:column; }
+#mxProcGrid .mx-col-side{ flex:0 0 calc(300 * var(--u)); display:flex; flex-direction:column; align-self:flex-start; }
 /* панель вирівнюється по верхній межі картки форми (відступ = висота заголовка) */
-#mxProcGrid .mx-col-side .mx-side{ margin-top:var(--mx-head-h, 0px); flex:1 1 auto; }
+#mxProcGrid .mx-col-side .mx-side{ margin-top:var(--mx-head-h, 0px); flex:0 0 auto; }   /* панель за висотою вмісту, а не колонки */
 /* обгортка форми добирає вільну висоту → кнопка притиснута до низу, низ = низ панелі (навіть коли форма коротша за панель, напр. F2) */
 #mxProcGrid .mx-col-form > [id^="js-client-universal-form"]{ flex:1 1 auto !important; min-height:0 !important; }
 /* лівий заголовок над формою (ліва вісь) */
