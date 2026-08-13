@@ -4754,6 +4754,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   }
 
   function apply(){
+    // на сторінці перегляду ОПИСУ живе свій екран (MX-OPIS) — не втручаємось
+    if (document.getElementById('mxOpisData')) return false;
     var src = document.getElementById('mxResData');
     if (!src) return false;
     if (document.getElementById('mxResView')) return true;
@@ -4795,6 +4797,393 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     }, 150);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
+  window.addEventListener('mx:navigated', watch);
+})();
+</script>
+
+
+<!-- ============================================================================
+     MX-OPIS v1 — екран «Перегляд опису» (БП «[R1.1] Опис»).
+     Вмикається наявністю прихованого блока-джерела #mxOpisData («Вставка коду»
+     з галочкою «Заменить в содержимом переменные для процессов»). Ставиться
+     ТІЛЬКИ на сторінці перегляду процесу «Опис» — тому екрани дослідження,
+     шаблонів і форм не зачеплені. Дизайн — як екран «Перегляд дослідження».
+     Статус тягнеться з «Універсального блока» OneBox (поле «Статус»).
+     Мапінг статусів БП -> 3 кроки клієнта (матч по тексту):
+       крок 1 «В обробці»  <- статус «В обробці» (старт).
+       крок 2 «В роботі»   <- «В роботі», «Опис виконано», «Узгодження результату»,
+                              «Узгоджено», «Повідомлення надіслано».
+       крок 3 «Виконано»   <- «Виконано». Тут PDF стає доступним для завантаження.
+     ============================================================================ -->
+<script>
+(function(){
+  if(window.__mxOpis) return; window.__mxOpis = true;
+
+  var BACK_URL   = '/client/myorders/radiology-reports/';
+  var FORM_GUID  = '/client/form/6/';
+  var MX_TG      = 'https://t.me/dlmaxilla';
+  var MX_TG_FILE = 'https://t.me/edmaxilla';
+  var PRICE_GUID = '';   // напр. 'від 1500 гривень' — порожньо: ціна не показується
+
+  var STEPS = ['В обробці', 'В роботі', 'Виконано'];
+
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  var DL    = '<span class="mxo-dl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+            + '<g class="mxo-dl-arr"><path d="M12 3.5v10.5"/><path d="M7.6 9.9 12 14.3l4.4-4.4"/></g>'
+            + '<path class="mxo-dl-tray" d="M4.5 19.5h15"/></svg></span>';
+  var ARR   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+  var SHIELD= '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>';
+  var DOC   = '<svg viewBox="0 0 26 26" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect class="b" x="6" y="3" width="13" height="19" rx="2"/><path class="a" d="M9.5 9h6M9.5 12.5h6M9.5 16h4"/></svg>';
+  var HOUR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3c0 4.5 8 4.5 8 9s-8 4.5-8 9"/><path d="M16 3c0 4.5-8 4.5-8 9s8 4.5 8 9"/></svg>';
+
+  function esc(x){ return String(x == null ? '' : x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function norm(x){ return String(x || '').toLowerCase().replace(/["'’ʼ`]/g, '').trim(); }
+  var MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+  function dateUA(s){ var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return s; return (+m[3]) + ' ' + MONTHS[(+m[2]) - 1] + ' ' + m[1]; }
+
+  function val(node){
+    if(!node) return '';
+    var t = (node.textContent || '').replace(/\s+/g, ' ').trim();
+    if(!t) return '';
+    if(t.indexOf('{|') !== -1 || t.indexOf('{$') !== -1 || /^\[[a-z_]+\]$/i.test(t)) return '';
+    return t.replace(/[\s,;·]+$/, '');
+  }
+  function pick(parent, k){
+    var list = parent.querySelectorAll(':scope > [data-k="' + k + '"]');
+    for(var i = 0; i < list.length; i++){ var v = val(list[i]); if(v) return v; }
+    return '';
+  }
+  // PDF-поле може прийти як текст-URL або як готовий <a href> — беремо href, якщо є
+  function pickUrl(parent, k){
+    var list = parent.querySelectorAll(':scope > [data-k="' + k + '"]');
+    for(var i = 0; i < list.length; i++){
+      var a = list[i].querySelector('a[href]');
+      if(a){ var href = a.getAttribute('href'); if(href && href.indexOf('{|') === -1) return href; }
+      var v = val(list[i]); if(v) return v;
+    }
+    return '';
+  }
+  // статус процесу — з «Універсального блока» OneBox (поле «Статус»)
+  function readStatus(){
+    var s = '';
+    Array.prototype.forEach.call(document.querySelectorAll('.js-data-element'), function(el){
+      if(s) return;
+      var cap = el.querySelector('.flex-caption'), v = el.querySelector('.flex-value');
+      if(!cap || !v) return;
+      var c = norm(cap.textContent).replace(/[:?]/g, ' ').replace(/\s+/g, ' ').trim();
+      var txt = (v.textContent || '').replace(/\s+/g, ' ').trim().replace(/[\s,;·]+$/, '');
+      if(/^статус/.test(c) && txt) s = txt;
+    });
+    return s;
+  }
+
+  function read(src){
+    var d = { patient:'', birth:'', zone:'', pdf:'', parent:'', status:'', num:'' };
+    if(src){
+      d.patient = pick(src, 'patient');
+      d.birth   = pick(src, 'birth');
+      d.zone    = pick(src, 'zone');
+      d.pdf     = pickUrl(src, 'pdf');
+      d.parent  = pick(src, 'parent');
+      var st    = pick(src, 'status'); if(st) d.status = st;
+    }
+    if(!d.status) d.status = readStatus();
+    var mo = location.pathname.match(/\/client\/order\/(\d+)/); d.num = mo ? mo[1] : '';
+    return d;
+  }
+
+  // етап 1..3 за текстом статусу
+  function stageOf(status){
+    var t = norm(status);
+    if(!t) return 1;
+    if(t === 'виконано' || /^виконано\b/.test(t)) return 3;
+    if(t.indexOf('обробц') !== -1 || t.indexOf('обработ') !== -1) return 1;
+    return 2;   // «в роботі», «опис виконано», «узгодження», «узгоджено», «повідомлення надіслано»
+  }
+
+  function css(){
+    if(document.getElementById('mxOpisCss')) return;
+    var st = document.createElement('style'); st.id = 'mxOpisCss';
+    st.textContent = ''
+      + '#mxOpisView, #mxOpisView *{ box-sizing:border-box; }'
+      + '#mxOpisView{ font-family:\'Manrope\',sans-serif; color:#0F172A; }'
+      + '#mxOpisView .mxo-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:calc(18 * var(--u)); }'
+      + '#mxOpisView .mxo-back{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(14.5 * var(--u)); font-weight:600; color:#0F172A; text-decoration:none !important; transition:color .15s ease; }'
+      + '#mxOpisView .mxo-back:hover{ color:#2c3bff; }'
+      + '#mxOpisView .mxo-back svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); }'
+      + '#mxOpisView .mxo-safe{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; }'
+      + '#mxOpisView .mxo-safe svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxOpisView .mxo-steps{ display:flex; align-items:center; gap:calc(6 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(15 * var(--u)) calc(20 * var(--u)); margin-bottom:calc(16 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); }'
+      + '#mxOpisView .mxo-step{ display:inline-flex; align-items:center; gap:calc(10 * var(--u)); flex:0 0 auto; }'
+      + '#mxOpisView .mxo-step-n{ flex:0 0 auto; width:calc(26 * var(--u)); height:calc(26 * var(--u)); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:calc(12.5 * var(--u)); font-weight:700; box-sizing:border-box; }'
+      + '#mxOpisView .mxo-step-n svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); }'
+      + '#mxOpisView .mxo-step-t{ font-size:calc(13.5 * var(--u)); font-weight:600; white-space:nowrap; }'
+      + '#mxOpisView .mxo-step-line{ flex:1 1 auto; height:calc(1.5 * var(--u)); background:#E4E8EF; margin:0 calc(4 * var(--u)); min-width:calc(18 * var(--u)); border-radius:calc(2 * var(--u)); }'
+      + '#mxOpisView .mxo-line-on{ background:#2c3bff; }'
+      + '#mxOpisView .mxo-done .mxo-step-n{ background:#2c3bff; color:#fff; }'
+      + '#mxOpisView .mxo-done .mxo-step-t{ color:#0F172A; }'
+      + '#mxOpisView .mxo-act .mxo-step-n{ background:#EEF2FF; border:1.5px solid #2c3bff; color:#2c3bff; }'
+      + '#mxOpisView .mxo-act .mxo-step-t{ color:#0F172A; font-weight:700; }'
+      + '#mxOpisView .mxo-fut .mxo-step-n{ background:#FFFFFF; border:1.5px solid #E4E8EF; color:#94A3B8; }'
+      + '#mxOpisView .mxo-fut .mxo-step-t{ color:#94A3B8; }'
+      + '#mxOpisView .mxo-head{ display:flex; gap:calc(22 * var(--u)); align-items:stretch; margin-bottom:calc(22 * var(--u)); }'
+      + '#mxOpisView .mxo-col{ display:flex; flex-direction:column; min-width:0; }'
+      + '#mxOpisView .mxo-col:first-child{ flex:1 1 auto; }'
+      + '#mxOpisView .mxo-col-v{ flex:0 0 calc(300 * var(--u)); }'
+      + '#mxOpisView .mxo-lbl{ font-size:calc(11 * var(--u)); font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#A9B2C1; margin-bottom:calc(10 * var(--u)); }'
+      + '#mxOpisView .mxo-box{ flex:1 1 auto; background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(20 * var(--u)) calc(22 * var(--u)); }'
+      + '#mxOpisView .mxo-col-v .mxo-box{ display:flex; flex-direction:column; justify-content:center; }'
+      + '#mxOpisView .mxo-p{ display:flex; align-items:center; }'
+      + '#mxOpisView .mxo-p-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxOpisView .mxo-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
+      + '#mxOpisView .mxo-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
+      + '#mxOpisView .mxo-p-sub b{ color:#0F172A; font-weight:700; }'
+      + '#mxOpisView .mxo-zone{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(13 * var(--u)); padding:calc(6 * var(--u)) calc(11 * var(--u)); border-radius:calc(9 * var(--u)); background:#EEF2FF; max-width:100%; }'
+      + '#mxOpisView .mxo-zone-k{ font-size:calc(11.5 * var(--u)); font-weight:700; letter-spacing:.02em; color:#3730A3; flex:0 0 auto; }'
+      + '#mxOpisView .mxo-zone-v{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#4338CA; min-width:0; }'
+      + '#mxOpisView .mxo-v{ display:grid; grid-template-columns:max-content 1fr; column-gap:calc(14 * var(--u)); row-gap:calc(9 * var(--u)); align-items:baseline; }'
+      + '#mxOpisView .mxo-v-k{ font-size:calc(12.5 * var(--u)); font-weight:600; color:#A9B2C1; }'
+      + '#mxOpisView .mxo-v-v{ font-size:calc(13 * var(--u)); font-weight:500; color:#64748B; }'
+      + '#mxOpisView .mxo-sec-h{ display:flex; align-items:center; gap:calc(12 * var(--u)); font-size:calc(11 * var(--u)); font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#A9B2C1; margin-bottom:calc(10 * var(--u)); }'
+      + '#mxOpisView .mxo-qc{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; text-transform:none; letter-spacing:.02em; color:#64748B; }'
+      + '#mxOpisView .mxo-qc svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); color:#16A34A; }'
+      + '#mxOpisView .mxo-grid{ display:flex; gap:calc(22 * var(--u)); align-items:flex-start; }'
+      + '#mxOpisView .mxo-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:calc(10 * var(--u)); }'
+      + '#mxOpisView .mxo-side-col{ flex:0 0 calc(300 * var(--u)); align-self:flex-start; position:sticky; top:calc(18 * var(--u)); }'
+      + '#mxOpisView .mxo-card{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(22 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); display:flex; align-items:center; gap:calc(18 * var(--u)); transition:border-color .16s ease, box-shadow .16s ease; }'
+      + '#mxOpisView .mxo-card:hover{ border-color:#D7DEEA; box-shadow:0 6px 20px rgba(15,23,42,0.06); }'
+      + '#mxOpisView .mxo-card-ic{ flex:0 0 auto; width:calc(50 * var(--u)); height:calc(50 * var(--u)); border-radius:calc(15 * var(--u)); background:#F3F5FF; display:flex; align-items:center; justify-content:center; }'
+      + '#mxOpisView .mxo-card-ic svg{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); }'
+      + '#mxOpisView .mxo-card-ic .b{ stroke:#9AA6BA; } #mxOpisView .mxo-card-ic .a{ stroke:#2c3bff; }'
+      + '#mxOpisView .mxo-card-ic-wait{ background:#F4F6F8; }'
+      + '#mxOpisView .mxo-card-ic-wait svg{ color:#94A3B8; }'
+      + '#mxOpisView .mxo-card-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxOpisView .mxo-card-t{ font-size:calc(19 * var(--u)); font-weight:800; letter-spacing:-0.025em; line-height:1.25; color:#0F172A; }'
+      + '#mxOpisView .mxo-card-s{ margin-top:calc(6 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; line-height:1.55; color:#64748B; max-width:calc(560 * var(--u)); }'
+      + '#mxOpisView .mxo-wait .mxo-card-t{ color:#334155; }'
+      + '#mxOpisView .mxo-dl{ flex:0 0 auto; align-self:center; display:inline-flex; align-items:center; gap:calc(9 * var(--u)); height:calc(44 * var(--u)); padding:0 calc(20 * var(--u)); background:linear-gradient(180deg,#49546B 0%,#2E3648 100%); color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14 * var(--u)); font-weight:600; border-radius:calc(11 * var(--u)); box-shadow:inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 2px rgba(15,23,42,0.14), 0 3px 8px rgba(15,23,42,0.07); transition:background .15s ease, box-shadow .15s ease; white-space:nowrap; }'
+      + '#mxOpisView .mxo-dl:hover{ background:linear-gradient(180deg,#556279 0%,#353F53 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 2px 4px rgba(15,23,42,0.18), 0 8px 18px rgba(15,23,42,0.16); }'
+      + '#mxOpisView .mxo-dl:active{ transform:translateY(1px); box-shadow:inset 0 1px 2px rgba(0,0,0,0.22); }'
+      + '#mxOpisView .mxo-dl-ic{ display:flex; }'
+      + '#mxOpisView .mxo-dl-ic svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); overflow:visible; }'
+      + '#mxOpisView .mxo-dl-arr{ transform-box:fill-box; transform-origin:center; }'
+      + '#mxOpisView .mxo-dl-tray{ opacity:.75; }'
+      + '#mxOpisView .mxo-dl:hover .mxo-dl-arr{ animation:mxoDrop 1.15s cubic-bezier(.4,0,.2,1) infinite; }'
+      + '@keyframes mxoDrop{ 0%{ transform:translateY(0); opacity:1 } 45%{ transform:translateY(calc(3 * var(--u))); opacity:.15 } 46%{ transform:translateY(calc(-5 * var(--u))); opacity:0 } 70%{ opacity:1 } 100%{ transform:translateY(0); opacity:1 } }'
+      + '@media (prefers-reduced-motion: reduce){ #mxOpisView .mxo-dl:hover .mxo-dl-arr{ animation:none } }'
+      + '#mxOpisView .mxo-dl-off{ background:#E2E8F0 !important; background-image:none !important; color:#94A3B8 !important; box-shadow:none !important; cursor:not-allowed; }'
+      + '#mxOpisView .mxo-dl-off:hover .mxo-dl-arr{ animation:none !important; }'
+      + '#mxOpisView .mxo-got{ background:#ECFDF5 !important; background-image:none !important; border:1px solid #BBF7D0 !important; color:#047857 !important; box-shadow:none !important; }'
+      + '#mxOpisView .mxo-got:hover .mxo-dl-arr{ animation:none !important; }'
+      + '#mxOpisView .mxo-got svg{ color:#16A34A; }'
+      + '#mxOpisView .mxo-hint{ display:flex; align-items:center; gap:calc(10 * var(--u)); margin-top:calc(2 * var(--u)); padding:calc(12 * var(--u)) calc(16 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; }'
+      + '#mxOpisView .mxo-hint svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; color:#A9B2C1; }'
+      + '#mxOpisView .mxo-nav{ display:flex; align-items:center; justify-content:space-between; gap:calc(16 * var(--u)); margin-top:calc(2 * var(--u)); padding:calc(15 * var(--u)) calc(18 * var(--u)); background:#F7F9FC; border:1px solid #E8ECF3; border-radius:calc(14 * var(--u)); transition:border-color .15s ease, box-shadow .15s ease; }'
+      + '#mxOpisView .mxo-nav:hover{ border-color:#D7DEEA; box-shadow:0 4px 14px rgba(15,23,42,0.05); }'
+      + '#mxOpisView .mxo-nav-t{ font-size:calc(14 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#0F172A; }'
+      + '#mxOpisView .mxo-nav-s{ margin-top:calc(3 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#64748B; }'
+      + '#mxOpisView .mxo-nav-b{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(7 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(15 * var(--u)); border-radius:calc(10 * var(--u)); background:#EEF2FF; color:#2c3bff !important; text-decoration:none !important; font-size:calc(13 * var(--u)); font-weight:700; transition:background .15s ease; white-space:nowrap; }'
+      + '#mxOpisView .mxo-nav-b:hover{ background:#E0E7FF; }'
+      + '#mxOpisView .mxo-nav-b svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxOpisView .mxo-side{ background:radial-gradient(115% 150% at 100% 0%, rgba(44,59,255,0.22) 0%, rgba(44,59,255,0) 58%), #0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(22 * var(--u)); color:#fff; box-shadow:0 10px 34px rgba(15,23,42,0.14); }'
+      + '#mxOpisView .mxo-eyebrow{ font-size:calc(10.5 * var(--u)); font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8A8FA3; margin-bottom:calc(13 * var(--u)); }'
+      + '#mxOpisView .mxo-o-zone{ display:block; margin:calc(-6 * var(--u)) calc(-8 * var(--u)) 0; padding:calc(6 * var(--u)) calc(8 * var(--u)) calc(10 * var(--u)); border-radius:calc(12 * var(--u)); text-decoration:none !important; color:inherit !important; transition:background .18s ease; }'
+      + '#mxOpisView .mxo-o-zone:hover{ background:rgba(255,255,255,0.04); }'
+      + '#mxOpisView .mxo-o-t{ display:block; font-size:calc(16 * var(--u)); font-weight:800; color:#fff; letter-spacing:-0.02em; line-height:1.25; }'
+      + '#mxOpisView .mxo-o-s{ display:block; font-size:calc(12.5 * var(--u)); font-weight:500; color:#9AA0B4; line-height:1.55; margin-top:calc(8 * var(--u)); }'
+      + '#mxOpisView .mxo-o-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(15 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(17 * var(--u)); border-radius:calc(10 * var(--u)); background:#FFFFFF; color:#0F172A !important; text-decoration:none !important; font-size:calc(13 * var(--u)); font-weight:700; transition:transform .12s ease, box-shadow .15s ease; }'
+      + '#mxOpisView .mxo-o-zone:hover .mxo-o-b{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
+      + '#mxOpisView .mxo-o-b svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxOpisView .mxo-foot{ margin-top:calc(18 * var(--u)); padding-top:calc(15 * var(--u)); border-top:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; gap:calc(9 * var(--u)); }'
+      + '#mxOpisView .mxo-ft{ display:flex; align-items:center; gap:calc(8 * var(--u)); font-size:calc(11.5 * var(--u)); color:#9AA0B4; }'
+      + '#mxOpisView .mxo-ft svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); color:#22C55E; flex:0 0 auto; }'
+      + '#mxOpisView .mxo-help{ display:block; font-size:calc(12 * var(--u)); font-weight:600; color:#8B9CFF !important; text-decoration:none !important; }'
+      + '#mxOpisView .mxo-help:hover{ color:#fff !important; }'
+      + 'body:has(#mxOpisData) #mxProcTop, body:has(#mxOpisData) #mxProcGrid{ display:none !important; }'
+      + '@media (max-width: 900px){ #mxOpisView .mxo-head{ flex-direction:column; } #mxOpisView .mxo-col-v{ flex-basis:auto; } #mxOpisView .mxo-grid{ flex-direction:column; } #mxOpisView .mxo-side-col{ width:100%; flex-basis:auto; position:static; } #mxOpisView .mxo-card{ flex-wrap:wrap; } #mxOpisView .mxo-dl{ width:100%; justify-content:center; } #mxOpisView .mxo-steps{ flex-wrap:wrap; gap:calc(10 * var(--u)); } #mxOpisView .mxo-step-line{ display:none; } }';
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  function stepsBar(stage){
+    var h = '';
+    for(var i = 0; i < 3; i++){
+      var n = i + 1, cls, inner;
+      if(n < stage){ cls = 'mxo-done'; inner = CHECK; }
+      else if(n === stage){ cls = 'mxo-act'; inner = String(n); }
+      else { cls = 'mxo-fut'; inner = String(n); }
+      h += '<div class="mxo-step ' + cls + '"><span class="mxo-step-n">' + inner + '</span><span class="mxo-step-t">' + STEPS[i] + '</span></div>';
+      if(i < 2) h += '<span class="mxo-step-line' + (n < stage ? ' mxo-line-on' : '') + '"></span>';
+    }
+    return '<div class="mxo-steps">' + h + '</div>';
+  }
+
+  function head(d){
+    function kv(k, v){ return '<span class="mxo-v-k">' + k + '</span><span class="mxo-v-v">' + v + '</span>'; }
+    var order = kv('Статус', esc(d.status || 'В обробці'));
+    if(d.num) order += kv('Номер', esc(d.num));
+    var zone = d.zone ? '<div class="mxo-zone"><span class="mxo-zone-k">Зона опису</span><span class="mxo-zone-v">' + esc(d.zone) + '</span></div>' : '';
+    return '<div class="mxo-head">'
+      + '<div class="mxo-col"><div class="mxo-lbl">Пацієнт</div>'
+        + '<div class="mxo-box mxo-p"><div class="mxo-p-tx">'
+          + '<div class="mxo-p-name">' + esc(d.patient || 'Рентгенологічний опис') + '</div>'
+          + (d.birth ? '<div class="mxo-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
+          + zone
+        + '</div></div>'
+      + '</div>'
+      + '<div class="mxo-col mxo-col-v"><div class="mxo-lbl">Замовлення</div>'
+        + '<div class="mxo-box"><div class="mxo-v">' + order + '</div></div>'
+      + '</div>'
+      + '</div>';
+  }
+
+  function resultCard(d, stage, ready){
+    if(ready){
+      return '<div class="mxo-card">'
+        + '<div class="mxo-card-ic">' + DOC + '</div>'
+        + '<div class="mxo-card-tx"><div class="mxo-card-t">Рентгенологічний опис готовий</div>'
+          + '<div class="mxo-card-s">PDF-висновок лікаря-рентгенолога' + (d.zone ? ' · ' + esc(d.zone) : '') + '</div></div>'
+        + '<a class="mxo-dl" href="' + esc(d.pdf) + '" target="_blank" rel="noopener" data-mx-dl="1">' + DL + 'Завантажити</a>'
+      + '</div>';
+    }
+    var t, s;
+    if(stage === 1){ t = 'Дослідження готується до опису'; s = 'Найближчим часом рентгенолог розпочне опис. Кнопка «Завантажити» стане активною по готовності.'; }
+    else { t = 'Рентгенолог працює над описом'; s = 'Опис уже у роботі. Щойно висновок буде готовий, PDF зʼявиться тут для завантаження.'; }
+    return '<div class="mxo-card mxo-wait">'
+      + '<div class="mxo-card-ic mxo-card-ic-wait">' + HOUR + '</div>'
+      + '<div class="mxo-card-tx"><div class="mxo-card-t">' + t + '</div><div class="mxo-card-s">' + s + '</div></div>'
+      + '<span class="mxo-dl mxo-dl-off">' + DL + 'Завантажити</span>'
+    + '</div>';
+  }
+
+  function hint(ready){
+    if(!ready) return '';
+    return '<div class="mxo-hint">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>'
+      + 'Це PDF-документ — відкривається на будь-якому пристрої, нічого встановлювати не потрібно.'
+    + '</div>';
+  }
+
+  function navCard(d){
+    if(!d.parent) return '';
+    return '<div class="mxo-nav">'
+      + '<div class="mxo-nav-tx"><div class="mxo-nav-t">Перейти до дослідження</div>'
+        + '<div class="mxo-nav-s">Знімок, на основі якого виконано опис</div></div>'
+      + '<a class="mxo-nav-b" href="/client/order/' + esc(d.parent) + '/">Відкрити' + ARR + '</a>'
+    + '</div>';
+  }
+
+  function sidePanel(d){
+    return '<div class="mxo-side">'
+      + '<div class="mxo-eyebrow">Наступний крок</div>'
+      + '<a class="mxo-o-zone" href="' + FORM_GUID + '">'
+        + '<span class="mxo-o-t">Хірургічний шаблон</span>'
+        + '<span class="mxo-o-s">Плануєте імплантацію за цим знімком? Сплануємо та виготовимо шаблон протягом 48 годин після погодження.</span>'
+        + '<span class="mxo-o-b">' + (PRICE_GUID ? 'Замовити — ' + esc(PRICE_GUID) : 'Замовити') + ARR + '</span>'
+      + '</a>'
+      + '<div class="mxo-foot">'
+        + '<div class="mxo-ft">' + CHECK + 'Дані пацієнта захищені</div>'
+        + '<a class="mxo-help" href="' + MX_TG + '?text=' + encodeURIComponent('Питання щодо опису' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener">Питання щодо опису? Напишіть нам</a>'
+      + '</div>'
+    + '</div>';
+  }
+
+  function build(d){
+    var stage = stageOf(d.status);
+    var ready = (stage === 3 && !!d.pdf);
+    var secH = '<div class="mxo-sec-h">Результат опису' + (ready ? '<span class="mxo-qc">' + CHECK + 'якість перевірено</span>' : '') + '</div>';
+    return '<div id="mxOpisView">'
+      + '<div class="mxo-top">'
+        + '<a class="mxo-back" href="' + BACK_URL + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Всі описи</a>'
+        + '<span class="mxo-safe">' + SHIELD + 'Дані захищені</span>'
+      + '</div>'
+      + stepsBar(stage)
+      + head(d)
+      + secH
+      + '<div class="mxo-grid"><div class="mxo-main">'
+        + resultCard(d, stage, ready)
+        + hint(ready)
+        + navCard(d)
+      + '</div>'
+      + '<div class="mxo-side-col">' + sidePanel(d) + '</div></div>'
+    + '</div>';
+  }
+
+  function markDownloads(root){
+    Array.prototype.forEach.call(root.querySelectorAll('[data-mx-dl]'), function(a){
+      a.addEventListener('click', function(){
+        if(a.classList.contains('mxo-got')) return;
+        a.classList.add('mxo-got');
+        var txt = a.lastChild;
+        if(txt && txt.nodeType === 3) txt.textContent = 'Завантажено';
+      });
+    });
+  }
+
+  function mobileOrder(root){
+    var mq = window.matchMedia('(max-width: 900px)');
+    var grid = root.querySelector('.mxo-grid');
+    var side = root.querySelector('.mxo-side-col');
+    var main = root.querySelector('.mxo-main');
+    if(!grid || !side || !main) return;
+    function place(){
+      if(mq.matches){
+        var hero = main.querySelector('.mxo-card');
+        if(hero && side.parentNode !== main){ hero.parentNode.insertBefore(side, hero.nextSibling); }
+      } else if(side.parentNode !== grid){
+        grid.appendChild(side);
+      }
+    }
+    place();
+    if(mq.addEventListener) mq.addEventListener('change', place);
+    else if(mq.addListener) mq.addListener(place);
+  }
+
+  var waited = 0;
+  function apply(){
+    var src = document.getElementById('mxOpisData');
+    if(!src) return false;
+    if(document.getElementById('mxOpisView')) return true;
+
+    var d = read(src);
+    // статус приходить з «Універсального блока», який може дорендеритись пізніше:
+    // чекаємо його до ~3с, щоб не показати «В обробці» замість реального статусу
+    if(!d.status && waited < 20){ waited++; return false; }
+    css();
+
+    (function(){
+      var n = 0;
+      var h = setInterval(function(){
+        n++;
+        ['mxProcTop', 'mxProcGrid'].forEach(function(id){
+          var e = document.getElementById(id); if(e) e.style.setProperty('display', 'none', 'important');
+        });
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element, .client-cell-body:not(.aside-left):not(.aside-right) .os-block-form'),
+          function(e){ if(!e.closest('#mxOpisView')) e.style.setProperty('display', 'none', 'important'); }
+        );
+        if(n > 60) clearInterval(h);
+      }, 150);
+    })();
+
+    var host = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)') || src.parentNode;
+    var wrap = document.createElement('div');
+    wrap.innerHTML = build(d);
+    var view = wrap.firstChild;
+    host.insertBefore(view, host.firstChild);
+    markDownloads(view);
+    mobileOrder(view);
+    return true;
+  }
+
+  function watch(){
+    var tries = 0;
+    var t = setInterval(function(){
+      tries++;
+      if(apply() || tries > 80) clearInterval(t);
+    }, 150);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
   else watch();
   window.addEventListener('mx:navigated', watch);
 })();
