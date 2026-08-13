@@ -3910,12 +3910,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         var LIST_KEYS = { patients:1, reports:1, ceph:1, superimp:1, guides:1, print:1 };
         if(!LIST_KEYS[key]) return;
         var LIST_INFO = {
-            patients: 'Знімок доступний одразу після дослідження — у кабінеті та на email.',
-            reports:  'Опис готує лікар-рентгенолог — зазвичай до 3 робочих днів.',
-            ceph:     'Цефалометричні розрахунки за 10+ авторами та протоколами.',
-            guides:   'Виготовляємо та надсилаємо за 48 годин після погодження.',
-            print:    'Друкуємо з вашого STL — оплата лише після оцінки вартості.',
-            superimp: ''
+            patients: 'Знімки доступні одразу після виконання',
+            reports:  'Виконуємо напротязі 3 робочих днів',
+            ceph:     'Звіт з аналізами за 10+ авторами',
+            superimp: 'Виконуємо напротязі 3 робочих днів',
+            guides:   'Виготовляємо за 48 годин з моменту погодження планування',
+            print:    'Друкуємо за 48 годин з моменту підтвердження замовлення'
         };
         var LIST_EMPTY = {
             patients: 'Тут зʼявляться дослідження ваших пацієнтів',
@@ -3931,8 +3931,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var st = document.createElement('style'); st.id = 'mxListCss';
             var S = '.client-cell-body:not(.aside-left):not(.aside-right) ';
             st.textContent = ''
-                + S + '.mx-list-info{ display:flex; align-items:center; gap:calc(9 * var(--u)); margin:calc(2 * var(--u)) 0 calc(16 * var(--u)); padding:calc(10 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(11 * var(--u)); font-family:\'Manrope\',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:500; color:#64748B; }'
-                + S + '.mx-list-info svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; color:#94A3B8; }'
+                + S + '.mx-list-info{ display:flex; align-items:center; gap:calc(7 * var(--u)); margin:calc(-6 * var(--u)) 0 calc(14 * var(--u)); font-family:\'Manrope\',sans-serif; font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
+                + S + '.mx-list-info svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); flex:0 0 auto; color:#B4BCC9; }'
                 + S + '.mx-empty{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); padding:calc(42 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); font-family:\'Manrope\',sans-serif; animation:mxUp .35s ease both; }'
                 + S + '.mx-empty-ic{ width:calc(58 * var(--u)); height:calc(58 * var(--u)); border-radius:50%; background:#F4F6FB; display:flex; align-items:center; justify-content:center; color:#A9B2C1; margin-bottom:calc(4 * var(--u)); }'
                 + S + '.mx-empty-ic svg{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); }'
@@ -3945,14 +3945,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         function run(){
             var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
             if(!col) return false;
-            var pf = col.querySelector('.params-form');
-            if(pf && LIST_INFO[key] && !col.querySelector('.mx-list-info')){
-                var strip = document.createElement('div'); strip.className = 'mx-list-info';
-                strip.innerHTML = INFO_ICO + '<span>' + LIST_INFO[key] + '</span>';
-                pf.parentNode.insertBefore(strip, pf.nextSibling);
-            }
             var table = col.querySelector('table.os-table');
             if(!table) return false;   // таблиця ще не відрендерилась — пробуємо ще
+            // тиха підпис-строка ПІД заголовком таблиці («Найновіші …»), без картки
+            var lbl = col.querySelector('.mx-sec-label');
+            if(lbl && LIST_INFO[key] && !col.querySelector('.mx-list-info')){
+                var strip = document.createElement('div'); strip.className = 'mx-list-info';
+                strip.innerHTML = INFO_ICO + '<span>' + LIST_INFO[key] + '</span>';
+                lbl.parentNode.insertBefore(strip, lbl.nextSibling);
+            }
             var dataRows = table.querySelectorAll('tbody tr a[href*="/order/"]').length;
             var wrap = col.querySelector('.os-overflow-table');
             var panel = col.querySelector('.os-block-panel');
