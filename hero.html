@@ -4939,9 +4939,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxOpisView .mxo-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
       + '#mxOpisView .mxo-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
       + '#mxOpisView .mxo-p-sub b{ color:#0F172A; font-weight:700; }'
-      + '#mxOpisView .mxo-pat{ margin-bottom:calc(16 * var(--u)); }'
-      + '#mxOpisView .mxo-pat-ord{ margin-bottom:calc(22 * var(--u)); }'
-      + '#mxOpisView .mxo-ord{ background:#F8FAFC; border:1px solid #EDF1F7; border-radius:calc(14 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); }'
+      + '#mxOpisView .mxo-ordwrap{ margin-bottom:calc(12 * var(--u)); }'
+      + '#mxOpisView .mxo-ord{ display:flex; align-items:center; gap:calc(16 * var(--u)); background:#F8FAFC; border:1px solid #EDF1F7; border-radius:calc(14 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); }'
+      + '#mxOpisView .mxo-ord-main{ flex:1 1 auto; min-width:0; }'
+      + '#mxOpisView .mxo-ord-go{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(7 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(15 * var(--u)); border-radius:calc(10 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; color:#2c3bff !important; font-size:calc(12.5 * var(--u)); font-weight:700; text-decoration:none !important; white-space:nowrap; transition:border-color .15s ease, background .15s ease; }'
+      + '#mxOpisView .mxo-ord-go:hover{ border-color:#2c3bff; background:#F6F8FF; }'
+      + '#mxOpisView .mxo-ord-go svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxOpisView .mxo-lbl-ghost{ visibility:hidden; }'
       + '#mxOpisView .mxo-ord-top{ display:flex; align-items:baseline; flex-wrap:wrap; gap:calc(4 * var(--u)) calc(9 * var(--u)); }'
       + '#mxOpisView .mxo-ord-k{ font-size:calc(12 * var(--u)); font-weight:700; letter-spacing:.02em; color:#94A3B8; flex:0 0 auto; }'
       + '#mxOpisView .mxo-ord-v{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#334155; min-width:0; }'
@@ -4991,8 +4995,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxOpisView .mxo-got{ background:#ECFDF5 !important; background-image:none !important; border:1px solid #BBF7D0 !important; color:#047857 !important; box-shadow:none !important; }'
       + '#mxOpisView .mxo-got:hover .mxo-dl-arr{ animation:none !important; }'
       + '#mxOpisView .mxo-got svg{ color:#16A34A; }'
-      + '#mxOpisView .mxo-hint{ display:flex; align-items:center; gap:calc(10 * var(--u)); margin-top:calc(2 * var(--u)); padding:calc(12 * var(--u)) calc(16 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; }'
-      + '#mxOpisView .mxo-hint svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; color:#A9B2C1; }'
+      + '#mxOpisView .mxo-view{ display:flex; align-items:flex-start; gap:calc(15 * var(--u)); margin-top:calc(2 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)); background:#FFFFFF; border:1px solid #E8ECF3; border-radius:calc(16 * var(--u)); }'
+      + '#mxOpisView .mxo-view-ic{ flex:0 0 auto; width:calc(38 * var(--u)); height:calc(38 * var(--u)); border-radius:calc(11 * var(--u)); background:#F4F6F8; color:#94A3B8; display:flex; align-items:center; justify-content:center; }'
+      + '#mxOpisView .mxo-view-ic svg{ width:calc(19 * var(--u)); height:calc(19 * var(--u)); }'
+      + '#mxOpisView .mxo-view-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxOpisView .mxo-view-t{ font-size:calc(13.5 * var(--u)); font-weight:700; color:#334155; letter-spacing:-0.01em; }'
+      + '#mxOpisView .mxo-view-s{ margin-top:calc(5 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; line-height:1.55; color:#94A3B8; max-width:calc(620 * var(--u)); }'
       + '#mxOpisView .mxo-nav{ display:flex; align-items:center; justify-content:space-between; gap:calc(16 * var(--u)); margin-top:calc(2 * var(--u)); padding:calc(15 * var(--u)) calc(18 * var(--u)); background:#F7F9FC; border:1px solid #E8ECF3; border-radius:calc(14 * var(--u)); transition:border-color .15s ease, box-shadow .15s ease; }'
       + '#mxOpisView .mxo-nav:hover{ border-color:#D7DEEA; box-shadow:0 4px 14px rgba(15,23,42,0.05); }'
       + '#mxOpisView .mxo-nav-t{ font-size:calc(14 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#0F172A; }'
@@ -5015,16 +5023,27 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxOpisView .mxo-help{ display:block; font-size:calc(12 * var(--u)); font-weight:600; color:#8B9CFF !important; text-decoration:none !important; }'
       + '#mxOpisView .mxo-help:hover{ color:#fff !important; }'
       + 'body:has(#mxOpisData) #mxProcTop, body:has(#mxOpisData) #mxProcGrid{ display:none !important; }'
-      + '@media (max-width: 900px){ #mxOpisView .mxo-head{ flex-direction:column; } #mxOpisView .mxo-col-v{ flex-basis:auto; } #mxOpisView .mxo-grid{ flex-direction:column; } #mxOpisView .mxo-side-col{ width:100%; flex-basis:auto; position:static; } #mxOpisView .mxo-card{ flex-wrap:wrap; } #mxOpisView .mxo-dl{ width:100%; justify-content:center; } #mxOpisView .mxo-steps{ flex-wrap:wrap; gap:calc(10 * var(--u)); } #mxOpisView .mxo-step-line{ display:none; } }';
+      + '@media (max-width: 900px){ #mxOpisView .mxo-head{ flex-direction:column; } #mxOpisView .mxo-col-v{ flex-basis:auto; } #mxOpisView .mxo-grid{ flex-direction:column; } #mxOpisView .mxo-side-col{ width:100%; flex-basis:auto; position:static; } #mxOpisView .mxo-card{ flex-wrap:wrap; } #mxOpisView .mxo-dl{ width:100%; justify-content:center; } #mxOpisView .mxo-steps{ flex-wrap:wrap; gap:calc(10 * var(--u)); } #mxOpisView .mxo-step-line{ display:none; } #mxOpisView .mxo-ord{ flex-wrap:wrap; } #mxOpisView .mxo-ord-go{ width:100%; justify-content:center; } #mxOpisView .mxo-lbl-ghost{ display:none; } }';
     (document.head || document.documentElement).appendChild(st);
   }
 
-  function patientCard(d){
-    return '<div class="mxo-pat"><div class="mxo-lbl">Пацієнт</div>'
-      + '<div class="mxo-box">'
-        + '<div class="mxo-p-name">' + esc(d.patient || 'Рентгенологічний опис') + '</div>'
-        + (d.birth ? '<div class="mxo-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
-      + '</div></div>';
+  // шапка: ліворуч картка пацієнта, праворуч картка «Замовлення» (Статус + Номер) —
+  // однакова з екраном «Перегляд дослідження»
+  function head(d){
+    function kv(k, v){ return '<span class="mxo-v-k">' + k + '</span><span class="mxo-v-v">' + v + '</span>'; }
+    var order = kv('Статус', esc(d.status || 'В обробці'));
+    if(d.num) order += kv('Номер', esc(d.num));
+    return '<div class="mxo-head">'
+      + '<div class="mxo-col"><div class="mxo-lbl">Пацієнт</div>'
+        + '<div class="mxo-box mxo-p"><div class="mxo-p-tx">'
+          + '<div class="mxo-p-name">' + esc(d.patient || 'Рентгенологічний опис') + '</div>'
+          + (d.birth ? '<div class="mxo-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
+        + '</div></div>'
+      + '</div>'
+      + '<div class="mxo-col mxo-col-v"><div class="mxo-lbl">Замовлення</div>'
+        + '<div class="mxo-box"><div class="mxo-v">' + order + '</div></div>'
+      + '</div>'
+      + '</div>';
   }
   // лаконічний статус: 3 кроки горизонтально, з галочками (як старий блок 4, але тихіше)
   function orderSteps(stage){
@@ -5040,14 +5059,20 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return out;
   }
   function orderBlock(d, stage){
-    var num = d.num ? '<span class="mxo-ord-num">№ ' + esc(d.num) + '</span>' : '';
     var zona = d.zone
       ? '<span class="mxo-ord-k">Зона опису</span><span class="mxo-ord-v">' + esc(d.zone) + '</span>'
       : '<span class="mxo-ord-k">Опис</span>';
-    return '<div class="mxo-pat mxo-pat-ord"><div class="mxo-lbl">Замовлення опису</div>'
+    // перехід до картки дослідження, за яким зроблено опис — лаконічно, у правій частині блока
+    var go = d.parent
+      ? '<a class="mxo-ord-go" href="/client/order/' + esc(d.parent) + '/">Перейти до дослідження' + ARR + '</a>'
+      : '';
+    return '<div class="mxo-ordwrap"><div class="mxo-lbl">Що описуємо</div>'
       + '<div class="mxo-ord">'
-        + '<div class="mxo-ord-top">' + zona + num + '</div>'
-        + '<div class="mxo-ord-steps">' + orderSteps(stage) + '</div>'
+        + '<div class="mxo-ord-main">'
+          + '<div class="mxo-ord-top">' + zona + '</div>'
+          + '<div class="mxo-ord-steps">' + orderSteps(stage) + '</div>'
+        + '</div>'
+        + go
       + '</div></div>';
   }
 
@@ -5070,11 +5095,16 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     + '</div>';
   }
 
-  function hint(ready){
+  // «Як переглянути» — тихий блок під результатом. Для опису відповідь завжди однакова:
+  // це PDF, відкривається будь-де. Клієнт не має ставити це питання.
+  function viewCard(ready){
     if(!ready) return '';
-    return '<div class="mxo-hint">'
-      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>'
-      + 'Це PDF-документ — відкривається на будь-якому пристрої, нічого встановлювати не потрібно.'
+    return '<div class="mxo-view">'
+      + '<div class="mxo-view-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M9 13h6M9 17h4"/></svg></div>'
+      + '<div class="mxo-view-tx">'
+        + '<div class="mxo-view-t">Як переглянути опис</div>'
+        + '<div class="mxo-view-s">Опис — це звичайний PDF-файл. Відкривається на будь-якому пристрої: компʼютері, планшеті чи смартфоні. Нічого встановлювати не потрібно.</div>'
+      + '</div>'
     + '</div>';
   }
 
@@ -5087,17 +5117,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     + '</div>';
   }
 
+  // права панель: цінність опису, без CTA і без «напишіть питання» — описи детальні,
+  // додаткових дій продавати нема чого
   function sidePanel(d){
     return '<div class="mxo-side">'
-      + '<div class="mxo-eyebrow">Наступний крок</div>'
-      + '<a class="mxo-o-zone" href="' + FORM_GUID + '">'
-        + '<span class="mxo-o-t">Хірургічний шаблон</span>'
-        + '<span class="mxo-o-s">Плануєте імплантацію за цим знімком? Сплануємо та виготовимо шаблон протягом 48 годин після погодження.</span>'
-        + '<span class="mxo-o-b">' + (PRICE_GUID ? 'Замовити — ' + esc(PRICE_GUID) : 'Замовити') + ARR + '</span>'
-      + '</a>'
+      + '<div class="mxo-eyebrow">Як ми описуємо</div>'
+      + '<div class="mxo-o-t">Опис від лікаря-рентгенолога</div>'
+      + '<div class="mxo-o-s">Кожне дослідження описується за повним протоколом — усі зони, структури й знахідки у зоні інтересу.</div>'
       + '<div class="mxo-foot">'
-        + '<div class="mxo-ft">' + CHECK + 'Дані пацієнта захищені</div>'
-        + '<a class="mxo-help" href="' + MX_TG + '?text=' + encodeURIComponent('Питання щодо опису' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener">Питання щодо опису? Напишіть нам</a>'
+        + '<div class="mxo-ft">' + CHECK + 'Зберігається тут 2 роки</div>'
       + '</div>'
     + '</div>';
   }
@@ -5111,15 +5139,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         + '<a class="mxo-back" href="' + BACK_URL + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Всі описи</a>'
         + '<span class="mxo-safe">' + SHIELD + 'Дані захищені</span>'
       + '</div>'
-      + patientCard(d)
-      + orderBlock(d, stage)
-      + secH
+      + head(d)
       + '<div class="mxo-grid"><div class="mxo-main">'
+        + orderBlock(d, stage)
+        + secH
         + resultCard(d, stage, ready)
-        + hint(ready)
-        + navCard(d)
+        + viewCard(ready)
       + '</div>'
-      + '<div class="mxo-side-col">' + sidePanel(d) + '</div></div>'
+      // порожній лейбл-розпірка: опускає праву панель до рівня КАРТКИ «Що описуємо», а не її заголовка
+      + '<div class="mxo-side-col"><div class="mxo-lbl mxo-lbl-ghost" aria-hidden="true">&nbsp;</div>' + sidePanel(d) + '</div></div>'
     + '</div>';
   }
 
