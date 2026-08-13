@@ -5243,3 +5243,443 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   window.addEventListener('mx:navigated', watch);
 })();
 </script>
+
+
+<!-- ============================================================================
+     MX-CEPH v1 — екран «Перегляд 3D Ceph аналізу» (БП «[R2.1] 3D Ceph»).
+     Вмикається наявністю прихованого блока-джерела #mxCephData («Вставка коду»
+     з галочкою «Заменить в содержимом переменные для процессов»). Ставиться
+     ТІЛЬКИ на сторінці перегляду процесу «3D Ceph» — тому інші екрани
+     шаблонів і форм не зачеплені. Дизайн — як екран «Перегляд дослідження».
+     Статус тягнеться з «Універсального блока» OneBox (поле «Статус»).
+     Мапінг статусів БП -> 3 кроки клієнта (матч по тексту):
+       крок 1 «В обробці»  <- статус «В обробці» (старт).
+       крок 2 «В роботі»   <- «В роботі», «Аналіз виконано», «Узгодження результату»,
+                              «Узгоджено», «Повідомлення надіслано».
+       крок 3 «Виконано»   <- «Виконано». Тут PDF стає доступним для завантаження.
+     ============================================================================ -->
+<script>
+(function(){
+  if(window.__mxCeph) return; window.__mxCeph = true;
+
+  var BACK_URL   = '/client/custompage/53/';
+  var FORM_GUID  = '/client/form/6/';
+  var MX_TG      = 'https://t.me/dlmaxilla';
+  var MX_TG_FILE = 'https://t.me/edmaxilla';
+  var PRICE_GUID = '';   // напр. 'від 1500 гривень' — порожньо: ціна не показується
+
+  var STEPS = ['В обробці', 'В роботі', 'Виконано'];
+
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  var DL    = '<span class="mxc-dl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+            + '<g class="mxc-dl-arr"><path d="M12 3.5v10.5"/><path d="M7.6 9.9 12 14.3l4.4-4.4"/></g>'
+            + '<path class="mxc-dl-tray" d="M4.5 19.5h15"/></svg></span>';
+  var ARR   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+  var SHIELD= '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>';
+  var DOC   = '<svg viewBox="0 0 26 26" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect class="b" x="6" y="3" width="13" height="19" rx="2"/><path class="a" d="M9.5 9h6M9.5 12.5h6M9.5 16h4"/></svg>';
+  var HOUR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10"/><path d="M8 3c0 4.5 8 4.5 8 9s-8 4.5-8 9"/><path d="M16 3c0 4.5-8 4.5-8 9s8 4.5 8 9"/></svg>';
+
+  function esc(x){ return String(x == null ? '' : x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function norm(x){ return String(x || '').toLowerCase().replace(/["'’ʼ`]/g, '').trim(); }
+  var MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+  function dateUA(s){ var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return s; return (+m[3]) + ' ' + MONTHS[(+m[2]) - 1] + ' ' + m[1]; }
+
+  function val(node){
+    if(!node) return '';
+    var t = (node.textContent || '').replace(/\s+/g, ' ').trim();
+    if(!t) return '';
+    if(t.indexOf('{|') !== -1 || t.indexOf('{$') !== -1 || /^\[[a-z_]+\]$/i.test(t)) return '';
+    return t.replace(/[\s,;·]+$/, '');
+  }
+  function pick(parent, k){
+    var list = parent.querySelectorAll(':scope > [data-k="' + k + '"]');
+    for(var i = 0; i < list.length; i++){ var v = val(list[i]); if(v) return v; }
+    return '';
+  }
+  // PDF-поле може прийти як текст-URL або як готовий <a href> — беремо href, якщо є
+  function pickUrl(parent, k){
+    var list = parent.querySelectorAll(':scope > [data-k="' + k + '"]');
+    for(var i = 0; i < list.length; i++){
+      var a = list[i].querySelector('a[href]');
+      if(a){ var href = a.getAttribute('href'); if(href && href.indexOf('{|') === -1) return href; }
+      var v = val(list[i]); if(v) return v;
+    }
+    return '';
+  }
+  // статус процесу — з «Універсального блока» OneBox (поле «Статус»)
+  function readStatus(){
+    var s = '';
+    Array.prototype.forEach.call(document.querySelectorAll('.js-data-element'), function(el){
+      if(s) return;
+      var cap = el.querySelector('.flex-caption'), v = el.querySelector('.flex-value');
+      if(!cap || !v) return;
+      var c = norm(cap.textContent).replace(/[:?]/g, ' ').replace(/\s+/g, ' ').trim();
+      var txt = (v.textContent || '').replace(/\s+/g, ' ').trim().replace(/[\s,;·]+$/, '');
+      if(/^статус/.test(c) && txt) s = txt;
+    });
+    return s;
+  }
+
+  function read(src){
+    var d = { patient:'', birth:'', zone:'', pdf:'', parent:'', status:'', num:'' };
+    if(src){
+      d.patient = pick(src, 'patient');
+      d.birth   = pick(src, 'birth');
+      d.zone    = pick(src, 'zone');
+      d.pdf     = pickUrl(src, 'pdf');
+      d.parent  = pick(src, 'parent');
+      var st    = pick(src, 'status'); if(st) d.status = st;
+    }
+    if(!d.status) d.status = readStatus();
+    var mo = location.pathname.match(/\/client\/order\/(\d+)/); d.num = mo ? mo[1] : '';
+    return d;
+  }
+
+  // етап 1..3 за текстом статусу
+  function stageOf(status){
+    var t = norm(status);
+    if(!t) return 1;
+    if(t === 'виконано' || /^виконано\b/.test(t)) return 3;
+    if(t.indexOf('обробц') !== -1 || t.indexOf('обработ') !== -1) return 1;
+    return 2;   // «в роботі», «опис виконано», «узгодження», «узгоджено», «повідомлення надіслано»
+  }
+
+  function css(){
+    if(document.getElementById('mxCephCss')) return;
+    var st = document.createElement('style'); st.id = 'mxCephCss';
+    st.textContent = ''
+      + '#mxCephView, #mxCephView *{ box-sizing:border-box; }'
+      + '#mxCephView{ font-family:\'Manrope\',sans-serif; color:#0F172A; }'
+      + '#mxCephView .mxc-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:calc(18 * var(--u)); }'
+      + '#mxCephView .mxc-back{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(14.5 * var(--u)); font-weight:600; color:#0F172A; text-decoration:none !important; transition:color .15s ease; }'
+      + '#mxCephView .mxc-back:hover{ color:#2c3bff; }'
+      + '#mxCephView .mxc-back svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); }'
+      + '#mxCephView .mxc-safe{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#94A3B8; }'
+      + '#mxCephView .mxc-safe svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxCephView .mxc-steps{ display:flex; align-items:center; gap:calc(6 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(15 * var(--u)) calc(20 * var(--u)); margin-bottom:calc(16 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); }'
+      + '#mxCephView .mxc-step{ display:inline-flex; align-items:center; gap:calc(10 * var(--u)); flex:0 0 auto; }'
+      + '#mxCephView .mxc-step-n{ flex:0 0 auto; width:calc(26 * var(--u)); height:calc(26 * var(--u)); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:calc(12.5 * var(--u)); font-weight:700; box-sizing:border-box; }'
+      + '#mxCephView .mxc-step-n svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); }'
+      + '#mxCephView .mxc-step-t{ font-size:calc(13.5 * var(--u)); font-weight:600; white-space:nowrap; }'
+      + '#mxCephView .mxc-step-line{ flex:1 1 auto; height:calc(1.5 * var(--u)); background:#E4E8EF; margin:0 calc(4 * var(--u)); min-width:calc(18 * var(--u)); border-radius:calc(2 * var(--u)); }'
+      + '#mxCephView .mxc-line-on{ background:#2c3bff; }'
+      + '#mxCephView .mxc-done .mxc-step-n{ background:#2c3bff; color:#fff; }'
+      + '#mxCephView .mxc-done .mxc-step-t{ color:#0F172A; }'
+      + '#mxCephView .mxc-act .mxc-step-n{ background:#EEF2FF; border:1.5px solid #2c3bff; color:#2c3bff; }'
+      + '#mxCephView .mxc-act .mxc-step-t{ color:#0F172A; font-weight:700; }'
+      + '#mxCephView .mxc-fut .mxc-step-n{ background:#FFFFFF; border:1.5px solid #E4E8EF; color:#94A3B8; }'
+      + '#mxCephView .mxc-fut .mxc-step-t{ color:#94A3B8; }'
+      + '#mxCephView .mxc-head{ display:flex; gap:calc(22 * var(--u)); align-items:stretch; margin-bottom:calc(22 * var(--u)); }'
+      + '#mxCephView .mxc-col{ display:flex; flex-direction:column; min-width:0; }'
+      + '#mxCephView .mxc-col:first-child{ flex:1 1 auto; }'
+      + '#mxCephView .mxc-col-v{ flex:0 0 calc(300 * var(--u)); }'
+      + '#mxCephView .mxc-lbl{ font-size:calc(11 * var(--u)); font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#A9B2C1; margin-bottom:calc(10 * var(--u)); }'
+      + '#mxCephView .mxc-box{ flex:1 1 auto; background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(20 * var(--u)) calc(22 * var(--u)); }'
+      + '#mxCephView .mxc-col-v .mxc-box{ display:flex; flex-direction:column; justify-content:center; }'
+      + '#mxCephView .mxc-p{ display:flex; align-items:center; }'
+      + '#mxCephView .mxc-p-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxCephView .mxc-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
+      + '#mxCephView .mxc-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
+      + '#mxCephView .mxc-p-sub b{ color:#0F172A; font-weight:700; }'
+      + '#mxCephView .mxc-ordwrap{ margin-bottom:calc(12 * var(--u)); }'
+      /* карткa «Що аналізуємо» — помітніша за решту: біла, з акцентним кантом ліворуч і глибшою тінню */
+      + '#mxCephView .mxc-ord{ position:relative; overflow:hidden; display:flex; align-items:center; gap:calc(18 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(14 * var(--u)); padding:calc(15 * var(--u)) calc(20 * var(--u)); padding-left:calc(22 * var(--u)); box-shadow:0 calc(8 * var(--u)) calc(26 * var(--u)) rgba(15,23,42,0.09); }'
+      + '#mxCephView .mxc-ord::before{ content:\'\'; position:absolute; left:0; top:0; bottom:0; width:calc(4 * var(--u)); background:#2c3bff; }'
+      + '#mxCephView .mxc-ord-main{ flex:1 1 auto; min-width:0; }'
+      + '#mxCephView .mxc-ord-go{ flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; text-align:right; gap:calc(3 * var(--u)); max-width:calc(230 * var(--u)); text-decoration:none !important; }'
+      + '#mxCephView .mxc-ord-go-t{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); font-size:calc(13 * var(--u)); font-weight:700; color:#2E3648; white-space:nowrap; letter-spacing:-0.01em; transition:color .15s ease; }'
+      + '#mxCephView .mxc-ord-go:hover .mxc-ord-go-t{ color:#0F172A; }'
+      + '#mxCephView .mxc-ord-go-t svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); transition:transform .15s ease; }'
+      + '#mxCephView .mxc-ord-go:hover .mxc-ord-go-t svg{ transform:translateX(calc(3 * var(--u))); }'
+      + '#mxCephView .mxc-ord-go-s{ font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; line-height:1.4; }'
+      + '#mxCephView .mxc-lbl-ghost{ visibility:hidden; }'
+      + '#mxCephView .mxc-ord-top{ display:flex; align-items:baseline; flex-wrap:wrap; gap:calc(4 * var(--u)) calc(9 * var(--u)); }'
+      + '#mxCephView .mxc-ord-k{ font-size:calc(12 * var(--u)); font-weight:700; letter-spacing:.02em; color:#94A3B8; flex:0 0 auto; }'
+      + '#mxCephView .mxc-ord-v{ font-size:calc(14 * var(--u)); font-weight:500; color:#334155; min-width:0; }'
+      + '#mxCephView .mxc-ord-steps{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)) calc(9 * var(--u)); margin-top:calc(11 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #EDF1F7; }'
+      + '#mxCephView .mxc-os{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; }'
+      + '#mxCephView .mxc-os-m{ font-style:normal; font-size:calc(11.5 * var(--u)); line-height:1; }'
+      + '#mxCephView .mxc-os-done{ color:#64748B; }'
+      + '#mxCephView .mxc-os-done .mxc-os-m{ color:#334155; }'
+      + '#mxCephView .mxc-os-cur{ color:#64748B; font-weight:600; }'
+      + '#mxCephView .mxc-os-cur .mxc-os-m{ color:#2c3bff; }'
+      + '#mxCephView .mxc-os-fin{ color:#64748B; font-weight:600; }'
+      + '#mxCephView .mxc-os-fin .mxc-os-m{ color:#16A34A; }'
+      + '#mxCephView .mxc-os-fut{ color:#B4BCC9; }'
+      + '#mxCephView .mxc-os-fut .mxc-os-m{ color:#CBD5E1; }'
+      + '#mxCephView .mxc-os-sep{ width:calc(16 * var(--u)); height:calc(1.5 * var(--u)); background:#E2E8F0; border-radius:calc(2 * var(--u)); flex:0 0 auto; }'
+      + '#mxCephView .mxc-v{ display:grid; grid-template-columns:max-content 1fr; column-gap:calc(14 * var(--u)); row-gap:calc(9 * var(--u)); align-items:baseline; }'
+      + '#mxCephView .mxc-v-k{ font-size:calc(12.5 * var(--u)); font-weight:600; color:#A9B2C1; }'
+      + '#mxCephView .mxc-v-v{ font-size:calc(13 * var(--u)); font-weight:500; color:#64748B; }'
+      + '#mxCephView .mxc-sec-h{ display:flex; align-items:center; gap:calc(12 * var(--u)); font-size:calc(11 * var(--u)); font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#A9B2C1; margin-bottom:calc(10 * var(--u)); }'
+      + '#mxCephView .mxc-qc{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; text-transform:none; letter-spacing:.02em; color:#64748B; }'
+      + '#mxCephView .mxc-qc svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); color:#16A34A; }'
+      + '#mxCephView .mxc-grid{ display:flex; gap:calc(22 * var(--u)); align-items:flex-start; }'
+      + '#mxCephView .mxc-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:calc(10 * var(--u)); }'
+      + '#mxCephView .mxc-side-col{ flex:0 0 calc(300 * var(--u)); align-self:flex-start; position:sticky; top:calc(18 * var(--u)); }'
+      + '#mxCephView .mxc-card{ background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(22 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.05); display:flex; align-items:center; gap:calc(18 * var(--u)); transition:border-color .16s ease, box-shadow .16s ease; }'
+      + '#mxCephView .mxc-card:hover{ border-color:#D7DEEA; box-shadow:0 6px 20px rgba(15,23,42,0.06); }'
+      + '#mxCephView .mxc-card-ic{ flex:0 0 auto; width:calc(50 * var(--u)); height:calc(50 * var(--u)); border-radius:calc(15 * var(--u)); background:#F3F5FF; display:flex; align-items:center; justify-content:center; }'
+      + '#mxCephView .mxc-card-ic svg{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); }'
+      + '#mxCephView .mxc-card-ic .b{ stroke:#9AA6BA; } #mxCephView .mxc-card-ic .a{ stroke:#2c3bff; }'
+      + '#mxCephView .mxc-card-ic-wait{ background:#F4F6F8; }'
+      + '#mxCephView .mxc-card-ic-wait svg{ color:#94A3B8; }'
+      + '#mxCephView .mxc-card-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxCephView .mxc-card-t{ font-size:calc(19 * var(--u)); font-weight:800; letter-spacing:-0.025em; line-height:1.25; color:#0F172A; }'
+      + '#mxCephView .mxc-card-s{ margin-top:calc(6 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; line-height:1.55; color:#64748B; max-width:calc(560 * var(--u)); }'
+      + '#mxCephView .mxc-wait .mxc-card-t{ color:#334155; }'
+      + '#mxCephView .mxc-dl{ flex:0 0 auto; align-self:center; display:inline-flex; align-items:center; gap:calc(9 * var(--u)); height:calc(44 * var(--u)); padding:0 calc(20 * var(--u)); background:linear-gradient(180deg,#49546B 0%,#2E3648 100%); color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14 * var(--u)); font-weight:600; border-radius:calc(11 * var(--u)); box-shadow:inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 2px rgba(15,23,42,0.14), 0 3px 8px rgba(15,23,42,0.07); transition:background .15s ease, box-shadow .15s ease; white-space:nowrap; }'
+      + '#mxCephView .mxc-dl:hover{ background:linear-gradient(180deg,#556279 0%,#353F53 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 2px 4px rgba(15,23,42,0.18), 0 8px 18px rgba(15,23,42,0.16); }'
+      + '#mxCephView .mxc-dl:active{ transform:translateY(1px); box-shadow:inset 0 1px 2px rgba(0,0,0,0.22); }'
+      + '#mxCephView .mxc-dl-ic{ display:flex; }'
+      + '#mxCephView .mxc-dl-ic svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); overflow:visible; }'
+      + '#mxCephView .mxc-dl-arr{ transform-box:fill-box; transform-origin:center; }'
+      + '#mxCephView .mxc-dl-tray{ opacity:.75; }'
+      + '#mxCephView .mxc-dl:hover .mxc-dl-arr{ animation:mxcDrop 1.15s cubic-bezier(.4,0,.2,1) infinite; }'
+      + '@keyframes mxcDrop{ 0%{ transform:translateY(0); opacity:1 } 45%{ transform:translateY(calc(3 * var(--u))); opacity:.15 } 46%{ transform:translateY(calc(-5 * var(--u))); opacity:0 } 70%{ opacity:1 } 100%{ transform:translateY(0); opacity:1 } }'
+      + '@media (prefers-reduced-motion: reduce){ #mxCephView .mxc-dl:hover .mxc-dl-arr{ animation:none } }'
+      + '#mxCephView .mxc-dl-off{ background:#E2E8F0 !important; background-image:none !important; color:#94A3B8 !important; box-shadow:none !important; cursor:not-allowed; }'
+      + '#mxCephView .mxc-dl-off:hover .mxc-dl-arr{ animation:none !important; }'
+      + '#mxCephView .mxc-got{ background:#ECFDF5 !important; background-image:none !important; border:1px solid #BBF7D0 !important; color:#047857 !important; box-shadow:none !important; }'
+      + '#mxCephView .mxc-got:hover .mxc-dl-arr{ animation:none !important; }'
+      + '#mxCephView .mxc-got svg{ color:#16A34A; }'
+      + '#mxCephView .mxc-view{ display:flex; align-items:flex-start; gap:calc(15 * var(--u)); margin-top:calc(2 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)); background:#FFFFFF; border:1px solid #E8ECF3; border-radius:calc(16 * var(--u)); }'
+      + '#mxCephView .mxc-view-ic{ flex:0 0 auto; width:calc(38 * var(--u)); height:calc(38 * var(--u)); border-radius:calc(11 * var(--u)); background:#F4F6F8; color:#94A3B8; display:flex; align-items:center; justify-content:center; }'
+      + '#mxCephView .mxc-view-ic svg{ width:calc(19 * var(--u)); height:calc(19 * var(--u)); }'
+      + '#mxCephView .mxc-view-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxCephView .mxc-view-t{ font-size:calc(13.5 * var(--u)); font-weight:700; color:#334155; letter-spacing:-0.01em; }'
+      + '#mxCephView .mxc-view-s{ margin-top:calc(5 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; line-height:1.55; color:#94A3B8; max-width:calc(620 * var(--u)); }'
+      + '#mxCephView .mxc-nav{ display:flex; align-items:center; justify-content:space-between; gap:calc(16 * var(--u)); margin-top:calc(2 * var(--u)); padding:calc(15 * var(--u)) calc(18 * var(--u)); background:#F7F9FC; border:1px solid #E8ECF3; border-radius:calc(14 * var(--u)); transition:border-color .15s ease, box-shadow .15s ease; }'
+      + '#mxCephView .mxc-nav:hover{ border-color:#D7DEEA; box-shadow:0 4px 14px rgba(15,23,42,0.05); }'
+      + '#mxCephView .mxc-nav-t{ font-size:calc(14 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#0F172A; }'
+      + '#mxCephView .mxc-nav-s{ margin-top:calc(3 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:500; color:#64748B; }'
+      + '#mxCephView .mxc-nav-b{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(7 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(15 * var(--u)); border-radius:calc(10 * var(--u)); background:#EEF2FF; color:#2c3bff !important; text-decoration:none !important; font-size:calc(13 * var(--u)); font-weight:700; transition:background .15s ease; white-space:nowrap; }'
+      + '#mxCephView .mxc-nav-b:hover{ background:#E0E7FF; }'
+      + '#mxCephView .mxc-nav-b svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxCephView .mxc-side{ background:radial-gradient(115% 150% at 100% 0%, rgba(44,59,255,0.22) 0%, rgba(44,59,255,0) 58%), #0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(22 * var(--u)); color:#fff; box-shadow:0 10px 34px rgba(15,23,42,0.14); }'
+      + '#mxCephView .mxc-eyebrow{ font-size:calc(10.5 * var(--u)); font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8A8FA3; margin-bottom:calc(13 * var(--u)); }'
+      + '#mxCephView .mxc-o-zone{ display:block; margin:calc(-6 * var(--u)) calc(-8 * var(--u)) 0; padding:calc(6 * var(--u)) calc(8 * var(--u)) calc(10 * var(--u)); border-radius:calc(12 * var(--u)); text-decoration:none !important; color:inherit !important; transition:background .18s ease; }'
+      + '#mxCephView .mxc-o-zone:hover{ background:rgba(255,255,255,0.04); }'
+      + '#mxCephView .mxc-o-t{ display:block; font-size:calc(16 * var(--u)); font-weight:800; color:#fff; letter-spacing:-0.02em; line-height:1.25; }'
+      + '#mxCephView .mxc-o-s{ display:block; font-size:calc(12.5 * var(--u)); font-weight:500; color:#9AA0B4; line-height:1.55; margin-top:calc(8 * var(--u)); }'
+      + '#mxCephView .mxc-o-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(15 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(17 * var(--u)); border-radius:calc(10 * var(--u)); background:#FFFFFF; color:#0F172A !important; text-decoration:none !important; font-size:calc(13 * var(--u)); font-weight:700; transition:transform .12s ease, box-shadow .15s ease; }'
+      + '#mxCephView .mxc-o-zone:hover .mxc-o-b{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
+      + '#mxCephView .mxc-o-b svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxCephView .mxc-foot{ margin-top:calc(18 * var(--u)); padding-top:calc(15 * var(--u)); border-top:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; gap:calc(9 * var(--u)); }'
+      + '#mxCephView .mxc-ft{ display:flex; align-items:center; gap:calc(8 * var(--u)); font-size:calc(11.5 * var(--u)); color:#9AA0B4; }'
+      + '#mxCephView .mxc-ft svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); color:#22C55E; flex:0 0 auto; }'
+      + '#mxCephView .mxc-help{ display:block; font-size:calc(12 * var(--u)); font-weight:600; color:#8B9CFF !important; text-decoration:none !important; }'
+      + '#mxCephView .mxc-help:hover{ color:#fff !important; }'
+      + 'body:has(#mxCephData) #mxProcTop, body:has(#mxCephData) #mxProcGrid{ display:none !important; }'
+      + '@media (max-width: 900px){ #mxCephView .mxc-head{ flex-direction:column; } #mxCephView .mxc-col-v{ flex-basis:auto; } #mxCephView .mxc-grid{ flex-direction:column; } #mxCephView .mxc-side-col{ width:100%; flex-basis:auto; position:static; } #mxCephView .mxc-card{ flex-wrap:wrap; } #mxCephView .mxc-dl{ width:100%; justify-content:center; } #mxCephView .mxc-steps{ flex-wrap:wrap; gap:calc(10 * var(--u)); } #mxCephView .mxc-step-line{ display:none; } #mxCephView .mxc-ord{ flex-wrap:wrap; } #mxCephView .mxc-ord-go{ width:100%; justify-content:center; } #mxCephView .mxc-lbl-ghost{ display:none; } }';
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  // шапка: ліворуч картка пацієнта, праворуч картка «Замовлення» (Статус + Номер) —
+  // однакова з екраном «Перегляд дослідження»
+  function head(d){
+    function kv(k, v){ return '<span class="mxc-v-k">' + k + '</span><span class="mxc-v-v">' + v + '</span>'; }
+    var order = kv('Статус', esc(d.status || 'В обробці'));
+    if(d.num) order += kv('Номер', esc(d.num));
+    return '<div class="mxc-head">'
+      + '<div class="mxc-col"><div class="mxc-lbl">Пацієнт</div>'
+        + '<div class="mxc-box mxc-p"><div class="mxc-p-tx">'
+          + '<div class="mxc-p-name">' + esc(d.patient || '3D Ceph аналіз') + '</div>'
+          + (d.birth ? '<div class="mxc-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
+        + '</div></div>'
+      + '</div>'
+      + '<div class="mxc-col mxc-col-v"><div class="mxc-lbl">Замовлення</div>'
+        + '<div class="mxc-box"><div class="mxc-v">' + order + '</div></div>'
+      + '</div>'
+      + '</div>';
+  }
+  // лаконічний статус: 3 кроки горизонтально, з галочками (як старий блок 4, але тихіше)
+  function orderSteps(stage){
+    var out = '';
+    for(var i = 0; i < 3; i++){
+      var n = i + 1, cls, mark;
+      if(n < stage){ cls = 'mxc-os-done'; mark = '✓'; }               // пройдено — чорна галочка
+      else if(n === stage){
+        if(n === 3){ cls = 'mxc-os-fin'; mark = '✓'; }                // «Виконано» досягнуто — зелена галочка
+        else { cls = 'mxc-os-cur'; mark = '●'; }                       // поточний проміжний — крапка
+      }
+      else { cls = 'mxc-os-fut'; mark = '○'; }
+      if(i > 0) out += '<span class="mxc-os-sep"></span>';
+      out += '<span class="mxc-os ' + cls + '"><i class="mxc-os-m">' + mark + '</i>' + STEPS[i] + '</span>';
+    }
+    return out;
+  }
+  function orderBlock(d, stage){
+    var zona = d.zone
+      ? '<span class="mxc-ord-k">Тип аналізу</span><span class="mxc-ord-v">' + esc(d.zone || '3D Ceph') + '</span>'
+      : '<span class="mxc-ord-k">Тип аналізу</span><span class="mxc-ord-v">3D Ceph</span>';
+    // перехід до картки дослідження, за яким зроблено опис — навігація стилем «текст зі стрілкою»
+    var go = d.parent
+      ? '<a class="mxc-ord-go" href="/client/order/' + esc(d.parent) + '/">'
+          + '<span class="mxc-ord-go-t">Перейти до знімку' + ARR + '</span>'
+          + '<span class="mxc-ord-go-s">на основі якого виконано 3D Ceph</span>'
+        + '</a>'
+      : '';
+    return '<div class="mxc-ordwrap"><div class="mxc-lbl">Що аналізуємо</div>'
+      + '<div class="mxc-ord">'
+        + '<div class="mxc-ord-main">'
+          + '<div class="mxc-ord-top">' + zona + '</div>'
+          + '<div class="mxc-ord-steps">' + orderSteps(stage) + '</div>'
+        + '</div>'
+        + go
+      + '</div></div>';
+  }
+
+  function resultCard(d, stage, ready){
+    if(ready){
+      return '<div class="mxc-card">'
+        + '<div class="mxc-card-ic">' + DOC + '</div>'
+        + '<div class="mxc-card-tx"><div class="mxc-card-t">3D Ceph аналіз готовий</div>'
+          + '<div class="mxc-card-s">PDF-звіт цефалометричного аналізу' + '</div></div>'
+        + '<a class="mxc-dl" href="' + esc(d.pdf) + '" target="_blank" rel="noopener" data-mx-dl="1">' + DL + 'Завантажити</a>'
+      + '</div>';
+    }
+    var t, s;
+    if(stage === 1){ t = 'Дослідження готується до аналізу'; s = 'Найближчим часом розпочнемо цефалометричний аналіз. Кнопка «Завантажити» стане активною по готовності.'; }
+    else { t = 'Виконуємо цефалометричний аналіз'; s = 'Аналіз уже у роботі. Щойно звіт буде готовий, PDF зʼявиться тут для завантаження.'; }
+    return '<div class="mxc-card mxc-wait">'
+      + '<div class="mxc-card-ic mxc-card-ic-wait">' + HOUR + '</div>'
+      + '<div class="mxc-card-tx"><div class="mxc-card-t">' + t + '</div><div class="mxc-card-s">' + s + '</div></div>'
+      + '<span class="mxc-dl mxc-dl-off">' + DL + 'Завантажити</span>'
+    + '</div>';
+  }
+
+  // «Як переглянути» — тихий блок під результатом. Для опису відповідь завжди однакова:
+  // це PDF, відкривається будь-де. Клієнт не має ставити це питання.
+  function viewCard(ready){
+    if(!ready) return '';
+    return '<div class="mxc-view">'
+      + '<div class="mxc-view-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M9 13h6M9 17h4"/></svg></div>'
+      + '<div class="mxc-view-tx">'
+        + '<div class="mxc-view-t">Як переглянути аналіз</div>'
+        + '<div class="mxc-view-s">Звіт — це звичайний PDF-файл. Відкривається на будь-якому пристрої: компʼютері, планшеті чи смартфоні. Нічого встановлювати не потрібно.</div>'
+      + '</div>'
+    + '</div>';
+  }
+
+  function navCard(d){
+    if(!d.parent) return '';
+    return '<div class="mxc-nav">'
+      + '<div class="mxc-nav-tx"><div class="mxc-nav-t">Перейти до дослідження</div>'
+        + '<div class="mxc-nav-s">Знімок, на основі якого виконано опис</div></div>'
+      + '<a class="mxc-nav-b" href="/client/order/' + esc(d.parent) + '/">Відкрити' + ARR + '</a>'
+    + '</div>';
+  }
+
+  // права панель: цінність опису, без CTA і без «напишіть питання» — описи детальні,
+  // додаткових дій продавати нема чого
+  function sidePanel(d){
+    return '<div class="mxc-side">'
+      + '<div class="mxc-o-t">Аналіз за 10+ авторами</div>'
+      + '<div class="mxc-o-s">Цефалометричні розрахунки виконуються за 10+ визнаними авторами та протоколами, з перевіркою якості.</div>'
+      + '<div class="mxc-foot">'
+        + '<div class="mxc-ft">' + CHECK + 'Зберігається тут 2 роки</div>'
+      + '</div>'
+    + '</div>';
+  }
+
+  function build(d){
+    var stage = stageOf(d.status);
+    var ready = (stage === 3 && !!d.pdf);
+    var secH = '<div class="mxc-sec-h">Результат аналізу' + (ready ? '<span class="mxc-qc">' + CHECK + 'якість перевірено</span>' : '') + '</div>';
+    return '<div id="mxCephView">'
+      + '<div class="mxc-top">'
+        + '<a class="mxc-back" href="' + BACK_URL + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Всі аналізи</a>'
+        + '<span class="mxc-safe">' + SHIELD + 'Дані захищені</span>'
+      + '</div>'
+      + head(d)
+      + '<div class="mxc-grid"><div class="mxc-main">'
+        + orderBlock(d, stage)
+        + secH
+        + resultCard(d, stage, ready)
+        + viewCard(ready)
+      + '</div>'
+      // праворуч — свій заголовок-секція (єдиний для всіх екранів процесів), панель опускається до рівня картки
+      + '<div class="mxc-side-col"><div class="mxc-lbl">Корисна інформація</div>' + sidePanel(d) + '</div></div>'
+    + '</div>';
+  }
+
+  function markDownloads(root){
+    Array.prototype.forEach.call(root.querySelectorAll('[data-mx-dl]'), function(a){
+      a.addEventListener('click', function(){
+        if(a.classList.contains('mxc-got')) return;
+        a.classList.add('mxc-got');
+        var txt = a.lastChild;
+        if(txt && txt.nodeType === 3) txt.textContent = 'Завантажено';
+      });
+    });
+  }
+
+  function mobileOrder(root){
+    var mq = window.matchMedia('(max-width: 900px)');
+    var grid = root.querySelector('.mxc-grid');
+    var side = root.querySelector('.mxc-side-col');
+    var main = root.querySelector('.mxc-main');
+    if(!grid || !side || !main) return;
+    function place(){
+      if(mq.matches){
+        var hero = main.querySelector('.mxc-card');
+        if(hero && side.parentNode !== main){ hero.parentNode.insertBefore(side, hero.nextSibling); }
+      } else if(side.parentNode !== grid){
+        grid.appendChild(side);
+      }
+    }
+    place();
+    if(mq.addEventListener) mq.addEventListener('change', place);
+    else if(mq.addListener) mq.addListener(place);
+  }
+
+  var waited = 0;
+  function apply(){
+    var src = document.getElementById('mxCephData');
+    if(!src) return false;
+    if(document.getElementById('mxCephView')) return true;
+
+    var d = read(src);
+    // статус приходить з «Універсального блока», який може дорендеритись пізніше:
+    // чекаємо його до ~3с, щоб не показати «В обробці» замість реального статусу
+    if(!d.status && waited < 20){ waited++; return false; }
+    css();
+
+    (function(){
+      var n = 0;
+      var h = setInterval(function(){
+        n++;
+        ['mxProcTop', 'mxProcGrid'].forEach(function(id){
+          var e = document.getElementById(id); if(e) e.style.setProperty('display', 'none', 'important');
+        });
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.client-cell-body:not(.aside-left):not(.aside-right) .os-block-element, .client-cell-body:not(.aside-left):not(.aside-right) .os-block-form'),
+          function(e){ if(!e.closest('#mxCephView')) e.style.setProperty('display', 'none', 'important'); }
+        );
+        if(n > 60) clearInterval(h);
+      }, 150);
+    })();
+
+    var host = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)') || src.parentNode;
+    var wrap = document.createElement('div');
+    wrap.innerHTML = build(d);
+    var view = wrap.firstChild;
+    host.insertBefore(view, host.firstChild);
+    markDownloads(view);
+    mobileOrder(view);
+    return true;
+  }
+
+  function watch(){
+    var tries = 0;
+    var t = setInterval(function(){
+      tries++;
+      if(apply() || tries > 80) clearInterval(t);
+    }, 150);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
+  window.addEventListener('mx:navigated', watch);
+})();
+</script>
