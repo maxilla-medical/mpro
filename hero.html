@@ -3912,7 +3912,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         var LIST_INFO = {
             patients: 'Знімки доступні одразу після виконання',
             reports:  'Виконуємо напротязі 3 робочих днів',
-            ceph:     'Звіт з аналізами за 10+ авторами',
+            ceph:     'За 10+ авторами - Виконуємо напротязі 3 робочих днів',
             superimp: 'Виконуємо напротязі 3 робочих днів',
             guides:   'Виготовляємо за 48 годин з моменту погодження планування',
             print:    'Друкуємо за 48 годин з моменту підтвердження замовлення'
@@ -3946,6 +3946,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             if(!col) return false;
             var table = col.querySelector('table.os-table');
             if(!table) return false;   // таблиця ще не відрендерилась — пробуємо ще
+            // «Описи знімків» (/myorders/) — сторінковий H1 схлопнутий (0px проти 20px на custompage),
+            // через що пошук стоїть на ~20px вище. Вирівнюємо відступ панелі під решту розділів.
+            if(key === 'reports'){
+                var rpanel = col.querySelector('.os-block-panel');
+                if(rpanel && !rpanel.getAttribute('data-mxgap')){ rpanel.style.marginTop = 'calc(18 * var(--u))'; rpanel.setAttribute('data-mxgap', '1'); }
+            }
             // тиха підпис ПОРУЧ із заголовком таблиці («Найновіші …»), тим самим кольором, без картки
             var lbl = col.querySelector('.mx-sec-label');
             if(lbl && LIST_INFO[key] && !lbl.querySelector('.mx-list-cap')){
