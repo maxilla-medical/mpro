@@ -6084,6 +6084,14 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 #mxSetView .mxs-pw .wrap{ display:block !important; width:100% !important; }
 #mxSetView .mxs-pw .w-element{ display:block !important; width:100% !important; padding:0 !important; }
 #mxSetView .mxs-pw .w-element + .w-element{ margin-top:calc(13 * var(--u)); }
+/* знімаємо рідну «картку» форми OneBox + колонковий layout, щоб не було картки в картці
+   і щоб поля/кнопка стояли вертикально, а не в колонки */
+#mxSetView form, #mxSetView .os-block-form, #mxSetView .client-wrap-element{ display:block !important; width:100% !important; max-width:none !important; margin:0 !important; padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; }
+/* .columns розкладає поля у 2 CSS-колонки (column-count:2) — вимикаємо, робимо один стовпчик на всю ширину */
+#mxSetView .os-block-form, #mxSetView .columns{ -webkit-columns:auto !important; columns:auto !important; column-count:1 !important; column-width:auto !important; }
+#mxSetView .os-block-form .element{ float:none !important; width:100% !important; clear:both !important; margin-left:0 !important; margin-right:0 !important; break-inside:avoid; }
+#mxSetView .mxs-pw, #mxSetView .mxs-pw .wrap{ margin:0 !important; padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important; }
+#mxSetView .mxs-btnwrap{ float:none !important; clear:both !important; width:100% !important; margin-top:calc(18 * var(--u)); text-align:left !important; }
 #mxSetView .mxs-field{ display:flex; flex-direction:column; gap:calc(7 * var(--u)); }
 #mxSetView .mxs-flbl{ font-size:calc(12.5 * var(--u)); font-weight:700; color:#0F172A; letter-spacing:-0.01em; }
 #mxSetView input[name="oldpassword"], #mxSetView input[name="password"]{ width:100% !important; box-sizing:border-box; height:calc(46 * var(--u)) !important; padding:0 calc(14 * var(--u)) !important; font-family:'Manrope',sans-serif; font-size:calc(13.5 * var(--u)) !important; color:#0F172A !important; background:#FFFFFF !important; border:1.5px solid #E2E8F0 !important; border-radius:calc(12 * var(--u)) !important; outline:none; transition:border-color .15s ease, box-shadow .15s ease; margin:0 !important; }
@@ -6224,7 +6232,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var sec = document.createElement('div'); sec.className = 'mxs-card';
     var secHead = document.createElement('div');
     secHead.innerHTML = '<div class="mxs-card-t">Змінити пароль</div><div class="mxs-card-s">Єдине, що можна змінити самостійно</div>';
-    var slot = form.parentNode;
+    // топ-блок форми = прямий нащадок main; запамʼятовуємо його місце, щоб вставити
+    // наш блок ТУТ (над футером), а не в кінець main (інакше футер лізе вгору)
+    var topBlock = form; while(topBlock.parentElement && topBlock.parentElement !== main) topBlock = topBlock.parentElement;
+    var anchorNext = topBlock ? topBlock.nextSibling : null;
+    // кнопку «Зберегти» ставимо одразу після полів пароля, поза центрованою обгорткою
+    if(save && save.parentNode){ var bw = document.createElement('div'); bw.className = 'mxs-btnwrap'; pwRow.insertAdjacentElement('afterend', bw); bw.appendChild(save); }
     sec.appendChild(secHead);
     sec.appendChild(form);
     col.appendChild(sec);
@@ -6232,9 +6245,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     aside.innerHTML = darkPanel();
     grid.appendChild(col); grid.appendChild(aside);
     view.appendChild(grid);
-    // монтуємо на всю ширину головної колонки; стару (вузьку) обгортку форми ховаємо
-    main.appendChild(view);
-    if(slot && slot !== main && !slot.contains(view)) slot.style.setProperty('display', 'none', 'important');
+    // вставляємо на місце оригінального блоку форми (над футером); порожній блок ховаємо
+    if(topBlock && topBlock.parentElement === main){
+      main.insertBefore(view, topBlock);
+      topBlock.style.setProperty('display', 'none', 'important');
+    } else if(anchorNext && anchorNext.parentNode === main){
+      main.insertBefore(view, anchorNext);
+    } else {
+      main.appendChild(view);
+    }
 
     main.setAttribute('data-mxs', '1');
     return true;
