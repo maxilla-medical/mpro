@@ -3931,8 +3931,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var st = document.createElement('style'); st.id = 'mxListCss';
             var S = '.client-cell-body:not(.aside-left):not(.aside-right) ';
             st.textContent = ''
-                + S + '.mx-list-info{ display:flex; align-items:center; gap:calc(7 * var(--u)); margin:calc(-6 * var(--u)) 0 calc(14 * var(--u)); font-family:\'Manrope\',sans-serif; font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
-                + S + '.mx-list-info svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); flex:0 0 auto; color:#B4BCC9; }'
+                + S + '.mx-sec-label .mx-list-cap{ margin-left:calc(14 * var(--u)); font-weight:500; font-size:calc(12.5 * var(--u)); text-transform:none; letter-spacing:0; color:inherit; opacity:.82; white-space:normal; }'
                 + S + '.mx-empty{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); padding:calc(42 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); font-family:\'Manrope\',sans-serif; animation:mxUp .35s ease both; }'
                 + S + '.mx-empty-ic{ width:calc(58 * var(--u)); height:calc(58 * var(--u)); border-radius:50%; background:#F4F6FB; display:flex; align-items:center; justify-content:center; color:#A9B2C1; margin-bottom:calc(4 * var(--u)); }'
                 + S + '.mx-empty-ic svg{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); }'
@@ -3947,12 +3946,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             if(!col) return false;
             var table = col.querySelector('table.os-table');
             if(!table) return false;   // таблиця ще не відрендерилась — пробуємо ще
-            // тиха підпис-строка ПІД заголовком таблиці («Найновіші …»), без картки
+            // тиха підпис ПОРУЧ із заголовком таблиці («Найновіші …»), тим самим кольором, без картки
             var lbl = col.querySelector('.mx-sec-label');
-            if(lbl && LIST_INFO[key] && !col.querySelector('.mx-list-info')){
-                var strip = document.createElement('div'); strip.className = 'mx-list-info';
-                strip.innerHTML = INFO_ICO + '<span>' + LIST_INFO[key] + '</span>';
-                lbl.parentNode.insertBefore(strip, lbl.nextSibling);
+            if(lbl && LIST_INFO[key] && !lbl.querySelector('.mx-list-cap')){
+                var cap = document.createElement('span'); cap.className = 'mx-list-cap';
+                cap.textContent = LIST_INFO[key];
+                lbl.appendChild(cap);
             }
             var dataRows = table.querySelectorAll('tbody tr a[href*="/order/"]').length;
             var wrap = col.querySelector('.os-overflow-table');
@@ -3992,8 +3991,14 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         }
         function sweep(){
             Array.prototype.forEach.call(document.querySelectorAll('td, .mx-cell-name'), function(td){
-                if(td.children.length || td.__mxN) return;
+                if(td.children.length) return;
                 var t = (td.textContent || '').trim();
+                // дата в таблицях — без часу: «29.10.2024, 17:18» → «29.10.2024»
+                if(!td.__mxD){
+                    var dm = t.match(/^(\d{1,2}\.\d{1,2}\.\d{4})[\s,]+\d{1,2}:\d{2}(?::\d{2})?$/);
+                    if(dm){ td.textContent = dm[1]; td.__mxD = 1; return; }
+                }
+                if(td.__mxN) return;
                 if(t.length < 4 || t.length > 60) return;
                 if(!/^[A-ZА-ЯІЇЄҐ][A-ZА-ЯІЇЄҐ\s'ʼ’.\-]+$/.test(t)) return;   // лише суцільний КАПС
                 var n = norm(t);
