@@ -1030,6 +1030,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         if(p.indexOf('custompage/57') !== -1) return 'superimp';
         if(p.indexOf('custompage/58') !== -1) return 'guides';
         if(p.indexOf('custompage/59') !== -1) return 'print';
+        if(p.indexOf('mybonus') !== -1) return 'bonus';
         if(p.indexOf('/order/') !== -1) return 'process';
         if(p.indexOf('/form/') !== -1) return 'form';
         return 'home';
@@ -1040,7 +1041,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         ceph:     { title:'3D-Ceph аналізи', sub:'Цефалометричні аналізи знімків' },
         superimp: { title:'Суперімпозиція', sub:'Накладання знімків до і після лікування' },
         guides:   { title:'Шаблони', sub:'Хірургічні навігаційні шаблони' },
-        print:    { title:'3D-друк', sub:'Друк навігаційних шаблонів' }
+        print:    { title:'3D-друк', sub:'Друк навігаційних шаблонів' },
+        bonus:    { title:'Мої бонуси', sub:'Бонуси за направлених вами пацієнтів' }
     };
     var CTA = {
         guides:   { text:'Замовити шаблон', icon:'plus', href:'https://maxilla.pro/client/form/6/' },
@@ -3890,7 +3892,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     // page-aware CTA (закриває PENDING #2)
     var ctaCfg = CTA[key] || CTA_DEFAULT;
     var ctaEl = document.getElementById('mxHeroCta');
-    if(ctaEl){
+    if(key === 'bonus'){
+        // на сторінці бонусів немає дії «замовити» — ховаємо кнопку
+        if(ctaEl) ctaEl.style.display = 'none';
+    } else if(ctaEl){
+        ctaEl.style.display = '';
         ctaEl.setAttribute('href', ctaCfg.href);
         var ctaTxt = document.getElementById('mxHeroCtaText');
         if(ctaTxt) ctaTxt.textContent = ctaCfg.text;
@@ -5783,6 +5789,215 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       tries++;
       if(apply() || tries > 80) clearInterval(t);
     }, 150);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
+  window.addEventListener('mx:navigated', watch);
+})();
+</script>
+
+<!-- ============================================================================
+     MX-BONUS — екран «Мої бонуси» (/client/mybonus/).
+
+     Декоратор поверх рідної таблиці OneBox (Дата / Сума / Номер процесу):
+     таблицю лишаємо живою (динамічні рядки), лише перейменовуємо шапку в укр.,
+     чистимо суми (+/−, без .00), олюднюємо відносні дати й кладемо все у
+     2-колонкову сітку разом із темною панеллю-поясненням бонусної програми.
+     Баланс беремо з бічного блоку «Бонус» (Універсальний блок клієнта).
+     Самодостатній блок — від решти hero.html не залежить.
+============================================================================ -->
+<script>
+(function(){
+  if(location.pathname.indexOf('mybonus') === -1) return;
+  window.__mxBonus = true;
+
+  function css(){
+    if(document.getElementById('mxBonusCss')) return;
+    var st = document.createElement('style'); st.id = 'mxBonusCss';
+    st.textContent = `
+#mxBonusView{ font-family:'Manrope',sans-serif; margin-top:calc(10 * var(--u)); animation:mxBUp .35s ease both; }
+@keyframes mxBUp{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+#mxBonusView .mxb-grid{ display:grid; grid-template-columns:minmax(0,1fr) calc(360 * var(--u)); gap:calc(24 * var(--u)); align-items:start; }
+@media (max-width:900px){ #mxBonusView .mxb-grid{ grid-template-columns:1fr; } }
+
+#mxBonusView .mxb-h{ margin:0 0 calc(14 * var(--u)) !important; padding:0 !important; font-size:calc(19 * var(--u)) !important; font-weight:800 !important; letter-spacing:-0.02em; color:#0F172A !important; line-height:1.2; }
+
+#mxBonusView .os-overflow-table.standalone{ margin:0 !important; padding:0 !important; background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); overflow:hidden; }
+#mxBonusView table.os-table{ width:100% !important; border-collapse:collapse !important; margin:0 !important; table-layout:auto !important; }
+#mxBonusView table.os-table thead th, #mxBonusView table.os-table thead td{ text-align:left !important; padding:calc(14 * var(--u)) calc(22 * var(--u)) !important; font-size:calc(11 * var(--u)) !important; font-weight:700 !important; text-transform:uppercase; letter-spacing:0.06em; color:#94A3B8 !important; background:#F8FAFC !important; border:0 !important; border-bottom:1px solid #EEF1F6 !important; white-space:nowrap; }
+#mxBonusView table.os-table tbody td{ padding:calc(16 * var(--u)) calc(22 * var(--u)) !important; font-size:calc(14 * var(--u)) !important; font-weight:600 !important; color:#0F172A !important; border:0 !important; border-bottom:1px solid #F1F4F9 !important; vertical-align:middle; background:transparent !important; }
+#mxBonusView table.os-table tbody tr:last-child td{ border-bottom:0 !important; }
+#mxBonusView table.os-table tbody tr:hover td{ background:#FAFBFE !important; }
+#mxBonusView .mxb-date{ color:#64748B !important; font-weight:600 !important; }
+#mxBonusView .mxb-sum{ font-weight:800 !important; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
+#mxBonusView td.mxb-sum.mxb-pos{ color:#16A34A !important; }
+#mxBonusView td.mxb-sum.mxb-neg{ color:#DC2626 !important; }
+#mxBonusView td.mxb-proc{ color:#475569 !important; font-weight:600 !important; font-variant-numeric:tabular-nums; }
+#mxBonusView .mxb-proc a{ color:#475569 !important; font-weight:600 !important; text-decoration:none !important; border-bottom:1px solid transparent; transition:color .15s ease, border-color .15s ease; }
+#mxBonusView .mxb-proc a:hover{ color:#2c3bff !important; border-bottom-color:rgba(44,59,255,0.35); }
+
+#mxBonusView .mxb-aside{ position:sticky; top:calc(16 * var(--u)); align-self:start; }
+#mxBonusView .mxb-card{ position:relative; overflow:hidden; background:linear-gradient(158deg,#151D30 0%,#0B1120 100%); border:1px solid rgba(255,255,255,0.06); border-radius:calc(20 * var(--u)); padding:calc(26 * var(--u)) calc(24 * var(--u)); color:#E7ECF5; box-shadow:0 calc(18 * var(--u)) calc(40 * var(--u)) rgba(11,17,32,0.26); }
+#mxBonusView .mxb-card::before{ content:""; position:absolute; top:calc(-70 * var(--u)); right:calc(-55 * var(--u)); width:calc(190 * var(--u)); height:calc(190 * var(--u)); background:radial-gradient(circle, rgba(44,59,255,0.34), transparent 68%); pointer-events:none; }
+#mxBonusView .mxb-card > *{ position:relative; }
+
+#mxBonusView .mxb-bal-lbl{ font-size:calc(11.5 * var(--u)); font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#8A97B4; }
+#mxBonusView .mxb-bal{ display:flex; align-items:baseline; gap:calc(8 * var(--u)); margin-top:calc(7 * var(--u)); }
+#mxBonusView .mxb-bal-n{ font-size:calc(46 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1; color:#FFFFFF; font-variant-numeric:tabular-nums; }
+#mxBonusView .mxb-bal-u{ font-size:calc(15 * var(--u)); font-weight:600; color:#AEB8D0; }
+#mxBonusView .mxb-div{ height:1px; background:rgba(255,255,255,0.09); margin:calc(22 * var(--u)) 0; }
+
+#mxBonusView .mxb-sec-t{ font-size:calc(15.5 * var(--u)); font-weight:800; letter-spacing:-0.015em; color:#FFFFFF; margin:0 0 calc(10 * var(--u)); }
+#mxBonusView .mxb-p{ font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.6; color:#B8C2D9; margin:0; }
+#mxBonusView .mxb-p .mxb-hl{ color:#8FA0FF; font-weight:800; }
+
+#mxBonusView .mxb-spend-t{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#8A97B4; margin:calc(20 * var(--u)) 0 calc(13 * var(--u)); }
+#mxBonusView .mxb-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:calc(11 * var(--u)); }
+#mxBonusView .mxb-list li{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:600; color:#DCE3F2; line-height:1.35; }
+#mxBonusView .mxb-list li svg{ flex:0 0 auto; width:calc(17 * var(--u)); height:calc(17 * var(--u)); margin-top:calc(1 * var(--u)); color:#22C55E; }
+#mxBonusView .mxb-note{ margin-top:calc(22 * var(--u)); padding-top:calc(16 * var(--u)); border-top:1px solid rgba(255,255,255,0.09); font-size:calc(12 * var(--u)); font-weight:500; line-height:1.55; color:#7E8BA8; }
+
+#mxBonusView .mxb-empty{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); padding:calc(44 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); }
+#mxBonusView .mxb-empty-ic{ width:calc(58 * var(--u)); height:calc(58 * var(--u)); border-radius:50%; background:#F4F6FB; display:flex; align-items:center; justify-content:center; color:#A9B2C1; margin-bottom:calc(4 * var(--u)); }
+#mxBonusView .mxb-empty-ic svg{ width:calc(26 * var(--u)); height:calc(26 * var(--u)); }
+#mxBonusView .mxb-empty-t{ font-size:calc(17 * var(--u)); font-weight:800; letter-spacing:-0.02em; color:#0F172A; }
+#mxBonusView .mxb-empty-s{ font-size:calc(13.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.55; max-width:calc(420 * var(--u)); }
+`;
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  function balance(){
+    var v = '';
+    Array.prototype.forEach.call(document.querySelectorAll('.js-data-element, .ob-data-element'), function(e){
+      if(v) return;
+      var cap = ((e.querySelector('.flex-caption') || { textContent:'' }).textContent || '').toLowerCase();
+      if(cap.indexOf('бонус') === -1) return;
+      var dv = e.querySelector('.data-view, .flex-value');
+      if(dv){ v = (dv.textContent || '').trim(); }
+    });
+    return v;
+  }
+
+  function fmtDate(s){
+    s = (s || '').trim();
+    return s
+      .replace(/только\s*что/i, 'щойно')
+      .replace(/(\d+)\s*сек\.?\s*назад/i, '$1 с тому')
+      .replace(/(\d+)\s*(мин|хв)\.?\s*назад/i, '$1 хв тому')
+      .replace(/(\d+)\s*(час|ч|год)\.?\s*назад/i, '$1 год тому')
+      .replace(/(\d+)\s*(дн|дней|дня)\.?\s*назад/i, '$1 дн тому')
+      .replace(/назад/i, 'тому');
+  }
+
+  function fmtSum(raw){
+    var s = (raw || '').trim();
+    var num = parseFloat(s.replace(',', '.').replace(/[^\d.\-]/g, ''));
+    if(isNaN(num)) return { txt:s, cls:'' };
+    var neg = num < 0 || /^\s*[-−]/.test(s);
+    var abs = Math.abs(num);
+    var disp = String(abs).replace(/\.0+$/, '');
+    return { txt:(neg ? '−' : '+') + disp, cls:(neg ? 'mxb-neg' : 'mxb-pos') };
+  }
+
+  function panel(bal){
+    var chk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    var items = ['Діагностику — КТ та знімки', 'Описи знімків', '3D-Ceph аналізи', 'Суперімпозицію', 'Хірургічні шаблони', '3D-друк'];
+    var li = items.map(function(x){ return '<li>' + chk + '<span>' + x + '</span></li>'; }).join('');
+    var balN = (bal || '').replace(/\.0+$/, '');
+    var balHtml = balN
+      ? '<div class="mxb-bal-lbl">Ваш баланс</div>'
+        + '<div class="mxb-bal"><span class="mxb-bal-n">' + balN + '</span><span class="mxb-bal-u">бонусів</span></div>'
+        + '<div class="mxb-div"></div>'
+      : '';
+    return '<div class="mxb-card">'
+      + balHtml
+      + '<div class="mxb-sec-t">Як працює бонусна програма</div>'
+      + '<p class="mxb-p">Нараховуємо <span class="mxb-hl">10%</span> бонусів від суми, яку сплатив кожен направлений вами пацієнт.</p>'
+      + '<div class="mxb-spend-t">Витрачайте бонуси на</div>'
+      + '<ul class="mxb-list">' + li + '</ul>'
+      + '<div class="mxb-note">Бонуси зараховуються після того, як пацієнт оплатив послугу.</div>'
+      + '</div>';
+  }
+
+  function decorate(table, mainCol){
+    var box = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9.5h18M7.5 14h9M7.5 16.5h5"/></svg>';
+    var rows = table.querySelectorAll('tbody tr');
+    var dataRows = 0;
+    Array.prototype.forEach.call(rows, function(tr){
+      var tds = tr.querySelectorAll('td');
+      var txt = (tr.textContent || '').trim();
+      var empty = /дані відсутні|данные отсутствуют|немає даних|нет данных/i.test(txt);
+      if(tds.length < 2 || empty) return;
+      dataRows++;
+      var d0 = tds[0];
+      if(!d0.getAttribute('data-mxb') && d0.children.length === 0){ d0.textContent = fmtDate(d0.textContent); }
+      d0.classList.add('mxb-date'); d0.setAttribute('data-mxb', '1');
+      var s1 = tds[1];
+      if(!s1.getAttribute('data-mxb') && s1.children.length === 0){
+        var f = fmtSum(s1.textContent);
+        s1.textContent = f.txt;
+        s1.classList.add('mxb-sum'); if(f.cls) s1.classList.add(f.cls);
+        s1.setAttribute('data-mxb', '1');
+      } else { s1.classList.add('mxb-sum'); }
+      var p2 = tds[2];
+      if(p2){ p2.classList.add('mxb-proc'); p2.setAttribute('data-mxb', '1'); }
+    });
+    var wrap = mainCol.querySelector('.os-overflow-table');
+    if(dataRows === 0){
+      if(wrap) wrap.style.display = 'none';
+      if(!mainCol.querySelector('.mxb-empty')){
+        var e = document.createElement('div'); e.className = 'mxb-empty';
+        e.innerHTML = '<div class="mxb-empty-ic">' + box + '</div>'
+          + '<div class="mxb-empty-t">Бонусів поки немає</div>'
+          + '<div class="mxb-empty-s">Тут зʼявляться нарахування, коли направлені вами пацієнти оплатять діагностику чи послуги.</div>';
+        mainCol.appendChild(e);
+      }
+    } else if(wrap){ wrap.style.display = ''; }
+  }
+
+  function apply(){
+    var main = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+    if(!main) return false;
+    var host = main.querySelector('.os-mainer-inner');
+    if(!host) return false;
+    if(host.getAttribute('data-mxb')) return true;
+    var table = host.querySelector('table.os-table');
+    if(!table) return false;   // таблиця ще не відрендерилась
+    css();
+
+    // прибираємо фільтр-«Фільтрувати» — на короткій історії бонусів він зайвий
+    var tog = main.querySelector('.nc-params-form-toggler'); if(tog) tog.style.display = 'none';
+    var pf  = main.querySelector('.os-block-form.params-form'); if(pf) pf.style.display = 'none';
+
+    // шапка таблиці — українською
+    var HEAD = ['Дата', 'Сума', 'Номер процесу'];
+    var ths = table.querySelectorAll('thead th, thead td');
+    Array.prototype.forEach.call(ths, function(th, i){ if(HEAD[i] != null) th.textContent = HEAD[i]; });
+
+    var tableWrap = host.querySelector('.os-overflow-table') || table.parentElement;
+    var h2 = tableWrap.querySelector('h2');
+    // прибираємо голі <br> — вони псують ритм сітки
+    Array.prototype.forEach.call(host.children, function(c){ if(c.tagName === 'BR') c.parentNode.removeChild(c); });
+
+    var view = document.createElement('div'); view.id = 'mxBonusView';
+    var grid = document.createElement('div'); grid.className = 'mxb-grid';
+    var mainCol = document.createElement('div'); mainCol.className = 'mxb-main';
+    var aside = document.createElement('div'); aside.className = 'mxb-aside';
+    if(h2){ h2.className = 'mxb-h'; mainCol.appendChild(h2); }
+    mainCol.appendChild(tableWrap);
+    aside.innerHTML = panel(balance());
+    grid.appendChild(mainCol); grid.appendChild(aside);
+    view.appendChild(grid);
+    host.appendChild(view);
+
+    decorate(table, mainCol);
+    host.setAttribute('data-mxb', '1');
+    return true;
+  }
+
+  function watch(){
+    var tries = 0;
+    var t = setInterval(function(){ tries++; if(apply() || tries > 80) clearInterval(t); }, 150);
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
   else watch();
