@@ -82,7 +82,11 @@ html #mxProcGrid .os-block-form .element.mx-req-miss textarea:focus{ border-colo
 /* панель вирівнюється по верхній межі картки форми (відступ = висота заголовка) */
 #mxProcGrid .mx-col-side .mx-side{ margin-top:var(--mx-head-h, 0px); flex:0 0 auto; }   /* панель за висотою вмісту, а не колонки */
 /* обгортка форми добирає вільну висоту → кнопка притиснута до низу, низ = низ панелі (навіть коли форма коротша за панель, напр. F2) */
-#mxProcGrid .mx-col-form > [id^="js-client-universal-form"]{ flex:1 1 auto !important; min-height:0 !important; }
+/* grow:0 — форма НЕ розтягується по висоті колонки. Інакше на короткій формі (напр. 3D-друк:
+   лише завантаження STL) права панель «Як це працює» вища за форму, align-items:stretch тягне
+   ліву колонку, і картка через flex-grow вбирала слабину (48px порожнечі всередині), відриваючи
+   кнопку «Надіслати» вниз. shrink:1 + min-height:0 лишаємо. На високих формах grow і так був no-op. */
+#mxProcGrid .mx-col-form > [id^="js-client-universal-form"]{ flex:0 1 auto !important; min-height:0 !important; }
 /* лівий заголовок над формою (ліва вісь) */
 .mx-col-form .mx-form-head{ margin:0 0 calc(20 * var(--u)); text-align:left; }
 .mx-col-form .mx-form-head .mx-fill{ justify-content:flex-start; margin:0 0 calc(16 * var(--u)); }
