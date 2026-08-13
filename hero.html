@@ -1050,6 +1050,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         superimp: { text:'Замовити Суперімпозицію', icon:'plus', href:'https://maxilla.pro/client/form/9/' }
     };
     var CTA_DEFAULT = { text:'Записати пацієнта', icon:'user-plus', href:'https://maxilla.pro/client/form/8/' };
+    // ── КОНТАКТ МЕНЕДЖЕРА · ЄДИНЕ МІСЦЕ ──────────────────────────────────────
+    // Показується на екрані «Мої бонуси» (і будь-де далі, де читаємо MX_MANAGER).
+    // Змінився менеджер — правимо ТУТ і пушимо hero.html. Порожній phone → кнопки
+    // телефону немає. tg — юзернейм Telegram без «@».
+    window.MX_MANAGER = { name: 'Анна Байдак', phone: '', tg: 'abmaxilla' };
     var titleEl = document.getElementById('mxHeroTitle');
     var dateEl  = document.getElementById('mxHeroDate');
     var subEl   = document.getElementById('mxHeroSub');
@@ -5908,17 +5913,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return { txt:(neg ? '−' : '+') + disp, cls:(neg ? 'mxb-neg' : 'mxb-pos') };
   }
 
-  // менеджер клієнта: імʼя й телефон беремо з окремого прихованого блоку #mxMgrData
-  // (OneBox-блок «Вставка коду» на сторінці бонусів; атрибути data-name / data-phone).
-  // Кабінет НЕ виводить менеджера в HTML сам, а контактна форма клієнта містить
-  // телефон САМОГО клієнта — тому з неї не читаємо, щоб не показати чужі дані.
+  // менеджер клієнта: беремо з константи MX_MANAGER (єдине місце — верх hero.html).
+  // Кабінет НЕ віддає менеджера в HTML, тож тримаємо контакт у коді й керуємо ним
+  // через GitHub. Змінити менеджера — правимо MX_MANAGER угорі hero.html.
   function manager(){
-    var d = document.getElementById('mxMgrData');
-    var name = d ? (d.getAttribute('data-name') || '').trim() : '';
-    var phone = d ? (d.getAttribute('data-phone') || '').trim() : '';
-    if(/^(0|—|-)?$/.test(name)) name = '';   // порожня Smarty-підстановка → нічого
-    if(/^(0|—|-)?$/.test(phone)) phone = '';
-    return { name:name, phone:phone };
+    var m = window.MX_MANAGER || {};
+    var name = (m.name || '').trim();
+    var phone = (m.phone || '').trim();
+    var tg = (m.tg || 'abmaxilla').trim().replace(/^@/, '');
+    return { name:name, phone:phone, tg:tg };
   }
 
   function panel(bal, mgr){
@@ -5935,7 +5938,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var icoTg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.5-7.7c.4-.3-.1-.5-.6-.2L6.6 13.2 2 11.8c-1-.3-1-1 .2-1.5l18.4-7.1c.8-.3 1.6.2 1.3 1.1Z"/></svg>';
     var mgrLinks = '';
     if(mgr && mgr.phone){ mgrLinks += '<a class="mxb-mgr-a" href="tel:' + mgr.phone.replace(/[^\d+]/g, '') + '">' + icoPhone + '<span>' + mgr.phone + '</span></a>'; }
-    mgrLinks += '<a class="mxb-mgr-a" href="https://t.me/abmaxilla" target="_blank" rel="noopener">' + icoTg + '<span>Telegram · @abmaxilla</span></a>';
+    var tg = (mgr && mgr.tg) ? mgr.tg : 'abmaxilla';
+    mgrLinks += '<a class="mxb-mgr-a" href="https://t.me/' + tg + '" target="_blank" rel="noopener">' + icoTg + '<span>Telegram · @' + tg + '</span></a>';
     var mgrHtml = '<div class="mxb-mgr"><div class="mxb-mgr-lbl">Ваш менеджер</div>'
       + ((mgr && mgr.name) ? '<div class="mxb-mgr-name">' + mgr.name + '</div>' : '')
       + '<div class="mxb-mgr-row">' + mgrLinks + '</div></div>';
