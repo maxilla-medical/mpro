@@ -3905,6 +3905,80 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             ctaIco.parentNode.replaceChild(ni, ctaIco);
         }
     }
+    // ── сторінки-списки: тиха інфо-строка під пошуком + empty-state замість голої таблиці ──
+    (function(){
+        var LIST_KEYS = { patients:1, reports:1, ceph:1, superimp:1, guides:1, print:1 };
+        if(!LIST_KEYS[key]) return;
+        var LIST_INFO = {
+            patients: 'Знімок доступний одразу після дослідження — у кабінеті та на email.',
+            reports:  'Опис готує лікар-рентгенолог — зазвичай до 3 робочих днів.',
+            ceph:     'Цефалометричні розрахунки за 10+ авторами та протоколами.',
+            guides:   'Виготовляємо та надсилаємо за 48 годин після погодження.',
+            print:    'Друкуємо з вашого STL — оплата лише після оцінки вартості.',
+            superimp: ''
+        };
+        var LIST_EMPTY = {
+            patients: 'Тут зʼявляться дослідження ваших пацієнтів',
+            reports:  'Тут зʼявляться описи знімків',
+            ceph:     'Тут зʼявляться ваші 3D-Ceph аналізи',
+            superimp: 'Тут зʼявляться ваші суперімпозиції',
+            guides:   'Тут зʼявляться ваші хірургічні шаблони',
+            print:    'Тут зʼявляться ваші замовлення на друк'
+        };
+        var INFO_ICO  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>';
+        var EMPTY_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9.5h18M7.5 14h9M7.5 16.5h5"/></svg>';
+        if(!document.getElementById('mxListCss')){
+            var st = document.createElement('style'); st.id = 'mxListCss';
+            var S = '.client-cell-body:not(.aside-left):not(.aside-right) ';
+            st.textContent = ''
+                + S + '.mx-list-info{ display:flex; align-items:center; gap:calc(9 * var(--u)); margin:calc(2 * var(--u)) 0 calc(16 * var(--u)); padding:calc(10 * var(--u)) calc(14 * var(--u)); background:#F8FAFC; border:1px solid #EEF2F7; border-radius:calc(11 * var(--u)); font-family:\'Manrope\',sans-serif; font-size:calc(12.5 * var(--u)); font-weight:500; color:#64748B; }'
+                + S + '.mx-list-info svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); flex:0 0 auto; color:#94A3B8; }'
+                + S + '.mx-empty{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); padding:calc(42 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); font-family:\'Manrope\',sans-serif; animation:mxUp .35s ease both; }'
+                + S + '.mx-empty-ic{ width:calc(58 * var(--u)); height:calc(58 * var(--u)); border-radius:50%; background:#F4F6FB; display:flex; align-items:center; justify-content:center; color:#A9B2C1; margin-bottom:calc(4 * var(--u)); }'
+                + S + '.mx-empty-ic svg{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); }'
+                + S + '.mx-empty-t{ font-size:calc(17 * var(--u)); font-weight:800; letter-spacing:-0.02em; color:#0F172A; }'
+                + S + '.mx-empty-s{ font-size:calc(13.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.55; max-width:calc(440 * var(--u)); }'
+                + S + '.mx-empty-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(10 * var(--u)); height:calc(42 * var(--u)); padding:0 calc(20 * var(--u)); border-radius:calc(11 * var(--u)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14 * var(--u)); font-weight:600; transition:background .15s ease; }'
+                + S + '.mx-empty-b:hover{ background:#1E293B; }';
+            (document.head || document.documentElement).appendChild(st);
+        }
+        function run(){
+            var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+            if(!col) return false;
+            var pf = col.querySelector('.params-form');
+            if(pf && LIST_INFO[key] && !col.querySelector('.mx-list-info')){
+                var strip = document.createElement('div'); strip.className = 'mx-list-info';
+                strip.innerHTML = INFO_ICO + '<span>' + LIST_INFO[key] + '</span>';
+                pf.parentNode.insertBefore(strip, pf.nextSibling);
+            }
+            var table = col.querySelector('table.os-table');
+            if(!table) return false;   // таблиця ще не відрендерилась — пробуємо ще
+            var dataRows = table.querySelectorAll('tbody tr a[href*="/order/"]').length;
+            var wrap = col.querySelector('.os-overflow-table');
+            var panel = col.querySelector('.os-block-panel');
+            var massac = panel ? panel.querySelector('.nc-block-change-status') : null;
+            var existing = col.querySelector('.mx-empty');
+            if(dataRows === 0){
+                if(!existing){
+                    var e = document.createElement('div'); e.className = 'mx-empty';
+                    e.innerHTML = '<div class="mx-empty-ic">' + EMPTY_ICO + '</div>'
+                        + '<div class="mx-empty-t">' + (LIST_EMPTY[key] || 'Тут поки що порожньо') + '</div>'
+                        + '<div class="mx-empty-s">Скористайтесь пошуком вище або створіть нове — кнопкою «' + ctaCfg.text + '».</div>'
+                        + '<a class="mx-empty-b" href="' + ctaCfg.href + '">' + ctaCfg.text + '</a>';
+                    (wrap || table).parentNode.insertBefore(e, (wrap || table));
+                }
+                if(wrap) wrap.style.display = 'none';
+                if(massac) massac.style.display = 'none';
+            } else {
+                if(existing && existing.parentNode) existing.parentNode.removeChild(existing);
+                if(wrap) wrap.style.display = '';
+                if(massac) massac.style.display = '';
+            }
+            return true;
+        }
+        var n = 0, t = setInterval(function(){ n++; if(run() || n > 40) clearInterval(t); }, 250);
+        run();
+    })();
     // імена пацієнтів у таблицях кабінету — з КАПСУ в людський регістр (лише показ)
     (function(){
         function norm(s){
