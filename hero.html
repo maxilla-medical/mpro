@@ -3832,7 +3832,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 if(!sideEl) return;
                 sideEl.style.minHeight = ''; rcol.style.marginTop = '';
                 if(window.innerWidth <= 900){ rcol.style.removeProperty('--mx-head-h'); return; }
-                var off = card.getBoundingClientRect().top - lcol.getBoundingClientRect().top;
+                // якорем беремо ПЕРШУ видиму картку (.mx-c9), а не обгортку .os-block-form:
+                // між верхом обгортки та першою карткою є ~22px «повітря» (порожній <h2> + margin
+                // самої <form>), через які панель раніше висіла вище за картку. Fallback — сама картка.
+                var anchor = card.querySelector('.mx-c9, .mx-fgroup, .os-block-element.js-section-01') || card;
+                var off = anchor.getBoundingClientRect().top - lcol.getBoundingClientRect().top;
                 rcol.style.setProperty('--mx-head-h', (off > 0 ? off : 0) + 'px');
             };
             requestAnimationFrame(function(){ requestAnimationFrame(alignFormSide); });
