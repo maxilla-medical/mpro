@@ -4142,6 +4142,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
 
+
+
+
 <!-- ============================================================================
      MX-RES v13 — екран «Перегляд дослідження» (БП «Дослідження»).
 
@@ -4172,6 +4175,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   var CEPH_URL  = '/client/custompage/53/';
   var MX_TG     = 'https://t.me/dlmaxilla';
   var MX_TG_FILE= 'https://t.me/edmaxilla';   // запит на повторне завантаження файлів
+  var VIEWER_URL= 'https://www.planmeca.com/dental-software/romexis-viewer/';
   var KEEP_M    = 24;
 
   // ЦІНИ. Порожній рядок — ціна не показується. Впиши, коли буде рішення:
@@ -4189,6 +4193,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             + '<path class="mxr-dl-tray" d="M4.5 19.5h15"/></svg></span>';
   var ARR   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
   var TG    = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.5.5-.9.5l.3-4.6 8.3-7.5c.4-.3-.1-.5-.6-.2L7.4 13 3 11.6c-1-.3-1-1 .2-1.5l17.3-6.7c.8-.3 1.5.2 1.4 1z"/></svg>';
+  var EYE   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M9 20.5h6M12 17v3.5"/><path d="M7.5 10.5c1.8-2.6 7.2-2.6 9 0"/><circle cx="12" cy="10.6" r="1.6"/></svg>';
+  var IMG   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.6" cy="9.6" r="1.5"/><path d="M4 16.5l4.6-4.2c.8-.7 2-.7 2.8 0L16 16.5"/><path d="M14.5 14.2l1.6-1.4c.8-.7 2-.7 2.8 0L20 14"/></svg>';
   var SHIELD= '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>';
 
   function esc(x){ return String(x == null ? '' : x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -4311,8 +4317,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     st.textContent = ''
       + '#mxResView, #mxResView *{ box-sizing:border-box; }'
       + '#mxResView{ font-family:\'Manrope\',sans-serif; color:#0F172A; }'
-      + '#mxResView.mxr-wide{ display:flex; flex-direction:column; }'
-      + '#mxResView.mxr-wide .mxr-band{ margin-top:auto; }'
       /* шапка */
       + '#mxResView .mxr-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:calc(18 * var(--u)); }'
       + '#mxResView .mxr-back{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(14.5 * var(--u)); font-weight:600; color:#0F172A; text-decoration:none !important; transition:color .15s ease; }'
@@ -4406,30 +4410,23 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-empty{ background:#FFFFFF; border:1px dashed #DDE3EC; border-radius:calc(18 * var(--u)); padding:calc(26 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; color:#64748B; }'
       /* ── права панель ── */
       /* широка смуга пропозиції — композиція для одного-двох досліджень */
-      /* ── широка смуга пропозиції: композиція для одного-двох досліджень ── */
-      + '#mxResView .mxr-grid-wide .mxr-main{ margin-right:calc(322 * var(--u)); }'
-      + '#mxResView.mxr-wide .mxr-band{ margin-right:calc(322 * var(--u)); }'
-      + '#mxResView .mxr-band{ margin-top:calc(22 * var(--u)); border-radius:calc(20 * var(--u)); color:#fff; overflow:hidden;'
         + ' background:radial-gradient(115% 150% at 100% 0%, rgba(44,59,255,0.22) 0%, rgba(44,59,255,0) 58%), #0B0B0C;'
         + ' box-shadow:0 10px 34px rgba(15,23,42,0.14); }'
-      + '#mxResView .mxr-band-body{ display:flex; align-items:stretch; }'
-      + '#mxResView .mxr-band-body .mxr-band-top{ flex:1 1 auto; min-width:0; }'
-      + '#mxResView .mxr-band-side{ flex:0 0 38%; border-left:1px solid rgba(255,255,255,0.09); padding:calc(18 * var(--u)) calc(24 * var(--u)); display:flex; flex-direction:column; justify-content:center; }'
-      + '#mxResView .mxr-band-side .mxr-alt{ padding:calc(12 * var(--u)) 0; }'
-      + '#mxResView .mxr-band-side .mxr-alt:first-child{ padding-top:0; }'
-      + '#mxResView .mxr-band-side .mxr-alt:last-child{ padding-bottom:0; border-bottom:none; }'
-      + '#mxResView .mxr-band-split .mxr-o-s{ max-width:calc(430 * var(--u)); }'
       + '@media (max-width: 900px){ #mxResView .mxr-band-body{ flex-direction:column; } #mxResView .mxr-band-side{ flex-basis:auto; border-left:none; border-top:1px solid rgba(255,255,255,0.09); } }'
-      + '#mxResView .mxr-band-foot{ display:flex; align-items:center; justify-content:space-between; gap:calc(18 * var(--u)); flex-wrap:wrap; padding:calc(13 * var(--u)) calc(26 * var(--u)); border-top:1px solid rgba(255,255,255,0.07); background:rgba(255,255,255,0.02); }'
-      + '#mxResView .mxr-band-foot .mxr-help{ margin-top:0; padding-top:0; border-top:none; }'
-      + '#mxResView .mxr-band-top{ display:block; text-decoration:none !important; color:inherit !important; transition:background .18s ease; padding:calc(24 * var(--u)) calc(26 * var(--u)); }'
-      + '#mxResView .mxr-band-top .mxr-o-t{ font-size:calc(19 * var(--u)); }'
-      + '#mxResView .mxr-band-top .mxr-o-s{ max-width:calc(600 * var(--u)); }'
-      + '#mxResView .mxr-band-top .mxr-o-link{ margin-top:calc(15 * var(--u)); }'
-      + '#mxResView .mxr-band-top:hover{ background:rgba(255,255,255,0.04); }'
-      + '#mxResView .mxr-band-top:hover .mxr-o-b{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
-      + '#mxResView .mxr-band .mxr-o-b{ margin-top:0; height:calc(44 * var(--u)); padding:0 calc(22 * var(--u)); font-size:calc(13.5 * var(--u)); }'
-      + '@media (max-width: 900px){ #mxResView .mxr-grid-wide .mxr-main{ margin-right:0; } #mxResView.mxr-wide .mxr-band{ margin-right:0; } #mxResView .mxr-band-top{ flex-direction:column; align-items:stretch; } #mxResView .mxr-band-act{ padding-left:0; border-left:none; } #mxResView .mxr-band .mxr-o-b{ width:100%; justify-content:center; } }'
+      /* ── «як переглянути КТ» — тиха відповідь на перше питання лікаря ── */
+      + '#mxResView .mxr-view{ display:flex; align-items:flex-start; gap:calc(15 * var(--u)); margin-top:calc(12 * var(--u)); padding:calc(18 * var(--u)) calc(20 * var(--u)); background:#FFFFFF; border:1px solid #E8ECF3; border-radius:calc(16 * var(--u)); }'
+      + '#mxResView .mxr-view-ic{ flex:0 0 auto; width:calc(38 * var(--u)); height:calc(38 * var(--u)); border-radius:calc(11 * var(--u)); background:#F4F6F8; color:#94A3B8; display:flex; align-items:center; justify-content:center; }'
+      + '#mxResView .mxr-view-ic svg{ width:calc(19 * var(--u)); height:calc(19 * var(--u)); }'
+      + '#mxResView .mxr-view-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxResView .mxr-view-t{ font-size:calc(13.5 * var(--u)); font-weight:700; color:#334155; letter-spacing:-0.01em; }'
+      + '#mxResView .mxr-view-s{ margin-top:calc(5 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; line-height:1.55; color:#94A3B8; max-width:calc(620 * var(--u)); }'
+      + '#mxResView .mxr-view-s b{ color:#64748B; font-weight:700; }'
+      + '#mxResView .mxr-view-a{ display:flex; flex-wrap:wrap; gap:calc(10 * var(--u)) calc(22 * var(--u)); margin-top:calc(11 * var(--u)); }'
+      + '#mxResView .mxr-view-a a{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; color:#64748B !important; text-decoration:none !important; transition:color .15s ease; }'
+      + '#mxResView .mxr-view-a a:hover{ color:#2c3bff !important; }'
+      + '#mxResView .mxr-view-a svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); transition:transform .15s ease; }'
+      + '#mxResView .mxr-view-a a:hover svg{ transform:translateX(calc(2 * var(--u))); }'
+      + '@media (max-width: 900px){ #mxResView .mxr-view{ flex-wrap:wrap; } }'
       + '#mxResView .mxr-side{ background:radial-gradient(115% 150% at 100% 0%, rgba(44,59,255,0.22) 0%, rgba(44,59,255,0) 58%), #0B0B0C; border-radius:calc(20 * var(--u)); padding:calc(22 * var(--u)); color:#fff; box-shadow:0 10px 34px rgba(15,23,42,0.14); }'
       + '#mxResView .mxr-eyebrow{ font-size:calc(10.5 * var(--u)); font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8A8FA3; margin-bottom:calc(13 * var(--u)); }'
       + '#mxResView .mxr-o-t, #mxResView .mxr-o-s, #mxResView .mxr-band-tx, #mxResView .mxr-band-top .mxr-eyebrow{ display:block; }'
@@ -4441,7 +4438,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-o-zone:hover .mxr-o-b{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
       + '#mxResView .mxr-o-link{ display:inline-flex; align-items:center; gap:calc(9 * var(--u)); font-size:calc(14 * var(--u)); font-weight:700; color:#FFFFFF; letter-spacing:-0.01em; white-space:nowrap; }'
       + '#mxResView .mxr-o-link svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); transition:transform .16s ease; }'
-      + '#mxResView .mxr-band-top:hover .mxr-o-link svg{ transform:translateX(calc(4 * var(--u))); }'
       + '#mxResView .mxr-o-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(15 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(17 * var(--u)); border-radius:calc(10 * var(--u)); background:#FFFFFF; color:#0F172A !important; text-decoration:none !important; font-size:calc(13 * var(--u)); font-weight:700; transition:transform .12s ease, box-shadow .15s ease; }'
       + '#mxResView .mxr-o-b:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,0.4); }'
       + '#mxResView .mxr-o-b svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
@@ -4572,6 +4568,47 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   }
 
   // вузька колонка — коли карток багато і висоти зіставні
+  // Відповідь на питання, яке лікар ставить одразу після завантаження: чим це
+  // відкрити. Тихий блок під результатами — хто знає, той пройде повз.
+  // Показуємо лише коли у візиті є КТ: для панорами й ТРГ програма не потрібна.
+  function viewerCard(d, files){
+    if(!files.length) return '';
+    var names = files.map(function(it){ return it.name; }).join(' ');
+    var all = norm(names + ' ' + (d.done || ''));
+    var hasCT = /\bкт\b|кт |сегмент|суглоб|череп|пазух|конусно/.test(all);
+    // 2D — усе, що не КТ: панорама, ТРГ, а також опис (звичайний документ)
+    var has2D = files.some(function(it){
+      var t = norm(it.name);
+      return t && !/\bкт\b|кт |сегмент|суглоб|череп|пазух|конусно/.test(t);
+    }) || /панорам|трг|ортопантом/.test(all);
+
+    var t, sub;
+    if(hasCT && has2D){
+      t   = 'Як переглянути знімки';
+      sub = 'КТ відкривається у безкоштовній програмі <b>Planmeca Romexis Viewer</b>. '
+          + 'Панорама, ТРГ і описи — звичайні файли, відкриваються будь-де без програм.';
+    } else if(hasCT){
+      t   = 'Як переглянути КТ';
+      sub = 'Знімок відкривається у безкоштовній програмі <b>Planmeca Romexis Viewer</b>.';
+    } else {
+      t   = 'Як переглянути знімок';
+      sub = 'Це звичайне зображення — відкривається на будь-якому компʼютері, планшеті чи смартфоні. Нічого встановлювати не потрібно.';
+    }
+
+    var acts = (hasCT ? '<a href="' + VIEWER_URL + '" target="_blank" rel="noopener">Завантажити програму' + ARR + '</a>' : '')
+      + '<a href="' + MX_TG_FILE + '?text=' + encodeURIComponent('Потрібна допомога з переглядом знімка' + (d.num ? ' №' + d.num : '')) + '" target="_blank" rel="noopener">'
+      + (hasCT ? 'Не відкривається? Допоможемо' : 'Виникли складнощі? Допоможемо') + ARR + '</a>';
+
+    return '<div class="mxr-view">'
+      + '<div class="mxr-view-ic">' + (hasCT ? EYE : IMG) + '</div>'
+      + '<div class="mxr-view-tx">'
+        + '<div class="mxr-view-t">' + t + '</div>'
+        + '<div class="mxr-view-s">' + sub + '</div>'
+        + '<div class="mxr-view-a">' + acts + '</div>'
+      + '</div>'
+      + '</div>';
+  }
+
   function sidePanel(d, o){
     if(!o.main) return '';
     return '<div class="mxr-side">'
@@ -4583,25 +4620,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '</a>'
       + (o.rest.length ? '<div class="mxr-o-alt">' + altRows(o.rest) + '</div>' : '')
       + '<div class="mxr-foot">' + guarantees(d) + '</div>'
-      + '</div>';
-  }
-
-  // широка смуга під результатами — коли досліджень одне-два і колонка була б
-  // коротшою за панель. Порожнеча зникає не розтягуванням, а зміною композиції
-  function bandPanel(d, o){
-    if(!o.main) return '';
-    var split = o.rest.length > 0;                    // є вторинні пропозиції → дві зони
-    return '<div class="mxr-band">'
-      + '<div class="mxr-band-body' + (split ? ' mxr-band-split' : '') + '">'
-        + '<a class="mxr-band-top" href="' + o.main.h + '">'
-          + '<span class="mxr-eyebrow">Що ще можемо</span>'
-          + '<span class="mxr-o-t">' + o.main.t + '</span>'
-          + '<span class="mxr-o-s">' + o.main.s + '</span>'
-          + cta(o.main, true)
-        + '</a>'
-        + (split ? '<div class="mxr-band-side">' + altRows(o.rest) + '</div>' : '')
-      + '</div>'
-      + '<div class="mxr-band-foot">' + guarantees(d) + '</div>'
       + '</div>';
   }
 
@@ -4665,19 +4683,16 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
     var od = offerData(d, files);
-    var wide = files.length <= 2;                     // одне-два дослідження → смуга, а не колонка
 
-    return '<div id="mxResView"' + (wide ? ' class="mxr-wide"' : '') + '>'
+    return '<div id="mxResView">'
       + '<div class="mxr-top">'
         + '<a class="mxr-back" href="' + BACK_URL + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Мої пацієнти</a>'
         + '<span class="mxr-safe">' + SHIELD + 'Дані захищені</span>'
       + '</div>'
       + head(d, files, stage)
       + secH
-      + (wide
-          ? '<div class="mxr-grid mxr-grid-wide"><div class="mxr-main">' + main + '</div></div>' + bandPanel(d, od)
-          : '<div class="mxr-grid"><div class="mxr-main">' + main + '</div>'
-            + '<div class="mxr-side-col">' + sidePanel(d, od) + '</div></div>')
+      + '<div class="mxr-grid"><div class="mxr-main">' + main + viewerCard(d, files) + '</div>'
+        + '<div class="mxr-side-col">' + sidePanel(d, od) + '</div></div>'
       + '</div>';
   }
 
