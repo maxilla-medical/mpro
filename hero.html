@@ -4939,9 +4939,23 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxOpisView .mxo-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
       + '#mxOpisView .mxo-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
       + '#mxOpisView .mxo-p-sub b{ color:#0F172A; font-weight:700; }'
-      + '#mxOpisView .mxo-zone{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(13 * var(--u)); padding:calc(6 * var(--u)) calc(11 * var(--u)); border-radius:calc(9 * var(--u)); background:#EEF2FF; max-width:100%; }'
-      + '#mxOpisView .mxo-zone-k{ font-size:calc(11.5 * var(--u)); font-weight:700; letter-spacing:.02em; color:#3730A3; flex:0 0 auto; }'
-      + '#mxOpisView .mxo-zone-v{ font-size:calc(12.5 * var(--u)); font-weight:500; color:#4338CA; min-width:0; }'
+      + '#mxOpisView .mxo-pat{ margin-bottom:calc(16 * var(--u)); }'
+      + '#mxOpisView .mxo-pat-ord{ margin-bottom:calc(22 * var(--u)); }'
+      + '#mxOpisView .mxo-ord{ background:#F8FAFC; border:1px solid #EDF1F7; border-radius:calc(14 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); }'
+      + '#mxOpisView .mxo-ord-top{ display:flex; align-items:baseline; flex-wrap:wrap; gap:calc(4 * var(--u)) calc(9 * var(--u)); }'
+      + '#mxOpisView .mxo-ord-k{ font-size:calc(12 * var(--u)); font-weight:700; letter-spacing:.02em; color:#94A3B8; flex:0 0 auto; }'
+      + '#mxOpisView .mxo-ord-v{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#334155; min-width:0; }'
+      + '#mxOpisView .mxo-ord-num{ margin-left:auto; font-size:calc(12 * var(--u)); font-weight:600; color:#A9B2C1; white-space:nowrap; }'
+      + '#mxOpisView .mxo-ord-steps{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)) calc(9 * var(--u)); margin-top:calc(11 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #EDF1F7; }'
+      + '#mxOpisView .mxo-os{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; }'
+      + '#mxOpisView .mxo-os-m{ font-style:normal; font-size:calc(11.5 * var(--u)); line-height:1; }'
+      + '#mxOpisView .mxo-os-done{ color:#64748B; }'
+      + '#mxOpisView .mxo-os-done .mxo-os-m{ color:#16A34A; }'
+      + '#mxOpisView .mxo-os-cur{ color:#0F172A; font-weight:700; }'
+      + '#mxOpisView .mxo-os-cur .mxo-os-m{ color:#2c3bff; }'
+      + '#mxOpisView .mxo-os-fut{ color:#B4BCC9; }'
+      + '#mxOpisView .mxo-os-fut .mxo-os-m{ color:#CBD5E1; }'
+      + '#mxOpisView .mxo-os-sep{ width:calc(16 * var(--u)); height:calc(1.5 * var(--u)); background:#E2E8F0; border-radius:calc(2 * var(--u)); flex:0 0 auto; }'
       + '#mxOpisView .mxo-v{ display:grid; grid-template-columns:max-content 1fr; column-gap:calc(14 * var(--u)); row-gap:calc(9 * var(--u)); align-items:baseline; }'
       + '#mxOpisView .mxo-v-k{ font-size:calc(12.5 * var(--u)); font-weight:600; color:#A9B2C1; }'
       + '#mxOpisView .mxo-v-v{ font-size:calc(13 * var(--u)); font-weight:500; color:#64748B; }'
@@ -5005,36 +5019,36 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     (document.head || document.documentElement).appendChild(st);
   }
 
-  function stepsBar(stage){
-    var h = '';
-    for(var i = 0; i < 3; i++){
-      var n = i + 1, cls, inner;
-      if(n < stage){ cls = 'mxo-done'; inner = CHECK; }
-      else if(n === stage){ cls = 'mxo-act'; inner = String(n); }
-      else { cls = 'mxo-fut'; inner = String(n); }
-      h += '<div class="mxo-step ' + cls + '"><span class="mxo-step-n">' + inner + '</span><span class="mxo-step-t">' + STEPS[i] + '</span></div>';
-      if(i < 2) h += '<span class="mxo-step-line' + (n < stage ? ' mxo-line-on' : '') + '"></span>';
-    }
-    return '<div class="mxo-steps">' + h + '</div>';
+  function patientCard(d){
+    return '<div class="mxo-pat"><div class="mxo-lbl">Пацієнт</div>'
+      + '<div class="mxo-box">'
+        + '<div class="mxo-p-name">' + esc(d.patient || 'Рентгенологічний опис') + '</div>'
+        + (d.birth ? '<div class="mxo-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
+      + '</div></div>';
   }
-
-  function head(d){
-    function kv(k, v){ return '<span class="mxo-v-k">' + k + '</span><span class="mxo-v-v">' + v + '</span>'; }
-    var order = kv('Статус', esc(d.status || 'В обробці'));
-    if(d.num) order += kv('Номер', esc(d.num));
-    var zone = d.zone ? '<div class="mxo-zone"><span class="mxo-zone-k">Зона опису</span><span class="mxo-zone-v">' + esc(d.zone) + '</span></div>' : '';
-    return '<div class="mxo-head">'
-      + '<div class="mxo-col"><div class="mxo-lbl">Пацієнт</div>'
-        + '<div class="mxo-box mxo-p"><div class="mxo-p-tx">'
-          + '<div class="mxo-p-name">' + esc(d.patient || 'Рентгенологічний опис') + '</div>'
-          + (d.birth ? '<div class="mxo-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
-          + zone
-        + '</div></div>'
-      + '</div>'
-      + '<div class="mxo-col mxo-col-v"><div class="mxo-lbl">Замовлення</div>'
-        + '<div class="mxo-box"><div class="mxo-v">' + order + '</div></div>'
-      + '</div>'
-      + '</div>';
+  // лаконічний статус: 3 кроки горизонтально, з галочками (як старий блок 4, але тихіше)
+  function orderSteps(stage){
+    var out = '';
+    for(var i = 0; i < 3; i++){
+      var n = i + 1, cls, mark;
+      if(n < stage){ cls = 'mxo-os-done'; mark = '✓'; }
+      else if(n === stage){ cls = 'mxo-os-cur'; mark = '●'; }
+      else { cls = 'mxo-os-fut'; mark = '○'; }
+      if(i > 0) out += '<span class="mxo-os-sep"></span>';
+      out += '<span class="mxo-os ' + cls + '"><i class="mxo-os-m">' + mark + '</i>' + STEPS[i] + '</span>';
+    }
+    return out;
+  }
+  function orderBlock(d, stage){
+    var num = d.num ? '<span class="mxo-ord-num">№ ' + esc(d.num) + '</span>' : '';
+    var zona = d.zone
+      ? '<span class="mxo-ord-k">Зона опису</span><span class="mxo-ord-v">' + esc(d.zone) + '</span>'
+      : '<span class="mxo-ord-k">Опис</span>';
+    return '<div class="mxo-pat mxo-pat-ord"><div class="mxo-lbl">Замовлення опису</div>'
+      + '<div class="mxo-ord">'
+        + '<div class="mxo-ord-top">' + zona + num + '</div>'
+        + '<div class="mxo-ord-steps">' + orderSteps(stage) + '</div>'
+      + '</div></div>';
   }
 
   function resultCard(d, stage, ready){
@@ -5097,8 +5111,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         + '<a class="mxo-back" href="' + BACK_URL + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Всі описи</a>'
         + '<span class="mxo-safe">' + SHIELD + 'Дані захищені</span>'
       + '</div>'
-      + stepsBar(stage)
-      + head(d)
+      + patientCard(d)
+      + orderBlock(d, stage)
       + secH
       + '<div class="mxo-grid"><div class="mxo-main">'
         + resultCard(d, stage, ready)
