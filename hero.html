@@ -4141,6 +4141,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
 
+
 <!-- ============================================================================
      MX-RES v13 — екран «Перегляд дослідження» (БП «Дослідження»).
 
@@ -4310,6 +4311,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     st.textContent = ''
       + '#mxResView, #mxResView *{ box-sizing:border-box; }'
       + '#mxResView{ font-family:\'Manrope\',sans-serif; color:#0F172A; }'
+      + '#mxResView.mxr-wide{ display:flex; flex-direction:column; }'
+      + '#mxResView.mxr-wide .mxr-band{ margin-top:auto; }'
       /* шапка */
       + '#mxResView .mxr-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:calc(18 * var(--u)); }'
       + '#mxResView .mxr-back{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(14.5 * var(--u)); font-weight:600; color:#0F172A; text-decoration:none !important; transition:color .15s ease; }'
@@ -4692,6 +4695,22 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
   // на вузькому екрані пропозиція має стояти одразу після головного результату,
   // а не після всього контенту
+  // Смуга-пропозиція — «підвал» екрана: коли контенту мало, вона йде вниз сторінки,
+  // а не висить одразу під результатом із порожнечею під собою. Це не фіксована
+  // панель: сторінка гортається як завжди, просто мінімальна висота = екран.
+  function bottomBand(root){
+    if(!root.classList.contains('mxr-wide')) return;
+    function fit(){
+      root.style.minHeight = '';
+      var top = root.getBoundingClientRect().top + (window.pageYOffset || 0);
+      var pad = 40;                                  // повітря під смугою
+      root.style.minHeight = 'calc(100vh - ' + Math.round(top + pad) + 'px)';
+    }
+    fit();
+    window.addEventListener('resize', fit);
+    setTimeout(fit, 600);                            // після того, як меню/шапка стануть на місце
+  }
+
   function mobileOrder(root){
     var mq = window.matchMedia('(max-width: 900px)');
     var grid = root.querySelector('.mxr-grid');
@@ -4740,6 +4759,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var view = wrap.firstChild;
     host.insertBefore(view, host.firstChild);
     markDownloads(view);
+    bottomBand(view);
     mobileOrder(view);
     return true;
   }
