@@ -1042,7 +1042,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         superimp: { title:'Суперімпозиція', sub:'Накладання знімків до і після лікування' },
         guides:   { title:'Шаблони', sub:'Хірургічні навігаційні шаблони' },
         print:    { title:'3D-друк', sub:'Друк навігаційних шаблонів' },
-        bonus:    { title:'Мої бонуси', sub:'Бонуси за направлених вами пацієнтів' }
+        bonus:    { title:'Мої бонуси', sub:'Баланс та історія ваших бонусів' }
     };
     var CTA = {
         guides:   { text:'Замовити шаблон', icon:'plus', href:'https://maxilla.pro/client/form/6/' },
@@ -5856,6 +5856,13 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 #mxBonusView .mxb-list li{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:600; color:#DCE3F2; line-height:1.35; }
 #mxBonusView .mxb-list li svg{ flex:0 0 auto; width:calc(17 * var(--u)); height:calc(17 * var(--u)); margin-top:calc(1 * var(--u)); color:#22C55E; }
 #mxBonusView .mxb-note{ margin-top:calc(22 * var(--u)); padding-top:calc(16 * var(--u)); border-top:1px solid rgba(255,255,255,0.09); font-size:calc(12 * var(--u)); font-weight:500; line-height:1.55; color:#7E8BA8; }
+#mxBonusView .mxb-mgr{ margin-top:calc(22 * var(--u)); padding-top:calc(18 * var(--u)); border-top:1px solid rgba(255,255,255,0.09); }
+#mxBonusView .mxb-mgr-lbl{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#8A97B4; margin-bottom:calc(10 * var(--u)); }
+#mxBonusView .mxb-mgr-name{ font-size:calc(15 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#FFFFFF; margin-bottom:calc(12 * var(--u)); }
+#mxBonusView .mxb-mgr-row{ display:flex; flex-direction:column; gap:calc(8 * var(--u)); }
+#mxBonusView .mxb-mgr-a{ display:inline-flex; align-items:center; gap:calc(9 * var(--u)); width:fit-content; max-width:100%; padding:calc(9 * var(--u)) calc(13 * var(--u)); font-size:calc(13 * var(--u)); font-weight:600; color:#E7ECF5 !important; text-decoration:none !important; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:calc(11 * var(--u)); transition:background .15s ease, border-color .15s ease; }
+#mxBonusView .mxb-mgr-a:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.18); }
+#mxBonusView .mxb-mgr-a svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); color:#8FA0FF; flex:0 0 auto; }
 
 #mxBonusView .mxb-empty{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); padding:calc(44 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); }
 #mxBonusView .mxb-empty-ic{ width:calc(58 * var(--u)); height:calc(58 * var(--u)); border-radius:50%; background:#F4F6FB; display:flex; align-items:center; justify-content:center; color:#A9B2C1; margin-bottom:calc(4 * var(--u)); }
@@ -5880,6 +5887,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
   function fmtDate(s){
     s = (s || '').trim();
+    if(/^\s*(сегодня|сьогодні)/i.test(s)) return 'сьогодні';
+    if(/^\s*(вчера|вчора)/i.test(s)) return 'вчора';
     return s
       .replace(/только\s*что/i, 'щойно')
       .replace(/(\d+)\s*сек\.?\s*назад/i, '$1 с тому')
@@ -5899,7 +5908,24 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return { txt:(neg ? '−' : '+') + disp, cls:(neg ? 'mxb-neg' : 'mxb-pos') };
   }
 
-  function panel(bal){
+  // менеджер клієнта: беремо імʼя й телефон з бічної картки «Ваш менеджер»
+  // (блок .nc-block-profile) ЯКЩО вони там є. Читаємо лише з картки менеджера —
+  // не з віджета акаунта — щоб випадково не показати імʼя самого клієнта.
+  function manager(){
+    var prof = document.querySelector('.aside-right .nc-block-profile');
+    var name = '', phone = '';
+    if(prof){
+      var tel = prof.querySelector('a[href^="tel:"]');
+      if(tel){ phone = ((tel.textContent || '').trim()) || tel.getAttribute('href').replace(/^tel:/, ''); }
+      var txt = (prof.textContent || '').replace(/\s+/g, ' ').trim();
+      if(!phone){ var pm = txt.match(/\+?\d[\d\s\-()]{7,}\d/); if(pm) phone = pm[0].trim(); }
+      var ng = txt.replace(/\+?\d[\d\s\-()]{7,}\d/, '').trim();
+      if(ng && /[A-Za-zА-Яа-яІЇЄҐіїєґ]/.test(ng) && ng.length <= 40) name = ng;
+    }
+    return { name:name, phone:phone };
+  }
+
+  function panel(bal, mgr){
     var chk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
     var items = ['Діагностику — КТ та знімки', 'Описи знімків', '3D-Ceph аналізи', 'Суперімпозицію', 'Хірургічні шаблони', '3D-друк'];
     var li = items.map(function(x){ return '<li>' + chk + '<span>' + x + '</span></li>'; }).join('');
@@ -5909,13 +5935,21 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         + '<div class="mxb-bal"><span class="mxb-bal-n">' + balN + '</span><span class="mxb-bal-u">бонусів</span></div>'
         + '<div class="mxb-div"></div>'
       : '';
+    var icoPhone = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg>';
+    var icoTg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.5-7.7c.4-.3-.1-.5-.6-.2L6.6 13.2 2 11.8c-1-.3-1-1 .2-1.5l18.4-7.1c.8-.3 1.6.2 1.3 1.1Z"/></svg>';
+    var mgrLinks = '';
+    if(mgr && mgr.phone){ mgrLinks += '<a class="mxb-mgr-a" href="tel:' + mgr.phone.replace(/[^\d+]/g, '') + '">' + icoPhone + '<span>' + mgr.phone + '</span></a>'; }
+    mgrLinks += '<a class="mxb-mgr-a" href="https://t.me/abmaxilla" target="_blank" rel="noopener">' + icoTg + '<span>Telegram · @abmaxilla</span></a>';
+    var mgrHtml = '<div class="mxb-mgr"><div class="mxb-mgr-lbl">Ваш менеджер</div>'
+      + ((mgr && mgr.name) ? '<div class="mxb-mgr-name">' + mgr.name + '</div>' : '')
+      + '<div class="mxb-mgr-row">' + mgrLinks + '</div></div>';
     return '<div class="mxb-card">'
       + balHtml
-      + '<div class="mxb-sec-t">Як працює бонусна програма</div>'
-      + '<p class="mxb-p">Нараховуємо <span class="mxb-hl">10%</span> бонусів від суми, яку сплатив кожен направлений вами пацієнт.</p>'
-      + '<div class="mxb-spend-t">Витрачайте бонуси на</div>'
+      + '<div class="mxb-sec-t">Бонусна програма</div>'
+      + '<p class="mxb-p">Накопичуйте бонуси та оплачуйте ними наші послуги. Актуальні умови програми й ваш баланс завжди підкаже персональний менеджер — просто напишіть.</p>'
+      + '<div class="mxb-spend-t">Бонусами можна оплатити</div>'
       + '<ul class="mxb-list">' + li + '</ul>'
-      + '<div class="mxb-note">Бонуси зараховуються після того, як пацієнт оплатив послугу.</div>'
+      + mgrHtml
       + '</div>';
   }
 
@@ -5983,9 +6017,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var grid = document.createElement('div'); grid.className = 'mxb-grid';
     var mainCol = document.createElement('div'); mainCol.className = 'mxb-main';
     var aside = document.createElement('div'); aside.className = 'mxb-aside';
-    if(h2){ h2.className = 'mxb-h'; mainCol.appendChild(h2); }
+    if(h2){ h2.className = 'mxb-h'; h2.textContent = 'Історія бонусів'; mainCol.appendChild(h2); }
     mainCol.appendChild(tableWrap);
-    aside.innerHTML = panel(balance());
+    aside.innerHTML = panel(balance(), manager());
     grid.appendChild(mainCol); grid.appendChild(aside);
     view.appendChild(grid);
     host.appendChild(view);
