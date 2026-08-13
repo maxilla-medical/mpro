@@ -4337,7 +4337,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       /* метка · значення — той самий прийом, що в картках результату */
       /* підписи блоків — завжди НАД карткою, один прийом на весь екран */
       + '#mxResView .mxr-lbl, #mxResView .mxr-sec-h{ font-size:calc(11 * var(--u)); font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#A9B2C1; margin-bottom:calc(10 * var(--u)); }'
-      + '#mxResView .mxr-sec-h{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin-right:calc(322 * var(--u)); }'
+      + '#mxResView .mxr-sec-h{ display:flex; align-items:center; gap:calc(12 * var(--u)); margin-right:0; margin-bottom:0; }'
       + '#mxResView .mxr-qc{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:.04em; text-transform:none; color:#64748B; }'
       + '#mxResView .mxr-qc svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); color:#16A34A; }'
       /* пацієнт: титульний розворот — імʼя по центру блока */
@@ -4620,7 +4620,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   function sidePanel(d, o){
     if(!o.main) return '';
     return '<div class="mxr-side">'
-      + '<div class="mxr-eyebrow">Що ще можемо</div>'
       + '<a class="mxr-o-zone" href="' + o.main.h + '">'
         + '<span class="mxr-o-t">' + o.main.t + '</span>'
         + '<span class="mxr-o-s">' + o.main.s + '</span>'
@@ -4691,6 +4690,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
     var od = offerData(d, files);
+    var sp = sidePanel(d, od);
+    // праворуч — свій заголовок-секція (єдиний для всіх екранів процесів); лише коли панель є
+    var sideLbl = sp ? '<div class="mxr-lbl">Корисна інформація</div>' : '';
 
     return '<div id="mxResView">'
       + '<div class="mxr-top">'
@@ -4698,9 +4700,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         + '<span class="mxr-safe">' + SHIELD + 'Дані захищені</span>'
       + '</div>'
       + head(d, files, stage)
-      + secH
-      + '<div class="mxr-grid"><div class="mxr-main">' + main + viewerCard(d, files) + '</div>'
-        + '<div class="mxr-side-col">' + sidePanel(d, od) + '</div></div>'
+      + '<div class="mxr-grid"><div class="mxr-main">' + secH + main + viewerCard(d, files) + '</div>'
+        + '<div class="mxr-side-col">' + sideLbl + sp + '</div></div>'
       + '</div>';
   }
 
@@ -5128,7 +5129,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   // додаткових дій продавати нема чого
   function sidePanel(d){
     return '<div class="mxo-side">'
-      + '<div class="mxo-eyebrow">Як ми описуємо</div>'
       + '<div class="mxo-o-t">Опис від лікаря-рентгенолога</div>'
       + '<div class="mxo-o-s">Кожне дослідження описується за повним протоколом — усі зони, структури й знахідки у зоні інтересу.</div>'
       + '<div class="mxo-foot">'
@@ -5153,8 +5153,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         + resultCard(d, stage, ready)
         + viewCard(ready)
       + '</div>'
-      // порожній лейбл-розпірка: опускає праву панель до рівня КАРТКИ «Що описуємо», а не її заголовка
-      + '<div class="mxo-side-col"><div class="mxo-lbl mxo-lbl-ghost" aria-hidden="true">&nbsp;</div>' + sidePanel(d) + '</div></div>'
+      // праворуч — свій заголовок-секція (єдиний для всіх екранів процесів), панель опускається до рівня картки
+      + '<div class="mxo-side-col"><div class="mxo-lbl">Корисна інформація</div>' + sidePanel(d) + '</div></div>'
     + '</div>';
   }
 
