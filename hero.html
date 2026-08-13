@@ -1042,7 +1042,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         superimp: { title:'Суперімпозиція', sub:'Накладання знімків до і після лікування' },
         guides:   { title:'Шаблони', sub:'Хірургічні навігаційні шаблони' },
         print:    { title:'3D-друк', sub:'Друк навігаційних шаблонів' },
-        bonus:    { title:'Мої бонуси', sub:'Баланс та історія ваших бонусів' }
+        bonus:    { title:'Мої бонуси', sub:'Баланс та нарахування' }
     };
     var CTA = {
         guides:   { text:'Замовити шаблон', icon:'plus', href:'https://maxilla.pro/client/form/6/' },
@@ -5908,20 +5908,16 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return { txt:(neg ? '−' : '+') + disp, cls:(neg ? 'mxb-neg' : 'mxb-pos') };
   }
 
-  // менеджер клієнта: беремо імʼя й телефон з бічної картки «Ваш менеджер»
-  // (блок .nc-block-profile) ЯКЩО вони там є. Читаємо лише з картки менеджера —
-  // не з віджета акаунта — щоб випадково не показати імʼя самого клієнта.
+  // менеджер клієнта: імʼя й телефон беремо з окремого прихованого блоку #mxMgrData
+  // (OneBox-блок «Вставка коду» на сторінці бонусів; атрибути data-name / data-phone).
+  // Кабінет НЕ виводить менеджера в HTML сам, а контактна форма клієнта містить
+  // телефон САМОГО клієнта — тому з неї не читаємо, щоб не показати чужі дані.
   function manager(){
-    var prof = document.querySelector('.aside-right .nc-block-profile');
-    var name = '', phone = '';
-    if(prof){
-      var tel = prof.querySelector('a[href^="tel:"]');
-      if(tel){ phone = ((tel.textContent || '').trim()) || tel.getAttribute('href').replace(/^tel:/, ''); }
-      var txt = (prof.textContent || '').replace(/\s+/g, ' ').trim();
-      if(!phone){ var pm = txt.match(/\+?\d[\d\s\-()]{7,}\d/); if(pm) phone = pm[0].trim(); }
-      var ng = txt.replace(/\+?\d[\d\s\-()]{7,}\d/, '').trim();
-      if(ng && /[A-Za-zА-Яа-яІЇЄҐіїєґ]/.test(ng) && ng.length <= 40) name = ng;
-    }
+    var d = document.getElementById('mxMgrData');
+    var name = d ? (d.getAttribute('data-name') || '').trim() : '';
+    var phone = d ? (d.getAttribute('data-phone') || '').trim() : '';
+    if(/^(0|—|-)?$/.test(name)) name = '';   // порожня Smarty-підстановка → нічого
+    if(/^(0|—|-)?$/.test(phone)) phone = '';
     return { name:name, phone:phone };
   }
 
@@ -5946,7 +5942,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return '<div class="mxb-card">'
       + balHtml
       + '<div class="mxb-sec-t">Бонусна програма</div>'
-      + '<p class="mxb-p">Накопичуйте бонуси та оплачуйте ними наші послуги. Актуальні умови програми й ваш баланс завжди підкаже персональний менеджер — просто напишіть.</p>'
+      + '<p class="mxb-p">Накопичуйте бонуси й оплачуйте ними наші послуги. Умови підкаже ваш менеджер.</p>'
       + '<div class="mxb-spend-t">Бонусами можна оплатити</div>'
       + '<ul class="mxb-list">' + li + '</ul>'
       + mgrHtml
