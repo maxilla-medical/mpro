@@ -4954,14 +4954,16 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxOpisView .mxo-lbl-ghost{ visibility:hidden; }'
       + '#mxOpisView .mxo-ord-top{ display:flex; align-items:baseline; flex-wrap:wrap; gap:calc(4 * var(--u)) calc(9 * var(--u)); }'
       + '#mxOpisView .mxo-ord-k{ font-size:calc(12 * var(--u)); font-weight:700; letter-spacing:.02em; color:#94A3B8; flex:0 0 auto; }'
-      + '#mxOpisView .mxo-ord-v{ font-size:calc(14.5 * var(--u)); font-weight:700; color:#0F172A; min-width:0; }'
+      + '#mxOpisView .mxo-ord-v{ font-size:calc(14 * var(--u)); font-weight:500; color:#334155; min-width:0; }'
       + '#mxOpisView .mxo-ord-steps{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)) calc(9 * var(--u)); margin-top:calc(11 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #EDF1F7; }'
       + '#mxOpisView .mxo-os{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; }'
       + '#mxOpisView .mxo-os-m{ font-style:normal; font-size:calc(11.5 * var(--u)); line-height:1; }'
       + '#mxOpisView .mxo-os-done{ color:#64748B; }'
-      + '#mxOpisView .mxo-os-done .mxo-os-m{ color:#16A34A; }'
-      + '#mxOpisView .mxo-os-cur{ color:#0F172A; font-weight:700; }'
+      + '#mxOpisView .mxo-os-done .mxo-os-m{ color:#334155; }'
+      + '#mxOpisView .mxo-os-cur{ color:#64748B; font-weight:600; }'
       + '#mxOpisView .mxo-os-cur .mxo-os-m{ color:#2c3bff; }'
+      + '#mxOpisView .mxo-os-fin{ color:#64748B; font-weight:600; }'
+      + '#mxOpisView .mxo-os-fin .mxo-os-m{ color:#16A34A; }'
       + '#mxOpisView .mxo-os-fut{ color:#B4BCC9; }'
       + '#mxOpisView .mxo-os-fut .mxo-os-m{ color:#CBD5E1; }'
       + '#mxOpisView .mxo-os-sep{ width:calc(16 * var(--u)); height:calc(1.5 * var(--u)); background:#E2E8F0; border-radius:calc(2 * var(--u)); flex:0 0 auto; }'
@@ -5055,8 +5057,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var out = '';
     for(var i = 0; i < 3; i++){
       var n = i + 1, cls, mark;
-      if(n < stage){ cls = 'mxo-os-done'; mark = '✓'; }
-      else if(n === stage){ cls = 'mxo-os-cur'; mark = '●'; }
+      if(n < stage){ cls = 'mxo-os-done'; mark = '✓'; }               // пройдено — чорна галочка
+      else if(n === stage){
+        if(n === 3){ cls = 'mxo-os-fin'; mark = '✓'; }                // «Виконано» досягнуто — зелена галочка
+        else { cls = 'mxo-os-cur'; mark = '●'; }                       // поточний проміжний — крапка
+      }
       else { cls = 'mxo-os-fut'; mark = '○'; }
       if(i > 0) out += '<span class="mxo-os-sep"></span>';
       out += '<span class="mxo-os ' + cls + '"><i class="mxo-os-m">' + mark + '</i>' + STEPS[i] + '</span>';
