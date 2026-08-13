@@ -1002,6 +1002,26 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 </div>
 <script>
 (function(){
+    // «Назад» на формах/сторінках процесу: спершу браузерний back; якщо історії нема —
+    // ведемо у розділ, до якого належить форма (за id форми з URL). PJAX не чіпає ці кнопки
+    // (клас no-partial), тож керуємо переходом самі.
+    if(!window.__mxBackNav){
+        window.__mxBackNav = true;
+        var MX_FORM_BACK = {
+            '8': '/client/custompage/40/',   // запис пацієнта → Пацієнти
+            '6': '/client/custompage/58/',   // хір. шаблон    → Шаблони
+            '7': '/client/custompage/59/',   // 3D-друк        → 3D-друк
+            '9': '/client/custompage/57/'    // суперімпозиція → Суперімпозиція
+        };
+        document.addEventListener('click', function(e){
+            var a = e.target && e.target.closest ? e.target.closest('.mx-fback') : null;
+            if(!a) return;
+            e.preventDefault();
+            if(history.length > 1){ history.back(); return; }   // є куди повертатись у браузері
+            var m = location.pathname.match(/\/client\/form\/(\d+)/);
+            location.href = (m && MX_FORM_BACK[m[1]]) || a.getAttribute('href') || '/client/custompage/40/';
+        }, false);
+    }
     function pageKey(){
         var p = location.pathname;
         if(p.indexOf('custompage/40') !== -1) return 'patients';
@@ -2341,7 +2361,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     var dots = '';
                     for(var di=1; di<=STEP_LBL.length; di++){ dots += '<span class="mx-fd' + (di===stepN?' mx-on':'') + '"></span>'; }
                     top.innerHTML =
-                        '<div class="mx-form-topbar"><a class="mx-fback" href="' + PROC.back + '">' + backSvg + 'Назад</a>' +
+                        '<div class="mx-form-topbar"><a class="mx-fback no-partial" href="' + PROC.back + '">' + backSvg + 'Назад</a>' +
                         '<span class="mx-fsafe">' + safeSvg + 'Дані захищені</span></div>';
                     var subHTML = (stepN === 2) ? PROC.sub2 : PROC.sub1;
                     var headHTML =
@@ -2826,7 +2846,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     // тонкий топбар зі шляхом назад до списку — стандарт статус-сторінок (Stripe/Linear);
                     // великий H1 не потрібен: заголовком екрана служить hero-картка статусу
                     var tbBack = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>';
-                    top.innerHTML = '<div class="mx-form-topbar mx-tb-track"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + tbBack + 'Назад</a></div>';
+                    top.innerHTML = '<div class="mx-form-topbar mx-tb-track"><a class="mx-fback no-partial" href="https://maxilla.pro/client/custompage/58/">' + tbBack + 'Назад</a></div>';
                     // на трекері клієнт не рухає статус сам — ховаємо стандартний перехід
                     var cs = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right) .nc-block-change-status');
                     if(cs){ cs.setAttribute('data-mxhidebar','1'); }
@@ -2866,7 +2886,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var top = document.getElementById('mxProcTop');
             if(!top){ top = document.createElement('div'); top.id = 'mxProcTop'; col.insertBefore(top, col.firstChild); }
             top.innerHTML =
-                '<div class="mx-form-topbar"><a class="mx-fback" href="https://maxilla.pro/client/custompage/58/">' + fBackSvg + 'Назад</a>' +
+                '<div class="mx-form-topbar"><a class="mx-fback no-partial" href="https://maxilla.pro/client/custompage/58/">' + fBackSvg + 'Назад</a>' +
                 '<span class="mx-fsafe">' + fSafeSvg + 'Дані захищені</span></div>';
 
             var dots = '';
