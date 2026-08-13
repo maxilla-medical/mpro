@@ -4138,6 +4138,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
 
+
+
+
 <!-- ============================================================================
      MX-RES v13 — екран «Перегляд дослідження» (БП «Дослідження»).
 
@@ -4333,15 +4336,19 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-col{ display:flex; flex-direction:column; min-width:0; }'
       + '#mxResView .mxr-col:first-child{ flex:1 1 auto; }'
       + '#mxResView .mxr-col-v{ flex:0 0 calc(300 * var(--u)); }'
+      + '#mxResView .mxr-col-v .mxr-box{ display:flex; flex-direction:column; justify-content:center; }'
       + '#mxResView .mxr-box{ flex:1 1 auto; background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(16 * var(--u)); padding:calc(20 * var(--u)) calc(22 * var(--u)); }'
-      + '#mxResView .mxr-p{ display:flex; flex-direction:column; justify-content:center; }'
+      + '#mxResView .mxr-p{ display:flex; align-items:center; gap:calc(24 * var(--u)); }'
+      + '#mxResView .mxr-p-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxResView .mxr-v-in{ flex:0 0 auto; }'
+      
       + '#mxResView .mxr-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
       + '#mxResView .mxr-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
       + '#mxResView .mxr-p-sub b{ color:#0F172A; font-weight:700; }'
-      + '#mxResView .mxr-g{ display:flex; flex-direction:column; justify-content:center; }'
+      
       + '#mxResView .mxr-v{ display:grid; grid-template-columns:max-content 1fr; column-gap:calc(14 * var(--u)); row-gap:calc(9 * var(--u)); align-items:baseline; }'
-      + '#mxResView .mxr-v-k{ font-size:calc(12.5 * var(--u)); font-weight:600; color:#94A3B8; }'
-      + '#mxResView .mxr-v-v{ font-size:calc(13 * var(--u)); font-weight:500; color:#334155; }'
+      + '#mxResView .mxr-v-k{ font-size:calc(12.5 * var(--u)); font-weight:600; color:#A9B2C1; }'
+      + '#mxResView .mxr-v-v{ font-size:calc(13 * var(--u)); font-weight:500; color:#64748B; }'
       + '#mxResView .mxr-grid{ display:flex; gap:calc(22 * var(--u)); align-items:flex-start; }'
       + '#mxResView .mxr-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:calc(10 * var(--u)); }'
       + '#mxResView .mxr-side-col{ flex:0 0 calc(300 * var(--u)); align-self:flex-start; position:sticky; top:calc(18 * var(--u)); }'
@@ -4452,7 +4459,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxResView .mxr-help:hover{ color:#fff !important; }'
       /* службовий рендер OneBox на цьому екрані не потрібен */
       + 'body:has(#mxResData) #mxProcTop, body:has(#mxResData) #mxProcGrid{ display:none !important; }'
-      + '@media (max-width: 900px){ #mxResView .mxr-head{ flex-direction:column; } #mxResView .mxr-g{ flex-basis:auto; } #mxResView .mxr-sec-h{ margin-right:0; } #mxResView .mxr-grid{ flex-direction:column; } #mxResView .mxr-side-col{ width:100%; flex-basis:auto; position:static; } #mxResView .mxr-card{ flex-wrap:wrap; } #mxResView .mxr-dl{ width:100%; justify-content:center; }  #mxResView .mxr-seal-m{ display:none; } }';
+      + '@media (max-width: 900px){ #mxResView .mxr-head{ flex-direction:column; } #mxResView .mxr-p{ flex-wrap:wrap; gap:calc(14 * var(--u)); } #mxResView .mxr-g{ flex-basis:auto; } #mxResView .mxr-sec-h{ margin-right:0; } #mxResView .mxr-grid{ flex-direction:column; } #mxResView .mxr-side-col{ width:100%; flex-basis:auto; position:static; } #mxResView .mxr-card{ flex-wrap:wrap; } #mxResView .mxr-dl{ width:100%; justify-content:center; }  #mxResView .mxr-seal-m{ display:none; } }';
     (document.head || document.documentElement).appendChild(st);
   }
 
@@ -4486,24 +4493,30 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return day + '.' + (mo < 10 ? '0' + mo : mo) + '.' + y;
   }
   function head(d, files, stage){
-    var city = String(d.branch || '').replace(/\s*№\s*\d+\s*$/, '').trim();
+    var city = String(d.branch || '').replace(/\s*№\s*\d+\s*$/, '').trim() || 'Дніпро';
+    function kv(k, v){ return '<span class="mxr-v-k">' + k + '</span><span class="mxr-v-v">' + v + '</span>'; }
 
-    var rows = '';
-    function kv(k, v){ rows += '<span class="mxr-v-k">' + k + '</span><span class="mxr-v-v">' + v + '</span>'; }
-    if(d.date) kv('Дата візиту', esc(dateUA(d.date)));
-    if(city)   kv('Місто', esc(city));
-    if(d.num)  kv('Номер візиту', esc(d.num));
+    var visit = '';
+    if(d.date) visit += kv('Дата', esc(dateUA(d.date)));
+    visit += kv('Місто', esc(city));
+
+    var order = kv('Статус', 'Виконано');
+    if(d.num) order += kv('Номер', esc(d.num));
 
     return '<div class="mxr-head">'
       + '<div class="mxr-col">'
         + '<div class="mxr-lbl">Пацієнт</div>'
-        + '<div class="mxr-box mxr-p"><div class="mxr-p-name">' + esc(d.patient || 'Рентгенологічне дослідження') + '</div>'
-        + (d.birth ? '<div class="mxr-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
+        + '<div class="mxr-box mxr-p">'
+          + '<div class="mxr-p-tx">'
+            + '<div class="mxr-p-name">' + esc(d.patient || 'Рентгенологічне дослідження') + '</div>'
+            + (d.birth ? '<div class="mxr-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
+          + '</div>'
+          + '<div class="mxr-v mxr-v-in">' + visit + '</div>'
         + '</div>'
       + '</div>'
       + '<div class="mxr-col mxr-col-v">'
-        + '<div class="mxr-lbl">Візит</div>'
-        + '<div class="mxr-box mxr-g"><div class="mxr-v">' + rows + '</div></div>'
+        + '<div class="mxr-lbl">Замовлення</div>'
+        + '<div class="mxr-box"><div class="mxr-v">' + order + '</div></div>'
       + '</div>'
       + '</div>';
   }
