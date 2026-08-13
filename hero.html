@@ -4940,16 +4940,20 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxOpisView .mxo-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
       + '#mxOpisView .mxo-p-sub b{ color:#0F172A; font-weight:700; }'
       + '#mxOpisView .mxo-ordwrap{ margin-bottom:calc(12 * var(--u)); }'
-      + '#mxOpisView .mxo-ord{ display:flex; align-items:center; gap:calc(16 * var(--u)); background:#F8FAFC; border:1px solid #EDF1F7; border-radius:calc(14 * var(--u)); padding:calc(13 * var(--u)) calc(18 * var(--u)); }'
+      /* карткa «Що описуємо» — помітніша за решту: біла, з акцентним кантом ліворуч і глибшою тінню */
+      + '#mxOpisView .mxo-ord{ position:relative; overflow:hidden; display:flex; align-items:center; gap:calc(18 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(14 * var(--u)); padding:calc(15 * var(--u)) calc(20 * var(--u)); padding-left:calc(22 * var(--u)); box-shadow:0 calc(8 * var(--u)) calc(26 * var(--u)) rgba(15,23,42,0.09); }'
+      + '#mxOpisView .mxo-ord::before{ content:\'\'; position:absolute; left:0; top:0; bottom:0; width:calc(4 * var(--u)); background:#2c3bff; }'
       + '#mxOpisView .mxo-ord-main{ flex:1 1 auto; min-width:0; }'
-      + '#mxOpisView .mxo-ord-go{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(7 * var(--u)); height:calc(38 * var(--u)); padding:0 calc(15 * var(--u)); border-radius:calc(10 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; color:#2c3bff !important; font-size:calc(12.5 * var(--u)); font-weight:700; text-decoration:none !important; white-space:nowrap; transition:border-color .15s ease, background .15s ease; }'
-      + '#mxOpisView .mxo-ord-go:hover{ border-color:#2c3bff; background:#F6F8FF; }'
-      + '#mxOpisView .mxo-ord-go svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); }'
+      + '#mxOpisView .mxo-ord-go{ flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; text-align:right; gap:calc(3 * var(--u)); max-width:calc(230 * var(--u)); text-decoration:none !important; }'
+      + '#mxOpisView .mxo-ord-go-t{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); font-size:calc(13 * var(--u)); font-weight:700; color:#2E3648; white-space:nowrap; letter-spacing:-0.01em; transition:color .15s ease; }'
+      + '#mxOpisView .mxo-ord-go:hover .mxo-ord-go-t{ color:#0F172A; }'
+      + '#mxOpisView .mxo-ord-go-t svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); transition:transform .15s ease; }'
+      + '#mxOpisView .mxo-ord-go:hover .mxo-ord-go-t svg{ transform:translateX(calc(3 * var(--u))); }'
+      + '#mxOpisView .mxo-ord-go-s{ font-size:calc(11.5 * var(--u)); font-weight:500; color:#94A3B8; line-height:1.4; }'
       + '#mxOpisView .mxo-lbl-ghost{ visibility:hidden; }'
       + '#mxOpisView .mxo-ord-top{ display:flex; align-items:baseline; flex-wrap:wrap; gap:calc(4 * var(--u)) calc(9 * var(--u)); }'
       + '#mxOpisView .mxo-ord-k{ font-size:calc(12 * var(--u)); font-weight:700; letter-spacing:.02em; color:#94A3B8; flex:0 0 auto; }'
-      + '#mxOpisView .mxo-ord-v{ font-size:calc(13.5 * var(--u)); font-weight:600; color:#334155; min-width:0; }'
-      + '#mxOpisView .mxo-ord-num{ margin-left:auto; font-size:calc(12 * var(--u)); font-weight:600; color:#A9B2C1; white-space:nowrap; }'
+      + '#mxOpisView .mxo-ord-v{ font-size:calc(14.5 * var(--u)); font-weight:700; color:#0F172A; min-width:0; }'
       + '#mxOpisView .mxo-ord-steps{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(7 * var(--u)) calc(9 * var(--u)); margin-top:calc(11 * var(--u)); padding-top:calc(11 * var(--u)); border-top:1px solid #EDF1F7; }'
       + '#mxOpisView .mxo-os{ display:inline-flex; align-items:center; gap:calc(6 * var(--u)); font-size:calc(12.5 * var(--u)); font-weight:600; }'
       + '#mxOpisView .mxo-os-m{ font-style:normal; font-size:calc(11.5 * var(--u)); line-height:1; }'
@@ -5062,9 +5066,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     var zona = d.zone
       ? '<span class="mxo-ord-k">Зона опису</span><span class="mxo-ord-v">' + esc(d.zone) + '</span>'
       : '<span class="mxo-ord-k">Опис</span>';
-    // перехід до картки дослідження, за яким зроблено опис — лаконічно, у правій частині блока
+    // перехід до картки дослідження, за яким зроблено опис — навігація стилем «текст зі стрілкою»
     var go = d.parent
-      ? '<a class="mxo-ord-go" href="/client/order/' + esc(d.parent) + '/">Перейти до дослідження' + ARR + '</a>'
+      ? '<a class="mxo-ord-go" href="/client/order/' + esc(d.parent) + '/">'
+          + '<span class="mxo-ord-go-t">Перейти до знімку' + ARR + '</span>'
+          + '<span class="mxo-ord-go-s">на основі якого замовлено опис</span>'
+        + '</a>'
       : '';
     return '<div class="mxo-ordwrap"><div class="mxo-lbl">Що описуємо</div>'
       + '<div class="mxo-ord">'
