@@ -6293,3 +6293,79 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   window.addEventListener('mx:navigated', watch);
 })();
 </script>
+
+<!-- ============================================================================
+     MX-DENY — гарний екран «Доступ обмежено» замість рідної помилки OneBox
+     "Доступ к информации запрещен" на сторінці процесу, до якого немає доступу.
+     Ловимо .nc-message-error (або будь-який вузол) з текстом про заборону доступу,
+     ховаємо його й показуємо преміум-картку українською. Самодостатній блок.
+============================================================================ -->
+<script>
+(function(){
+  if(location.pathname.indexOf('/client/order/') === -1) return;
+  window.__mxDeny = true;
+
+  function isDeny(t){
+    return /доступ[\s\S]{0,40}(заборон|запрещ)|немає доступу|нет доступа|access\s+denied|forbidden/i.test(t || '');
+  }
+
+  function css(){
+    if(document.getElementById('mxDenyCss')) return;
+    var st = document.createElement('style'); st.id = 'mxDenyCss';
+    st.textContent = `
+#mxDenyView{ font-family:'Manrope',sans-serif; flex:1 1 auto; width:100%; min-width:0; box-sizing:border-box; display:flex; justify-content:center; padding:calc(48 * var(--u, 1px)) calc(20 * var(--u, 1px)); animation:mxDUp .35s ease both; }
+@keyframes mxDUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+#mxDenyView .mxd-card{ width:100%; max-width:calc(470 * var(--u, 1px)); box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; background:linear-gradient(180deg,#FFFFFF,#FAFBFF); border:1px solid #E7EAF2; border-radius:calc(22 * var(--u, 1px)); padding:calc(44 * var(--u, 1px)) calc(34 * var(--u, 1px)); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(15,23,42,0.04), 0 10px 22px rgba(15,23,42,0.06), 0 26px 48px rgba(15,23,42,0.07); }
+#mxDenyView .mxd-ic{ flex:0 0 auto; width:calc(66 * var(--u, 1px)); height:calc(66 * var(--u, 1px)); border-radius:50%; background:#F4F6FB; color:#94A3B8; display:flex; align-items:center; justify-content:center; margin-bottom:calc(16 * var(--u, 1px)); }
+#mxDenyView .mxd-ic svg{ width:calc(30 * var(--u, 1px)); height:calc(30 * var(--u, 1px)); }
+#mxDenyView .mxd-t{ font-size:calc(21 * var(--u, 1px)); font-weight:800; letter-spacing:-0.025em; color:#0F172A; line-height:1.2; }
+#mxDenyView .mxd-s{ margin-top:calc(8 * var(--u, 1px)); font-size:calc(14 * var(--u, 1px)); font-weight:500; line-height:1.6; color:#64748B; max-width:calc(380 * var(--u, 1px)); }
+#mxDenyView .mxd-b{ margin-top:calc(22 * var(--u, 1px)); white-space:nowrap; display:inline-flex; align-items:center; gap:calc(9 * var(--u, 1px)); height:calc(46 * var(--u, 1px)); padding:0 calc(22 * var(--u, 1px)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14 * var(--u, 1px)); font-weight:600; border-radius:calc(12 * var(--u, 1px)); box-shadow:0 1px 3px rgba(15,23,42,0.12); transition:background .15s ease, transform .06s ease; }
+#mxDenyView .mxd-b:hover{ background:#1E293B; }
+#mxDenyView .mxd-b:active{ transform:translateY(1px); }
+#mxDenyView .mxd-b svg{ flex:0 0 auto; width:calc(16 * var(--u, 1px)); height:calc(16 * var(--u, 1px)); }
+`;
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  function build(){
+    var main = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+    if(!main) return false;
+    if(main.getAttribute('data-mxdeny')) return true;
+    // шукаємо вузол з текстом про заборону доступу
+    var err = null;
+    var nodes = main.querySelectorAll('.nc-message-error, .info-message, .os-error, .nc-message, div, span, p');
+    Array.prototype.forEach.call(nodes, function(e){
+      if(err || e.children.length) return;
+      if(isDeny(e.textContent)) err = e;
+    });
+    if(!err) return false;
+    css();
+    var errBlock = err.closest('.nc-message-error, .info-message, .os-error, .nc-message') || err;
+    errBlock.style.setProperty('display', 'none', 'important');
+
+    var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="11" width="17" height="10" rx="2.5"/><path d="M7.5 11V7.5a4.5 4.5 0 0 1 9 0V11"/><circle cx="12" cy="16" r="1.3" fill="currentColor" stroke="none"/></svg>';
+    var ARR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>';
+
+    var view = document.createElement('div'); view.id = 'mxDenyView';
+    view.innerHTML = '<div class="mxd-card">'
+      + '<div class="mxd-ic">' + LOCK + '</div>'
+      + '<div class="mxd-t">Доступ обмежено</div>'
+      + '<div class="mxd-s">У вас немає доступу до цього замовлення. Можливо, воно належить іншому кабінету або вже закрите.</div>'
+      + '<a class="mxd-b" href="/client/custompage/40/">' + ARR + 'До моїх пацієнтів</a>'
+      + '</div>';
+    (errBlock.parentNode || main).insertBefore(view, errBlock);
+    main.setAttribute('data-mxdeny', '1');
+    return true;
+  }
+
+  function watch(){
+    var n = 0;
+    var t = setInterval(function(){ n++; if(build() || n > 40) clearInterval(t); }, 150);
+    build();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
+  window.addEventListener('mx:navigated', watch);
+})();
+</script>
