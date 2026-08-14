@@ -4628,7 +4628,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     visit += kv('Місто', esc(city));
 
     var order = kv('Статус', 'Виконано');
-    if(d.num) order += kv('Номер', esc(d.num));
+    if(d.num) order = kv('Номер', esc(d.num)) + order;
     if(d.cdate){ var _cd = dateUA(d.cdate); if(_cd === d.cdate){ _cd = String(d.cdate).replace(/[\sT]\d{1,2}:\d{2}.*/, '').trim(); } order = kv('Створено', esc(_cd)) + order; }
 
     return '<div class="mxr-head">'
@@ -5162,7 +5162,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   function head(d){
     function kv(k, v){ return '<span class="mxo-v-k">' + k + '</span><span class="mxo-v-v">' + v + '</span>'; }
     var order = kv('Статус', esc(d.status || 'В обробці'));
-    if(d.num) order += kv('Номер', esc(d.num));
+    if(d.num) order = kv('Номер', esc(d.num)) + order;
     if(d.cdate){ var _cd = dateUA(d.cdate); if(_cd === d.cdate){ _cd = String(d.cdate).replace(/[\sT]\d{1,2}:\d{2}.*/, '').trim(); } order = kv('Створено', esc(_cd)) + order; }
     return '<div class="mxo-head">'
       + '<div class="mxo-col"><div class="mxo-lbl">Пацієнт</div>'
@@ -5614,7 +5614,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   function head(d){
     function kv(k, v){ return '<span class="mxc-v-k">' + k + '</span><span class="mxc-v-v">' + v + '</span>'; }
     var order = kv('Статус', esc(d.status || 'В обробці'));
-    if(d.num) order += kv('Номер', esc(d.num));
+    if(d.num) order = kv('Номер', esc(d.num)) + order;
     if(d.cdate){ var _cd = dateUA(d.cdate); if(_cd === d.cdate){ _cd = String(d.cdate).replace(/[\sT]\d{1,2}:\d{2}.*/, '').trim(); } order = kv('Створено', esc(_cd)) + order; }
     return '<div class="mxc-head">'
       + '<div class="mxc-col"><div class="mxc-lbl">Пацієнт</div>'
