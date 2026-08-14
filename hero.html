@@ -6047,7 +6047,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxSuperView .mxs-qc svg{ width:calc(12 * var(--u)); height:calc(12 * var(--u)); color:#16A34A; }'
       + '#mxSuperView .mxs-grid{ display:flex; gap:calc(22 * var(--u)); align-items:flex-start; }'
       + '#mxSuperView .mxs-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:calc(10 * var(--u)); }'
-      + '#mxSuperView .mxs-side-col{ flex:0 0 calc(300 * var(--u)); align-self:flex-start; position:sticky; top:calc(18 * var(--u)); }'
+      + '#mxSuperView .mxs-side-col{ flex:0 0 calc(300 * var(--u)); align-self:flex-start; position:sticky; top:calc(18 * var(--u)); margin-top:calc(38 * var(--u)); }'
       + '#mxSuperView .mxs-card{ background:linear-gradient(180deg,#FFFFFF,#FAFBFF); border:1px solid #E7EAF2; border-radius:calc(16 * var(--u)); padding:calc(22 * var(--u)); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(15,23,42,0.04), 0 8px 18px rgba(15,23,42,0.06), 0 22px 42px rgba(15,23,42,0.08); display:flex; align-items:center; gap:calc(18 * var(--u)); transition:border-color .16s ease, box-shadow .16s ease, transform .16s ease; }'
       + '#mxSuperView .mxs-card:hover{ border-color:#DCE1EC; transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 4px rgba(15,23,42,0.05), 0 14px 28px rgba(15,23,42,0.09), 0 30px 56px rgba(15,23,42,0.10); }'
       + '#mxSuperView .mxs-card-ic{ flex:0 0 auto; width:calc(50 * var(--u)); height:calc(50 * var(--u)); border-radius:calc(15 * var(--u)); background:#F3F5FF; display:flex; align-items:center; justify-content:center; }'
@@ -6138,7 +6138,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxSuperView .mxs-dl-play{ background:linear-gradient(180deg,#3C46C6 0%,#2c3bff 100%) !important; }'
       + '#mxSuperView .mxs-dl-play:hover{ background:linear-gradient(180deg,#4650D6 0%,#3644FF 100%) !important; }'
       + 'body:has(#mxSuperData) #mxProcTop, body:has(#mxSuperData) #mxProcGrid{ display:none !important; }'
-      + '@media (max-width: 900px){ #mxSuperView .mxs-head{ flex-direction:column; } #mxSuperView .mxs-col-v{ flex-basis:auto; } #mxSuperView .mxs-grid{ flex-direction:column; } #mxSuperView .mxs-side-col{ width:100%; flex-basis:auto; position:static; } #mxSuperView .mxs-card{ flex-wrap:wrap; } #mxSuperView .mxs-dl{ width:100%; justify-content:center; } #mxSuperView .mxs-steps{ flex-wrap:wrap; gap:calc(10 * var(--u)); } #mxSuperView .mxs-step-line{ display:none; } #mxSuperView .mxs-ord{ flex-wrap:wrap; } #mxSuperView .mxs-ord-go{ width:100%; justify-content:center; } #mxSuperView .mxs-lbl-ghost{ display:none; } }';
+      + '@media (max-width: 900px){ #mxSuperView .mxs-head{ flex-direction:column; } #mxSuperView .mxs-col-v{ flex-basis:auto; } #mxSuperView .mxs-grid{ flex-direction:column; } #mxSuperView .mxs-side-col{ width:100%; flex-basis:auto; position:static; margin-top:0; } #mxSuperView .mxs-card{ flex-wrap:wrap; } #mxSuperView .mxs-dl{ width:100%; justify-content:center; } #mxSuperView .mxs-steps{ flex-wrap:wrap; gap:calc(10 * var(--u)); } #mxSuperView .mxs-step-line{ display:none; } #mxSuperView .mxs-ord{ flex-wrap:wrap; } #mxSuperView .mxs-ord-go{ width:100%; justify-content:center; } #mxSuperView .mxs-lbl-ghost{ display:none; } }';
     (document.head || document.documentElement).appendChild(st);
   }
 
@@ -6205,7 +6205,6 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       body = '<div class="mxs-src-rows">' + ktRow('Перше КТ', d.kt1) + ktRow('Друге КТ', d.kt2) + '</div>';
     }
     return '<div class="mxs-ordwrap"><div class="mxs-lbl">Що накладаємо</div>'
-      + statusPanel(stage)
       + '<div class="mxs-ord">'
         + '<div class="mxs-ord-main">'
           + body
@@ -6297,6 +6296,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '</div>'
       + head(d, stage)
       + '<div class="mxs-grid"><div class="mxs-main">'
+        + statusPanel(stage)
         + sourcesBlock(d, stage)
         + secH
         + results(d, stage, ready, archived)
