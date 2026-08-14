@@ -6010,6 +6010,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxSuperView .mxs-p{ display:flex; align-items:center; }'
       + '#mxSuperView .mxs-p-tx{ flex:1 1 auto; min-width:0; }'
       + '#mxSuperView .mxs-p-name{ font-size:calc(27 * var(--u)); font-weight:800; letter-spacing:-0.03em; line-height:1.15; color:#0F172A; text-wrap:balance; }'
+      + '#mxSuperView .mxs-p-empty{ color:#B4BCC9; font-size:calc(20 * var(--u)); font-weight:700; letter-spacing:-0.01em; }'
       + '#mxSuperView .mxs-p-sub{ margin-top:calc(9 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#94A3B8; }'
       + '#mxSuperView .mxs-p-sub b{ color:#0F172A; font-weight:700; }'
       + '#mxSuperView .mxs-ordwrap{ margin-bottom:calc(12 * var(--u)); }'
@@ -6153,7 +6154,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return '<div class="mxs-head">'
       + '<div class="mxs-col"><div class="mxs-lbl">Пацієнт</div>'
         + '<div class="mxs-box mxs-p"><div class="mxs-p-tx">'
-          + '<div class="mxs-p-name">' + esc(d.patient || 'Суперімпозиція') + '</div>'
+          + (d.patient ? '<div class="mxs-p-name">' + esc(d.patient) + '</div>' : '<div class="mxs-p-name mxs-p-empty">Пацієнта не вказано</div>')
           + (d.birth ? '<div class="mxs-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
         + '</div></div>'
       + '</div>'
