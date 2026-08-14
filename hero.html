@@ -3903,7 +3903,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         // на сторінках бонусів/налаштувань немає дії «замовити» — ховаємо кнопку
         if(ctaEl) ctaEl.style.display = 'none';
     } else if(ctaEl){
-        ctaEl.style.display = '';
+        ctaEl.style.display = 'inline-flex';   // повертаємо flex (не '', бо це стирає inline display:inline-flex → текст їде)
         ctaEl.setAttribute('href', ctaCfg.href);
         var ctaTxt = document.getElementById('mxHeroCtaText');
         if(ctaTxt) ctaTxt.textContent = ctaCfg.text;
