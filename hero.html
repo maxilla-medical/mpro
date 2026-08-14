@@ -6101,6 +6101,14 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxSuperView .mxs-ft svg{ width:calc(13 * var(--u)); height:calc(13 * var(--u)); color:#22C55E; flex:0 0 auto; }'
       + '#mxSuperView .mxs-help{ display:block; font-size:calc(12 * var(--u)); font-weight:600; color:#8B9CFF !important; text-decoration:none !important; }'
       + '#mxSuperView .mxs-help:hover{ color:#fff !important; }'
+      + '#mxSuperView .mxs-sp{ display:flex; align-items:center; flex-wrap:wrap; gap:calc(6 * var(--u)) calc(12 * var(--u)); background:transparent; border:0; padding:0; margin:0 calc(2 * var(--u)) calc(12 * var(--u)); box-shadow:none; }'
+      + '#mxSuperView .mxs-sp-item{ display:inline-flex; align-items:center; gap:calc(7 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:600; white-space:nowrap; }'
+      + '#mxSuperView .mxs-sp-ck{ display:inline-flex; width:calc(16 * var(--u)); height:calc(16 * var(--u)); }'
+      + '#mxSuperView .mxs-sp-ck svg{ width:100%; height:100%; }'
+      + '#mxSuperView .mxs-sp-sep{ flex:1 1 auto; min-width:calc(14 * var(--u)); height:calc(1.5 * var(--u)); background:#E7EBF2; border-radius:calc(2 * var(--u)); }'
+      + '#mxSuperView .mxs-sp-done{ color:#0F172A; } #mxSuperView .mxs-sp-done .mxs-sp-ck{ color:#334155; }'
+      + '#mxSuperView .mxs-sp-cur{ color:#0F172A; font-weight:700; } #mxSuperView .mxs-sp-cur .mxs-sp-ck{ color:#16A34A; }'
+      + '#mxSuperView .mxs-sp-fut{ color:#B4BCC9; } #mxSuperView .mxs-sp-fut .mxs-sp-ck{ color:#CBD5E1; }'
       + '#mxSuperView .mxs-hint{ display:flex; align-items:flex-start; gap:calc(11 * var(--u)); padding:calc(13 * var(--u)) calc(15 * var(--u)); background:#F2F5FF; border:1px solid #DBE2FB; border-radius:calc(12 * var(--u)); }'
       + '#mxSuperView .mxs-hint-ic{ flex:0 0 auto; width:calc(20 * var(--u)); height:calc(20 * var(--u)); color:#2c3bff; margin-top:calc(1 * var(--u)); }'
       + '#mxSuperView .mxs-hint-ic svg{ width:100%; height:100%; }'
@@ -6144,7 +6152,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     return '<div class="mxs-head">'
       + '<div class="mxs-col"><div class="mxs-lbl">Пацієнт</div>'
         + '<div class="mxs-box mxs-p"><div class="mxs-p-tx">'
-          + '<div class="mxs-p-name">' + esc(d.patient || (stage <= 1 ? 'Нова суперімпозиція' : 'Суперімпозиція')) + '</div>'
+          + '<div class="mxs-p-name">' + esc(d.patient || 'Суперімпозиція') + '</div>'
           + (d.birth ? '<div class="mxs-p-sub">Дата народження · <b>' + esc(dateUA(d.birth)) + '</b></div>' : '')
         + '</div></div>'
       + '</div>'
@@ -6169,6 +6177,17 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     }
     return out;
   }
+  // панель статусів словами: пройдені — чорна галочка, актуальний — зелена, майбутні — сіра
+  function statusPanel(stage){
+    var out = '';
+    for(var i = 0; i < STEPS.length; i++){
+      var n = i + 1, cls = (n < stage) ? 'mxs-sp-done' : (n === stage ? 'mxs-sp-cur' : 'mxs-sp-fut');
+      if(i > 0) out += '<span class="mxs-sp-sep"></span>';
+      out += '<span class="mxs-sp-item ' + cls + '"><span class="mxs-sp-ck">' + CHECK + '</span>' + STEPS[i] + '</span>';
+    }
+    return '<div class="mxs-sp">' + out + '</div>';
+  }
+
   function sourcesBlock(d, stage){
     function ktRow(lbl, num){
       if(!num){ return '<div class="mxs-src mxs-src-empty"><span class="mxs-src-k">' + lbl + '</span><span class="mxs-src-v">—</span></div>'; }
@@ -6186,10 +6205,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       body = '<div class="mxs-src-rows">' + ktRow('Перше КТ', d.kt1) + ktRow('Друге КТ', d.kt2) + '</div>';
     }
     return '<div class="mxs-ordwrap"><div class="mxs-lbl">Що накладаємо</div>'
+      + statusPanel(stage)
       + '<div class="mxs-ord">'
         + '<div class="mxs-ord-main">'
           + body
-          + '<div class="mxs-ord-steps">' + orderSteps(stage) + '</div>'
         + '</div>'
       + '</div></div>';
   }
