@@ -989,16 +989,28 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         </div>
         <div id="mxHeroSub"></div>
     </div>
-    <a id="mxHeroCta" href="#" style="
-        display:inline-flex; align-items:center; gap:calc(8 * var(--u));
-        height:calc(42 * var(--u)); padding:0 calc(20 * var(--u)); box-sizing:border-box;
-        background:#0F172A; color:#FFFFFF; text-decoration:none;
-        font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(11 * var(--u));
-        transition:background .15s ease; white-space:nowrap;
-    " onmouseover="this.style.background='#1E293B'" onmouseout="this.style.background='#0F172A'">
-        <i id="mxHeroCtaIco" data-lucide="user-plus" style="width:calc(15 * var(--u));height:calc(15 * var(--u));"></i>
-        <span id="mxHeroCtaText">Записати пацієнта</span>
-    </a>
+    <div class="mx-hero-ctas" style="display:flex; align-items:center; gap:calc(10 * var(--u)); flex-wrap:wrap;">
+        <a id="mxHeroCta2" href="https://maxilla.pro/client/custompage/83/" style="
+            display:none; align-items:center; gap:calc(8 * var(--u));
+            height:calc(42 * var(--u)); padding:0 calc(16 * var(--u)); box-sizing:border-box;
+            background:#FFFFFF; color:#0F172A; text-decoration:none;
+            font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(11 * var(--u));
+            border:1px solid #E2E8F0; transition:background .15s ease, border-color .15s ease; white-space:nowrap;
+        " onmouseover="this.style.background='#F1F5F9';this.style.borderColor='#CBD5E1'" onmouseout="this.style.background='#FFFFFF';this.style.borderColor='#E2E8F0'">
+            <i data-lucide="clipboard-plus" style="width:calc(15 * var(--u));height:calc(15 * var(--u));"></i>
+            <span>Направлення</span>
+        </a>
+        <a id="mxHeroCta" href="#" style="
+            display:inline-flex; align-items:center; gap:calc(8 * var(--u));
+            height:calc(42 * var(--u)); padding:0 calc(20 * var(--u)); box-sizing:border-box;
+            background:#0F172A; color:#FFFFFF; text-decoration:none;
+            font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(11 * var(--u));
+            transition:background .15s ease; white-space:nowrap;
+        " onmouseover="this.style.background='#1E293B'" onmouseout="this.style.background='#0F172A'">
+            <i id="mxHeroCtaIco" data-lucide="user-plus" style="width:calc(15 * var(--u));height:calc(15 * var(--u));"></i>
+            <span id="mxHeroCtaText">Записати пацієнта</span>
+        </a>
+    </div>
 </div>
 <script>
 (function(){
@@ -1011,7 +1023,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             '8': '/client/custompage/40/',   // запис пацієнта → Пацієнти
             '6': '/client/custompage/58/',   // хір. шаблон    → Шаблони
             '7': '/client/custompage/59/',   // 3D-друк        → 3D-друк
-            '9': '/client/custompage/57/'    // суперімпозиція → Суперімпозиція
+            '9': '/client/custompage/57/',   // суперімпозиція → Суперімпозиція
+            '2': '/client/custompage/83/'    // направлення → розділ Направлення
         };
         document.addEventListener('click', function(e){
             var a = e.target && e.target.closest ? e.target.closest('.mx-fback') : null;
@@ -1030,6 +1043,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         if(p.indexOf('custompage/57') !== -1) return 'superimp';
         if(p.indexOf('custompage/58') !== -1) return 'guides';
         if(p.indexOf('custompage/59') !== -1) return 'print';
+        if(p.indexOf('custompage/83') !== -1) return 'referral';
         if(p.indexOf('mybonus') !== -1) return 'bonus';
         if(p.indexOf('client/setting') !== -1) return 'setting';
         if(p.indexOf('/order/') !== -1) return 'process';
@@ -1044,7 +1058,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         guides:   { title:'Шаблони', sub:'Хірургічні навігаційні шаблони' },
         print:    { title:'3D-друк', sub:'Друк навігаційних шаблонів' },
         bonus:    { title:'Мої бонуси', sub:'Баланс та нарахування' },
-        setting:  { title:'Мої налаштування', sub:'Профіль та безпека' }
+        setting:  { title:'Мої налаштування', sub:'Профіль та безпека' },
+        referral: { title:'Направлення', sub:'Бланки направлень на дослідження' }
     };
     var CTA = {
         guides:   { text:'Замовити шаблон', icon:'plus', href:'https://maxilla.pro/client/form/6/' },
@@ -3899,8 +3914,8 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     // page-aware CTA (закриває PENDING #2)
     var ctaCfg = CTA[key] || CTA_DEFAULT;
     var ctaEl = document.getElementById('mxHeroCta');
-    if(key === 'bonus' || key === 'setting'){
-        // на сторінках бонусів/налаштувань немає дії «замовити» — ховаємо кнопку
+    if(key === 'bonus' || key === 'setting' || key === 'referral'){
+        // немає дії «замовити» / сторінка сама є вибором — ховаємо основну кнопку
         if(ctaEl) ctaEl.style.display = 'none';
     } else if(ctaEl){
         ctaEl.style.display = 'inline-flex';   // повертаємо flex (не '', бо це стирає inline display:inline-flex → текст їде)
@@ -3917,6 +3932,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             ni.style.height = 'calc(15 * var(--u))';
             ctaIco.parentNode.replaceChild(ni, ctaIco);
         }
+    }
+    // вторинна кнопка «Направлення»: головна, пацієнти та списки досліджень (не на просмотрах/формах/налаштуваннях)
+    var cta2 = document.getElementById('mxHeroCta2');
+    if(cta2){
+        var SHOW2 = { home:1, patients:1, reports:1, ceph:1, superimp:1 };
+        cta2.style.display = SHOW2[key] ? 'inline-flex' : 'none';
     }
     // ── сторінки-списки: тиха інфо-строка під пошуком + empty-state замість голої таблиці ──
     (function(){
@@ -6945,6 +6966,99 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   function watch(){
     var n = 0;
     var t = setInterval(function(){ n++; if(build() || n > 40) clearInterval(t); }, 150);
+    build();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+  else watch();
+  window.addEventListener('mx:navigated', watch);
+})();
+</script>
+
+
+<!-- ============================================================================
+     MX-REFERRAL — екран розділу «Направлення» (/client/custompage/83/).
+     Дворозгалуження: первинне «Замовити доставку бланків» (форма 2) + вторинне
+     «Записати пацієнта» (форма 8). Малюється у hero.html, у OneBox на сторінці —
+     лише блоки 1-4. Самодостатній блок.
+============================================================================ -->
+<script>
+(function(){
+  if(location.pathname.indexOf('custompage/83') === -1) return;
+  if(window.__mxRef) return; window.__mxRef = true;
+
+  var FORM_BLANK = 'https://maxilla.pro/client/form/2/';
+  var FORM_PAT   = 'https://maxilla.pro/client/form/8/';
+
+  var CLIP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.4"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><path d="M12 11v4M10 13h4"/></svg>';
+  var USER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  var ARR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+
+  function css(){
+    if(document.getElementById('mxRefCss')) return;
+    var st = document.createElement('style'); st.id = 'mxRefCss';
+    st.textContent = ''
+      + '#mxReferralView, #mxReferralView *{ box-sizing:border-box; }'
+      + '#mxReferralView{ font-family:\'Manrope\',sans-serif; color:#0F172A; width:100%; flex:1 1 auto; min-width:0; margin-top:calc(6 * var(--u)); display:flex; flex-direction:column; gap:calc(14 * var(--u)); max-width:calc(760 * var(--u)); animation:mxRfUp .35s ease both; }'
+      + '@keyframes mxRfUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }'
+      /* первинна картка — помітна, з глибиною */
+      + '#mxReferralView .mxrf-primary{ display:flex; align-items:center; gap:calc(20 * var(--u)); background:linear-gradient(180deg,#FFFFFF,#FAFBFF); border:1px solid #E7EAF2; border-radius:calc(18 * var(--u)); padding:calc(24 * var(--u)) calc(26 * var(--u)); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(15,23,42,0.04), 0 10px 22px rgba(15,23,42,0.06), 0 26px 48px rgba(15,23,42,0.07); }'
+      + '#mxReferralView .mxrf-ic{ flex:0 0 auto; width:calc(56 * var(--u)); height:calc(56 * var(--u)); border-radius:calc(15 * var(--u)); background:#F3F5FF; color:#2c3bff; display:flex; align-items:center; justify-content:center; }'
+      + '#mxReferralView .mxrf-ic svg{ width:calc(28 * var(--u)); height:calc(28 * var(--u)); }'
+      + '#mxReferralView .mxrf-tx{ flex:1 1 auto; min-width:0; }'
+      + '#mxReferralView .mxrf-t{ font-size:calc(19 * var(--u)); font-weight:800; letter-spacing:-0.025em; line-height:1.25; color:#0F172A; }'
+      + '#mxReferralView .mxrf-s{ margin-top:calc(6 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.55; color:#64748B; max-width:calc(420 * var(--u)); }'
+      + '#mxReferralView .mxrf-btn{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(9 * var(--u)); height:calc(46 * var(--u)); padding:0 calc(22 * var(--u)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(12 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.12); transition:background .15s ease, transform .06s ease; white-space:nowrap; }'
+      + '#mxReferralView .mxrf-btn:hover{ background:#1E293B; }'
+      + '#mxReferralView .mxrf-btn:active{ transform:translateY(1px); }'
+      + '#mxReferralView .mxrf-btn svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); transition:transform .15s ease; }'
+      + '#mxReferralView .mxrf-btn:hover svg{ transform:translateX(calc(3 * var(--u))); }'
+      /* вторинна смуга — тихіша */
+      + '#mxReferralView .mxrf-secondary{ display:flex; align-items:center; gap:calc(16 * var(--u)); background:#F7F9FC; border:1px solid #E8ECF3; border-radius:calc(15 * var(--u)); padding:calc(16 * var(--u)) calc(20 * var(--u)); transition:border-color .15s ease, box-shadow .15s ease; }'
+      + '#mxReferralView .mxrf-secondary:hover{ border-color:#D7DEEA; box-shadow:0 4px 14px rgba(15,23,42,0.05); }'
+      + '#mxReferralView .mxrf-ic-q{ flex:0 0 auto; width:calc(42 * var(--u)); height:calc(42 * var(--u)); border-radius:calc(12 * var(--u)); background:#EEF2F7; color:#94A3B8; display:flex; align-items:center; justify-content:center; }'
+      + '#mxReferralView .mxrf-ic-q svg{ width:calc(21 * var(--u)); height:calc(21 * var(--u)); }'
+      + '#mxReferralView .mxrf-t2{ font-size:calc(14.5 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#334155; }'
+      + '#mxReferralView .mxrf-s2{ margin-top:calc(3 * var(--u)); font-size:calc(13 * var(--u)); font-weight:500; color:#64748B; }'
+      + '#mxReferralView .mxrf-link{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(7 * var(--u)); height:calc(40 * var(--u)); padding:0 calc(16 * var(--u)); border-radius:calc(10 * var(--u)); background:#EEF2FF; color:#2c3bff !important; text-decoration:none !important; font-size:calc(13.5 * var(--u)); font-weight:700; transition:background .15s ease; white-space:nowrap; }'
+      + '#mxReferralView .mxrf-link:hover{ background:#E0E7FF; }'
+      + '#mxReferralView .mxrf-link svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); transition:transform .15s ease; }'
+      + '#mxReferralView .mxrf-link:hover svg{ transform:translateX(calc(2 * var(--u))); }'
+      + '@media (max-width: 720px){ #mxReferralView .mxrf-primary, #mxReferralView .mxrf-secondary{ flex-wrap:wrap; } #mxReferralView .mxrf-btn, #mxReferralView .mxrf-link{ width:100%; justify-content:center; } }';
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  function build(){
+    var main = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
+    if(!main) return false;
+    if(document.getElementById('mxReferralView')) return true;
+    css();
+    // ховаємо можливий рідний контент custompage (hero та footer не чіпаємо)
+    Array.prototype.forEach.call(main.querySelectorAll('.os-block-element, .os-block-form'), function(e){
+      if(!e.closest('#mxReferralView')) e.style.setProperty('display', 'none', 'important');
+    });
+    var view = document.createElement('div'); view.id = 'mxReferralView';
+    view.innerHTML =
+        '<div class="mxrf-primary">'
+      +   '<div class="mxrf-ic">' + CLIP + '</div>'
+      +   '<div class="mxrf-tx"><div class="mxrf-t">Замовити доставку бланків</div>'
+      +     '<div class="mxrf-s">Надішлемо друковані бланки направлень на дослідження Новою Поштою.</div></div>'
+      +   '<a class="mxrf-btn" href="' + FORM_BLANK + '">Замовити доставку' + ARR + '</a>'
+      + '</div>'
+      + '<div class="mxrf-secondary">'
+      +   '<div class="mxrf-ic-q">' + USER + '</div>'
+      +   '<div class="mxrf-tx"><div class="mxrf-t2">Не потрібні бланки?</div>'
+      +     '<div class="mxrf-s2">Можна одразу записати пацієнта на дослідження.</div></div>'
+      +   '<a class="mxrf-link" href="' + FORM_PAT + '">Записати пацієнта' + ARR + '</a>'
+      + '</div>';
+    var hero = document.getElementById('mxHero');
+    if(hero && hero.parentNode === main){ main.insertBefore(view, hero.nextSibling); }
+    else { main.insertBefore(view, main.firstChild); }
+    return true;
+  }
+
+  function watch(){
+    var n = 0;
+    var t = setInterval(function(){ n++; if(build() || n > 60) clearInterval(t); }, 150);
     build();
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
