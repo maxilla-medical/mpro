@@ -990,7 +990,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         <div id="mxHeroSub"></div>
     </div>
     <div class="mx-hero-ctas" style="display:flex; align-items:center; gap:calc(10 * var(--u)); flex-wrap:wrap;">
-        <a id="mxHeroCta2" href="https://maxilla.pro/client/custompage/83/" style="
+        <a id="mxHeroCta2" href="https://maxilla.pro/client/custompage/60/" style="
             display:none; align-items:center; gap:calc(8 * var(--u));
             height:calc(42 * var(--u)); padding:0 calc(16 * var(--u)); box-sizing:border-box;
             background:#FFFFFF; color:#0F172A; text-decoration:none;
@@ -1024,7 +1024,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             '6': '/client/custompage/58/',   // хір. шаблон    → Шаблони
             '7': '/client/custompage/59/',   // 3D-друк        → 3D-друк
             '9': '/client/custompage/57/',   // суперімпозиція → Суперімпозиція
-            '2': '/client/custompage/83/'    // направлення → розділ Направлення
+            '2': '/client/custompage/60/'    // направлення → розділ Направлення
         };
         document.addEventListener('click', function(e){
             var a = e.target && e.target.closest ? e.target.closest('.mx-fback') : null;
@@ -1043,7 +1043,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
         if(p.indexOf('custompage/57') !== -1) return 'superimp';
         if(p.indexOf('custompage/58') !== -1) return 'guides';
         if(p.indexOf('custompage/59') !== -1) return 'print';
-        if(p.indexOf('custompage/83') !== -1) return 'referral';
+        if(p.indexOf('custompage/60') !== -1) return 'referral';
         if(p.indexOf('mybonus') !== -1) return 'bonus';
         if(p.indexOf('client/setting') !== -1) return 'setting';
         if(p.indexOf('/order/') !== -1) return 'process';
@@ -6976,14 +6976,14 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 
 <!-- ============================================================================
-     MX-REFERRAL — екран розділу «Направлення» (/client/custompage/83/).
+     MX-REFERRAL — екран розділу «Направлення» (/client/custompage/60/).
      Дворозгалуження: первинне «Замовити доставку бланків» (форма 2) + вторинне
      «Записати пацієнта» (форма 8). Малюється у hero.html, у OneBox на сторінці —
      лише блоки 1-4. Самодостатній блок.
 ============================================================================ -->
 <script>
 (function(){
-  if(location.pathname.indexOf('custompage/83') === -1) return;
+  if(location.pathname.indexOf('custompage/60') === -1) return;
   if(window.__mxRef) return; window.__mxRef = true;
 
   var FORM_BLANK = 'https://maxilla.pro/client/form/2/';
