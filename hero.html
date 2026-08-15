@@ -6977,9 +6977,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 
 <!-- ============================================================================
      MX-REFERRAL — екран розділу «Направлення» (/client/custompage/60/).
-     Дворозгалуження: первинне «Замовити доставку бланків» (форма 2) + вторинне
-     «Записати пацієнта» (форма 8). Малюється у hero.html, у OneBox на сторінці —
-     лише блоки 1-4. Самодостатній блок.
+     Ліворуч — дії (замовити доставку бланків / записати пацієнта), праворуч —
+     темна панель: коротко про направлення + контакти менеджера (телефон/Telegram),
+     щоб можна було звернутись напряму, не граючись із формами.
+     Менеджер — з window.MX_MANAGER (єдине джерело). Малюється у hero.html;
+     у OneBox на сторінці — лише блоки 1-4. Самодостатній блок.
 ============================================================================ -->
 <script>
 (function(){
@@ -6992,27 +6994,32 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   var CLIP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.4"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><path d="M12 11v4M10 13h4"/></svg>';
   var USER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
   var ARR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+  var CHK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  var PHONE= '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg>';
+  var TG   = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.5-7.7c.4-.3-.1-.5-.6-.2L6.6 13.2 2 11.8c-1-.3-1-1 .2-1.5l18.4-7.1c.8-.3 1.6.2 1.3 1.1Z"/></svg>';
 
   function css(){
     if(document.getElementById('mxRefCss')) return;
     var st = document.createElement('style'); st.id = 'mxRefCss';
     st.textContent = ''
       + '#mxReferralView, #mxReferralView *{ box-sizing:border-box; }'
-      + '#mxReferralView{ font-family:\'Manrope\',sans-serif; color:#0F172A; width:100%; flex:1 1 auto; min-width:0; margin-top:calc(6 * var(--u)); display:flex; flex-direction:column; gap:calc(14 * var(--u)); max-width:calc(760 * var(--u)); animation:mxRfUp .35s ease both; }'
+      + '#mxReferralView{ font-family:\'Manrope\',sans-serif; color:#0F172A; width:100%; flex:1 1 auto; min-width:0; margin-top:calc(6 * var(--u)); animation:mxRfUp .35s ease both; }'
       + '@keyframes mxRfUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }'
-      /* первинна картка — помітна, з глибиною */
+      + '#mxReferralView .mxrf-grid{ display:grid; grid-template-columns:minmax(0,1fr) calc(360 * var(--u)); gap:calc(24 * var(--u)); align-items:start; }'
+      + '#mxReferralView .mxrf-main{ display:flex; flex-direction:column; gap:calc(14 * var(--u)); min-width:0; }'
+      /* первинна картка */
       + '#mxReferralView .mxrf-primary{ display:flex; align-items:center; gap:calc(20 * var(--u)); background:linear-gradient(180deg,#FFFFFF,#FAFBFF); border:1px solid #E7EAF2; border-radius:calc(18 * var(--u)); padding:calc(24 * var(--u)) calc(26 * var(--u)); box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(15,23,42,0.04), 0 10px 22px rgba(15,23,42,0.06), 0 26px 48px rgba(15,23,42,0.07); }'
       + '#mxReferralView .mxrf-ic{ flex:0 0 auto; width:calc(56 * var(--u)); height:calc(56 * var(--u)); border-radius:calc(15 * var(--u)); background:#F3F5FF; color:#2c3bff; display:flex; align-items:center; justify-content:center; }'
       + '#mxReferralView .mxrf-ic svg{ width:calc(28 * var(--u)); height:calc(28 * var(--u)); }'
       + '#mxReferralView .mxrf-tx{ flex:1 1 auto; min-width:0; }'
       + '#mxReferralView .mxrf-t{ font-size:calc(19 * var(--u)); font-weight:800; letter-spacing:-0.025em; line-height:1.25; color:#0F172A; }'
-      + '#mxReferralView .mxrf-s{ margin-top:calc(6 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.55; color:#64748B; max-width:calc(420 * var(--u)); }'
+      + '#mxReferralView .mxrf-s{ margin-top:calc(6 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.55; color:#64748B; }'
       + '#mxReferralView .mxrf-btn{ flex:0 0 auto; display:inline-flex; align-items:center; gap:calc(9 * var(--u)); height:calc(46 * var(--u)); padding:0 calc(22 * var(--u)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14.5 * var(--u)); font-weight:600; border-radius:calc(12 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.12); transition:background .15s ease, transform .06s ease; white-space:nowrap; }'
       + '#mxReferralView .mxrf-btn:hover{ background:#1E293B; }'
       + '#mxReferralView .mxrf-btn:active{ transform:translateY(1px); }'
       + '#mxReferralView .mxrf-btn svg{ width:calc(16 * var(--u)); height:calc(16 * var(--u)); transition:transform .15s ease; }'
       + '#mxReferralView .mxrf-btn:hover svg{ transform:translateX(calc(3 * var(--u))); }'
-      /* вторинна смуга — тихіша */
+      /* вторинна смуга */
       + '#mxReferralView .mxrf-secondary{ display:flex; align-items:center; gap:calc(16 * var(--u)); background:#F7F9FC; border:1px solid #E8ECF3; border-radius:calc(15 * var(--u)); padding:calc(16 * var(--u)) calc(20 * var(--u)); transition:border-color .15s ease, box-shadow .15s ease; }'
       + '#mxReferralView .mxrf-secondary:hover{ border-color:#D7DEEA; box-shadow:0 4px 14px rgba(15,23,42,0.05); }'
       + '#mxReferralView .mxrf-ic-q{ flex:0 0 auto; width:calc(42 * var(--u)); height:calc(42 * var(--u)); border-radius:calc(12 * var(--u)); background:#EEF2F7; color:#94A3B8; display:flex; align-items:center; justify-content:center; }'
@@ -7023,8 +7030,44 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       + '#mxReferralView .mxrf-link:hover{ background:#E0E7FF; }'
       + '#mxReferralView .mxrf-link svg{ width:calc(14 * var(--u)); height:calc(14 * var(--u)); transition:transform .15s ease; }'
       + '#mxReferralView .mxrf-link:hover svg{ transform:translateX(calc(2 * var(--u))); }'
+      /* права темна панель */
+      + '#mxReferralView .mxrf-side-col{ position:sticky; top:calc(16 * var(--u)); align-self:start; }'
+      + '#mxReferralView .mxrf-side{ position:relative; overflow:hidden; background:linear-gradient(158deg,#151D30 0%,#0B1120 100%); border:1px solid rgba(255,255,255,0.06); border-radius:calc(20 * var(--u)); padding:calc(26 * var(--u)) calc(24 * var(--u)); color:#E7ECF5; box-shadow:0 calc(18 * var(--u)) calc(40 * var(--u)) rgba(11,17,32,0.26); }'
+      + '#mxReferralView .mxrf-side::before{ content:""; position:absolute; top:calc(-70 * var(--u)); right:calc(-55 * var(--u)); width:calc(190 * var(--u)); height:calc(190 * var(--u)); background:radial-gradient(circle, rgba(44,59,255,0.34), transparent 68%); pointer-events:none; }'
+      + '#mxReferralView .mxrf-side > *{ position:relative; }'
+      + '#mxReferralView .mxrf-eyebrow{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#8A97B4; margin-bottom:calc(10 * var(--u)); }'
+      + '#mxReferralView .mxrf-side-t{ font-size:calc(17 * var(--u)); font-weight:800; letter-spacing:-0.015em; color:#FFFFFF; margin:0 0 calc(8 * var(--u)); }'
+      + '#mxReferralView .mxrf-side-p{ font-size:calc(13.5 * var(--u)); font-weight:500; line-height:1.6; color:#B8C2D9; margin:0; }'
+      + '#mxReferralView .mxrf-steps-t{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#8A97B4; margin:calc(20 * var(--u)) 0 calc(13 * var(--u)); }'
+      + '#mxReferralView .mxrf-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:calc(11 * var(--u)); }'
+      + '#mxReferralView .mxrf-list li{ display:flex; align-items:flex-start; gap:calc(10 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:600; color:#DCE3F2; line-height:1.35; }'
+      + '#mxReferralView .mxrf-list li svg{ flex:0 0 auto; width:calc(17 * var(--u)); height:calc(17 * var(--u)); margin-top:calc(1 * var(--u)); color:#22C55E; }'
+      /* менеджер */
+      + '#mxReferralView .mxrf-mgr{ margin-top:calc(22 * var(--u)); padding-top:calc(18 * var(--u)); border-top:1px solid rgba(255,255,255,0.09); }'
+      + '#mxReferralView .mxrf-mgr-lbl{ font-size:calc(11 * var(--u)); font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#8A97B4; margin-bottom:calc(8 * var(--u)); }'
+      + '#mxReferralView .mxrf-mgr-hint{ font-size:calc(13 * var(--u)); font-weight:500; line-height:1.5; color:#B8C2D9; margin-bottom:calc(12 * var(--u)); }'
+      + '#mxReferralView .mxrf-mgr-name{ font-size:calc(15 * var(--u)); font-weight:700; letter-spacing:-0.01em; color:#FFFFFF; margin-bottom:calc(12 * var(--u)); }'
+      + '#mxReferralView .mxrf-mgr-row{ display:flex; flex-direction:column; gap:calc(8 * var(--u)); }'
+      + '#mxReferralView .mxrf-mgr-a{ display:inline-flex; align-items:center; gap:calc(9 * var(--u)); width:fit-content; max-width:100%; padding:calc(10 * var(--u)) calc(14 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:600; color:#E7ECF5 !important; text-decoration:none !important; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:calc(11 * var(--u)); transition:background .15s ease, border-color .15s ease; }'
+      + '#mxReferralView .mxrf-mgr-a:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.18); }'
+      + '#mxReferralView .mxrf-mgr-a svg{ width:calc(15 * var(--u)); height:calc(15 * var(--u)); color:#8FA0FF; flex:0 0 auto; }'
+      + '@media (max-width: 900px){ #mxReferralView .mxrf-grid{ grid-template-columns:1fr; } #mxReferralView .mxrf-side-col{ position:static; } }'
       + '@media (max-width: 720px){ #mxReferralView .mxrf-primary, #mxReferralView .mxrf-secondary{ flex-wrap:wrap; } #mxReferralView .mxrf-btn, #mxReferralView .mxrf-link{ width:100%; justify-content:center; } }';
     (document.head || document.documentElement).appendChild(st);
+  }
+
+  function managerHtml(){
+    var m = window.MX_MANAGER || {};
+    var name = (m.name || '').trim();
+    var phone = (m.phone || '').trim();
+    var tg = (m.tg || 'abmaxilla').trim().replace(/^@/, '');
+    var links = '';
+    if(phone){ links += '<a class="mxrf-mgr-a" href="tel:' + phone.replace(/[^\d+]/g, '') + '">' + PHONE + '<span>' + phone + '</span></a>'; }
+    links += '<a class="mxrf-mgr-a" href="https://t.me/' + tg + '" target="_blank" rel="noopener">' + TG + '<span>Telegram · @' + tg + '</span></a>';
+    return '<div class="mxrf-mgr"><div class="mxrf-mgr-lbl">Ваш менеджер</div>'
+      + '<div class="mxrf-mgr-hint">Не хочете оформлювати онлайн? Зателефонуйте або напишіть — допоможемо оформити направлення.</div>'
+      + (name ? '<div class="mxrf-mgr-name">' + name + '</div>' : '')
+      + '<div class="mxrf-mgr-row">' + links + '</div></div>';
   }
 
   function build(){
@@ -7032,12 +7075,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     if(!main) return false;
     if(document.getElementById('mxReferralView')) return true;
     css();
-    // ховаємо можливий рідний контент custompage (hero та footer не чіпаємо)
     Array.prototype.forEach.call(main.querySelectorAll('.os-block-element, .os-block-form'), function(e){
       if(!e.closest('#mxReferralView')) e.style.setProperty('display', 'none', 'important');
     });
     var view = document.createElement('div'); view.id = 'mxReferralView';
-    view.innerHTML =
+    var left =
         '<div class="mxrf-primary">'
       +   '<div class="mxrf-ic">' + CLIP + '</div>'
       +   '<div class="mxrf-tx"><div class="mxrf-t">Замовити доставку бланків</div>'
@@ -7050,6 +7092,21 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
       +     '<div class="mxrf-s2">Можна одразу записати пацієнта на дослідження.</div></div>'
       +   '<a class="mxrf-link" href="' + FORM_PAT + '">Записати пацієнта' + ARR + '</a>'
       + '</div>';
+    var side =
+        '<div class="mxrf-side">'
+      +   '<div class="mxrf-eyebrow">Направлення</div>'
+      +   '<div class="mxrf-side-t">Бланки для ваших пацієнтів</div>'
+      +   '<p class="mxrf-side-p">Друковані бланки направлень R-знімки. Заповнюєте — і видаєте пацієнту.</p>'
+      +   '<div class="mxrf-steps-t">Як це працює</div>'
+      +   '<ul class="mxrf-list">'
+      +     '<li>' + CHK + '<span>Замовляєте доставку бланків</span></li>'
+      +     '<li>' + CHK + '<span>Отримуєте їх Новою Поштою</span></li>'
+      +     '<li>' + CHK + '<span>Видаєте пацієнту — він записується та приходить на дослідження</span></li>'
+      +   '</ul>'
+      +   managerHtml()
+      + '</div>';
+    view.innerHTML = '<div class="mxrf-grid"><div class="mxrf-main">' + left + '</div>'
+      + '<div class="mxrf-side-col">' + side + '</div></div>';
     var hero = document.getElementById('mxHero');
     if(hero && hero.parentNode === main){ main.insertBefore(view, hero.nextSibling); }
     else { main.insertBefore(view, main.firstChild); }
