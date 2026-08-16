@@ -1035,6 +1035,30 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             location.href = (m && MX_FORM_BACK[m[1]]) || a.getAttribute('href') || '/client/custompage/40/';
         }, false);
     }
+    // ПОВНЕ завантаження форм-заявок. OneBox за замовчуванням вантажить внутрішні посилання
+    // частково (PJAX): при переході у /client/form/N/ зі сторінки «Направлення» (чи будь-якої
+    // іншої) стара розмітка лишається, а наш рендер форми відпрацьовує по недобудованому DOM —
+    // форма виглядає кривою до ручного оновлення. Перехоплюємо клік у capture-фазі (ДО PJAX)
+    // і робимо звичайний повний перехід — форма щоразу вантажиться «з чистого аркуша».
+    if(!window.__mxFullNavForm){
+        window.__mxFullNavForm = true;
+        document.addEventListener('click', function(e){
+            // ВАЖЛИВО: не виходимо по e.defaultPrevented — рідний PJAX-обробник OneBox теж
+            // слухає у capture-фазі й уже викликав preventDefault ДО нас (але не спиняє
+            // поширення, тож ми все одно спрацьовуємо). Просто робимо повний перехід —
+            // location.assign перекриває вже запущене часткове завантаження.
+            if(e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;  // нове вікно/таб — не чіпаємо
+            var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+            if(!a) return;
+            if(a.getAttribute('target') === '_blank') return;
+            if(a.classList && a.classList.contains('mx-fback')) return;   // «Назад» має свій обробник
+            var href = a.getAttribute('href') || '';
+            if(!/\/client\/form\/\d+/.test(href)) return;                 // тільки форми-заявки
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            window.location.assign(a.href);
+        }, true);
+    }
     function pageKey(){
         var p = location.pathname;
         if(p.indexOf('custompage/40') !== -1) return 'patients';
