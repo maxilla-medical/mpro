@@ -4033,7 +4033,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 + S + '.mx-empty-s{ font-size:calc(14.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.6; max-width:calc(440 * var(--u)); }'
                 + S + '.mx-empty-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(14 * var(--u)); height:calc(46 * var(--u)); padding:0 calc(24 * var(--u)); border-radius:calc(12 * var(--u)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14.5 * var(--u)); font-weight:600; box-shadow:0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(15,23,42,0.14); transition:background .15s ease, transform .15s ease; }'
                 + S + '.mx-empty-b:hover{ background:#1E293B; transform:translateY(-1px); }'
-                + S + '.mx-empty-b svg{ width:calc(17 * var(--u)); height:calc(17 * var(--u)); }';
+                + S + '.mx-empty-b svg{ width:calc(17 * var(--u)); height:calc(17 * var(--u)); }'
+                // імʼя пацієнта у списках — того ж кегля, що й назва послуги в сусідньому стовпці
+                // (рідний .mx-rowtext дрібніший за дефолт клітинки; вирівнюємо до 15u)
+                + S + 'table.os-table td a.mx-rowtext{ font-size:calc(15 * var(--u)) !important; }';
             (document.head || document.documentElement).appendChild(st);
         }
         var PLUS_ICO   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>';
