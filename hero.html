@@ -4112,7 +4112,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             }
             return true;
         }
-        var n = 0, t = setInterval(function(){ n++; if(run() || n > 40) clearInterval(t); }, 250);
+        var n = 0, _mxLp = location.pathname, t = setInterval(function(){ n++; if(location.pathname !== _mxLp || run() || n > 40) clearInterval(t); }, 250);
         run();
     })();
     // імена пацієнтів у таблицях кабінету — з КАПСУ в людський регістр (лише показ)
@@ -5003,9 +5003,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     css();
 
     (function(){
-      var n = 0;
+      var n = 0, _mxp = location.pathname;
       var h = setInterval(function(){
         n++;
+        // PJAX: якщо навігація змінилась — наш екран уже не тут; припиняємо ховати,
+        // інакше глушимо блоки (зокрема пошук) на наступній сторінці
+        if (location.pathname !== _mxp){ clearInterval(h); return; }
         ['mxProcTop', 'mxProcGrid'].forEach(function(id){
           var e = document.getElementById(id); if (e) e.style.setProperty('display', 'none', 'important');
         });
@@ -5456,9 +5459,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     css();
 
     (function(){
-      var n = 0;
+      var n = 0, _mxp = location.pathname;
       var h = setInterval(function(){
         n++;
+        // PJAX: навігація змінилась — наш екран уже не тут; припиняємо ховати блоки
+        // наступної сторінки (зокрема пошук)
+        if(location.pathname !== _mxp){ clearInterval(h); return; }
         ['mxProcTop', 'mxProcGrid'].forEach(function(id){
           var e = document.getElementById(id); if(e) e.style.setProperty('display', 'none', 'important');
         });
@@ -5929,9 +5935,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     css();
 
     (function(){
-      var n = 0;
+      var n = 0, _mxp = location.pathname;
       var h = setInterval(function(){
         n++;
+        // PJAX: навігація змінилась — наш екран уже не тут; припиняємо ховати блоки
+        // наступної сторінки (зокрема пошук)
+        if(location.pathname !== _mxp){ clearInterval(h); return; }
         ['mxProcTop', 'mxProcGrid'].forEach(function(id){
           var e = document.getElementById(id); if(e) e.style.setProperty('display', 'none', 'important');
         });
@@ -6533,9 +6542,12 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     css();
 
     (function(){
-      var n = 0;
+      var n = 0, _mxp = location.pathname;
       var h = setInterval(function(){
         n++;
+        // PJAX: навігація змінилась — наш екран уже не тут; припиняємо ховати блоки
+        // наступної сторінки (зокрема пошук)
+        if(location.pathname !== _mxp){ clearInterval(h); return; }
         ['mxProcTop', 'mxProcGrid'].forEach(function(id){
           var e = document.getElementById(id); if(e) e.style.setProperty('display', 'none', 'important');
         });
@@ -7330,42 +7342,5 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
   else watch();
   window.addEventListener('mx:navigated', watch);
-})();
-</script>
-
-<!-- ============================================================================
-     MX-FOOTER-LINKS — тимчасово прибираємо посилання політик з футера.
-     Поки сторінки політик не готові: «Публічна оферта» і «Конфіденційність»
-     лишаємо ПРОСТО ТЕКСТОМ (без href, без кліку), «Повернення» — прибираємо.
-     Правка у hero, щоб не чіпати footer.html окремим пушем; коли політики
-     зʼявляться — цей блок прибрати, і рідні посилання з footer.html знову діють.
-============================================================================ -->
-<script>
-(function(){
-  function fixFooter(){
-    var f = document.getElementById('mxFooterWrap');
-    if(!f) return false;
-    if(f.getAttribute('data-mxfx')) return true;
-    var links = f.querySelectorAll('a[href*="/policies/"]');
-    if(!links.length) return false;   // футер ще без посилань — чекаємо
-    Array.prototype.forEach.call(links, function(a){
-      var href = a.getAttribute('href') || '';
-      if(/refund/i.test(href)){ if(a.parentNode) a.parentNode.removeChild(a); return; }  // «Повернення» — геть
-      // «Публічна оферта» / «Конфіденційність» → звичайний текст (без посилання)
-      var span = document.createElement('span');
-      span.textContent = (a.textContent || '').trim();
-      if(a.getAttribute('style')) span.setAttribute('style', a.getAttribute('style'));
-      span.style.cursor = 'default';
-      span.style.textDecoration = 'none';
-      if(a.parentNode) a.parentNode.replaceChild(span, a);
-    });
-    f.setAttribute('data-mxfx', '1');
-    return true;
-  }
-  var n = 0, t = setInterval(function(){ n++; if(fixFooter() || n > 60) clearInterval(t); }, 200);
-  fixFooter();
-  window.addEventListener('mx:navigated', function(){
-    var n2 = 0, t2 = setInterval(function(){ n2++; if(fixFooter() || n2 > 60) clearInterval(t2); }, 200);
-  });
 })();
 </script>
