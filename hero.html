@@ -5477,6 +5477,27 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     host.insertBefore(view, host.firstChild);
     markDownloads(view);
     mobileOrder(view);
+    // ПІДСТРАХОВКА ВІД ГОНКИ: універсальний блок «Статус» інколи дорендериться вже після
+    // побудови — тоді ми показали ранній етап. Стежимо ще кілька секунд і за зміни етапу
+    // перебудовуємо екран один раз коректно, без ручного оновлення сторінки.
+    (function(){
+      var baseStage = stageOf(d.status), rc = 0;
+      var ri = setInterval(function(){
+        rc++;
+        var now = readStatus();
+        if(now && stageOf(now) !== baseStage){
+          clearInterval(ri);
+          var old = document.getElementById('mxOpisView'); if(!old || !old.parentNode) return;
+          var d2 = read(src);
+          var w2 = document.createElement('div'); w2.innerHTML = build(d2);
+          old.parentNode.replaceChild(w2.firstChild, old);
+          var nv = document.getElementById('mxOpisView');
+          if(nv){ markDownloads(nv); mobileOrder(nv); }
+          return;
+        }
+        if(rc > 28) clearInterval(ri);   // ~7с підстраховки
+      }, 250);
+    })();
     return true;
   }
 
@@ -5929,6 +5950,28 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     host.insertBefore(view, host.firstChild);
     markDownloads(view);
     mobileOrder(view);
+    // ПІДСТРАХОВКА ВІД ГОНКИ: універсальний блок «Статус» інколи дорендериться ВЖЕ
+    // після побудови — тоді ми могли показати ранній етап (напр. «В обробці» + без файлу
+    // на реально виконаному аналізі). Ще кілька секунд стежимо і, якщо реальний статус
+    // змінює етап, перебудовуємо екран ОДИН раз коректно — без ручного оновлення сторінки.
+    (function(){
+      var baseStage = stageOf(d.status), rc = 0;
+      var ri = setInterval(function(){
+        rc++;
+        var now = readStatus();
+        if(now && stageOf(now) !== baseStage){
+          clearInterval(ri);
+          var old = document.getElementById('mxCephView'); if(!old || !old.parentNode) return;
+          var d2 = read(src);
+          var w2 = document.createElement('div'); w2.innerHTML = build(d2);
+          old.parentNode.replaceChild(w2.firstChild, old);
+          var nv = document.getElementById('mxCephView');
+          if(nv){ markDownloads(nv); mobileOrder(nv); }
+          return;
+        }
+        if(rc > 28) clearInterval(ri);   // ~7с підстраховки
+      }, 250);
+    })();
     return true;
   }
 
@@ -6512,6 +6555,27 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     markDownloads(view);
     mobileOrder(view);
     mountEditors(view, stageOf(d.status));
+    // ПІДСТРАХОВКА ВІД ГОНКИ: універсальний блок «Статус» інколи дорендериться вже після
+    // побудови — тоді ми показали ранній етап. Стежимо ще кілька секунд і за зміни етапу
+    // перебудовуємо екран один раз коректно, без ручного оновлення сторінки.
+    (function(){
+      var baseStage = stageOf(d.status), rc = 0;
+      var ri = setInterval(function(){
+        rc++;
+        var now = readStatus();
+        if(now && stageOf(now) !== baseStage){
+          clearInterval(ri);
+          var old = document.getElementById('mxSuperView'); if(!old || !old.parentNode) return;
+          var d2 = read(src);
+          var w2 = document.createElement('div'); w2.innerHTML = build(d2);
+          old.parentNode.replaceChild(w2.firstChild, old);
+          var nv = document.getElementById('mxSuperView');
+          if(nv){ markDownloads(nv); mobileOrder(nv); mountEditors(nv, stageOf(d2.status)); }
+          return;
+        }
+        if(rc > 28) clearInterval(ri);   // ~7с підстраховки
+      }, 250);
+    })();
     return true;
   }
 
@@ -7266,5 +7330,42 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
   else watch();
   window.addEventListener('mx:navigated', watch);
+})();
+</script>
+
+<!-- ============================================================================
+     MX-FOOTER-LINKS — тимчасово прибираємо посилання політик з футера.
+     Поки сторінки політик не готові: «Публічна оферта» і «Конфіденційність»
+     лишаємо ПРОСТО ТЕКСТОМ (без href, без кліку), «Повернення» — прибираємо.
+     Правка у hero, щоб не чіпати footer.html окремим пушем; коли політики
+     зʼявляться — цей блок прибрати, і рідні посилання з footer.html знову діють.
+============================================================================ -->
+<script>
+(function(){
+  function fixFooter(){
+    var f = document.getElementById('mxFooterWrap');
+    if(!f) return false;
+    if(f.getAttribute('data-mxfx')) return true;
+    var links = f.querySelectorAll('a[href*="/policies/"]');
+    if(!links.length) return false;   // футер ще без посилань — чекаємо
+    Array.prototype.forEach.call(links, function(a){
+      var href = a.getAttribute('href') || '';
+      if(/refund/i.test(href)){ if(a.parentNode) a.parentNode.removeChild(a); return; }  // «Повернення» — геть
+      // «Публічна оферта» / «Конфіденційність» → звичайний текст (без посилання)
+      var span = document.createElement('span');
+      span.textContent = (a.textContent || '').trim();
+      if(a.getAttribute('style')) span.setAttribute('style', a.getAttribute('style'));
+      span.style.cursor = 'default';
+      span.style.textDecoration = 'none';
+      if(a.parentNode) a.parentNode.replaceChild(span, a);
+    });
+    f.setAttribute('data-mxfx', '1');
+    return true;
+  }
+  var n = 0, t = setInterval(function(){ n++; if(fixFooter() || n > 60) clearInterval(t); }, 200);
+  fixFooter();
+  window.addEventListener('mx:navigated', function(){
+    var n2 = 0, t2 = setInterval(function(){ n2++; if(fixFooter() || n2 > 60) clearInterval(t2); }, 200);
+  });
 })();
 </script>
