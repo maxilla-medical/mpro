@@ -1423,6 +1423,11 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 var val = '';
                 var dv = el.querySelector('.data-view'); if(dv){ val = (dv.textContent || '').replace(/\s+/g, ' ').trim(); }
                 if(!val){ var vi = el.querySelector('.data-edit input, .data-edit textarea, .data-edit select'); if(vi){ val = (vi.value || '').trim(); } }
+                // нерозвʼязані підстановки / службові коментарі блоків OneBox («[ Данные о заказе на
+                // сканировании ]», «{|...|}») — це не значення поля; у квитанцію не виводимо
+                if(val && (/^\s*\[[^\]]*\]\s*$/.test(val) || /\{\||\|\}/.test(val))){
+                    el.classList.add('mx-rc-empty'); return;
+                }
                 if(val){ val = mxName(val); }                       // КАПС → людський регістр (лише показ)
                 if(low.indexOf('пацієнт') !== -1 && val){ mxPatient = val; }
                 var isOffer = low.indexOf('пропозиц') !== -1;
@@ -1511,7 +1516,10 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                 'Необхідні правки': ['Вносимо правки', 'Врахуємо ваші зауваження та повернемо планування на погодження.'],
                 'Погоджено клієнтом':['Планування затверджено', 'Передаємо шаблон у виробництво.'],
                 'Виробництво':      ['Виготовляємо шаблон', 'Далі — відправка Новою Поштою.'],
-                'Готове до відправки':['Шаблон готовий', 'Найближчим часом передамо у Нову Пошту.']
+                'Готове до відправки':['Шаблон готовий', 'Найближчим часом передамо у Нову Пошту.'],
+                'Відправлено':      ['Замовлення в дорозі', 'Очікуйте посилку Новою Поштою.'],
+                'Успішно реалізовано':['Замовлення доставлено', 'Дякуємо, що обрали MAXILLA.'],
+                'Закрито та не реалізовано':['Замовлення закрито', 'Якщо це помилка — напишіть нам, і ми повернемось до кейса.']
             };
             // тексти для 3D-друку: свій, коротший сценарій
             var HERO_PRINT = {
@@ -1528,6 +1536,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             };
             var hcfg = (isPrintP && HERO_PRINT[status]) || HERO_ACT[status] || HERO_PASS_ST[status] || HERO_PASS[m.s - 1] || HERO_PASS[0];
             var isAct = isPrintP ? /пропозиц|рахунок висталено/i.test(status) : !!HERO_ACT[status];
+            var isDelivered = /успішно реалізован/i.test(status);   // фінал: замовлення доставлено
+            var isClosed = /закрито та не реалізован/i.test(status);
+            var icoDone = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>';
             var icoClock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
             var icoBell  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
             var icoCog   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.36.4.66.73.86.3.19.65.29 1 .29H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
@@ -1540,7 +1551,9 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var SHORT_ST = ST_LIST;
             var lbls = '';
             SHORT_ST.forEach(function(nm, i){
-                lbls += '<span class="' + (i + 1 === m.s ? 'mx-on' : (i + 1 < m.s ? 'mx-done' : '')) + '">' + nm + '</span>';
+                // доставлено — весь шлях пройдено (усі етапи «done», без активного)
+                var c = isDelivered ? 'mx-done' : (i + 1 === m.s ? 'mx-on' : (i + 1 < m.s ? 'mx-done' : ''));
+                lbls += '<span class="' + c + '">' + nm + '</span>';
             });
             // праворуч у hero — ідентичність кейса (№ + пацієнт), а не бейдж-дубль статусу:
             // лікар з півпогляду бачить, ЧИЙ це кейс, не шукаючи в квитанції
@@ -1552,7 +1565,7 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                     + '</span>';
             }
             hero.innerHTML =
-                '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isAct ? icoBell : (isPlanning || isFixing ? icoCog : icoClock)) + '</span>' +
+                '<div class="mx-hst-row"><span class="mx-hst-ic">' + (isDelivered ? icoDone : (isAct ? icoBell : (isPlanning || isFixing ? icoCog : icoClock))) + '</span>' +
                 '<span class="mx-hst-tt"><span class="mx-hst-t">' + hcfg[0] + '</span><span class="mx-hst-s">' + hcfg[1] + '</span></span>' +
                 heroId + '</div>' +
                 '<div class="mx-hbar-row"><span class="mx-hbar"><span class="mx-hbar-fill" style="width:' + pct + '%"></span>' + ticks + '</span></div>' +
@@ -2879,6 +2892,29 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
                         if(!p.querySelector('.nc-block-change-status')){ p.style.display = 'none'; }
                     });
                     mxTrackLayout(col, m, statusBase);   // еталон екрана етапу: квитанція + жива панель
+                    // фінальні етапи (напр. «Успішно реалізовано») інколи лишають сирий службовий
+                    // блок OneBox — червоний підпис «ШАБЛОНИ Етап "…"» чи невирішену підстановку
+                    // «[ … ]». Це не контент для клієнта — ховаємо все, що лишилось поза нашим макетом.
+                    (function mxHideStageLeak(){
+                        var STAGE   = /(шаблон[иі]?|3\s*d[\s\-]*друк|друк)\s*[—:–\-]*\s*етап/i;
+                        var QUOTED  = /етап\s*[«"'][^»"']{2,}[»"']/i;
+                        var BRACKET = /^\s*\[[^\]]{2,}\]\s*$/;
+                        function sweep(){
+                            Array.prototype.forEach.call(col.querySelectorAll('*'), function(e){
+                                if(e.children.length) return;                   // лише листові вузли
+                                if(e.closest && (e.closest('#mxProcGrid') || e.closest('#mxProcTop'))) return;
+                                var t = (e.textContent || '').replace(/\s+/g, ' ').trim();
+                                if(!t || t.length > 90) return;
+                                if(!(BRACKET.test(t) || STAGE.test(t) || QUOTED.test(t))) return;
+                                var box = e.closest ? e.closest('.os-block-element') : null;
+                                if(!box){ box = e; while(box.parentElement && box.parentElement !== col){ box = box.parentElement; } }
+                                if(box.closest && (box.closest('#mxProcGrid') || box.closest('#mxProcTop'))) return;
+                                if(box.classList && (box.classList.contains('nc-block-history') || box.classList.contains('nc-block-change-status'))) return;
+                                box.style.setProperty('display', 'none', 'important');
+                            });
+                        }
+                        sweep(); setTimeout(sweep, 500); setTimeout(sweep, 1400);
+                    })();
                 }
                 return;
             }
@@ -3966,20 +4002,31 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             var S = '.client-cell-body:not(.aside-left):not(.aside-right) ';
             st.textContent = ''
                 + S + '.mx-sec-label .mx-list-cap{ margin-left:calc(14 * var(--u)); font-weight:500; font-size:calc(12.5 * var(--u)); text-transform:none; letter-spacing:0; color:inherit; opacity:.82; white-space:normal; background:none !important; background-color:transparent !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; padding:0 !important; }'
-                + S + '.mx-empty{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(9 * var(--u)); background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(18 * var(--u)); padding:calc(42 * var(--u)) calc(24 * var(--u)); box-shadow:0 1px 3px rgba(15,23,42,0.04); font-family:\'Manrope\',sans-serif; animation:mxUp .35s ease both; }'
-                + S + '.mx-empty-ic{ width:calc(58 * var(--u)); height:calc(58 * var(--u)); border-radius:50%; background:#F4F6FB; display:flex; align-items:center; justify-content:center; color:#A9B2C1; margin-bottom:calc(4 * var(--u)); }'
-                + S + '.mx-empty-ic svg{ width:calc(27 * var(--u)); height:calc(27 * var(--u)); }'
-                + S + '.mx-empty-t{ font-size:calc(17 * var(--u)); font-weight:800; letter-spacing:-0.02em; color:#0F172A; }'
-                + S + '.mx-empty-s{ font-size:calc(13.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.55; max-width:calc(440 * var(--u)); }'
-                + S + '.mx-empty-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(10 * var(--u)); height:calc(42 * var(--u)); padding:0 calc(20 * var(--u)); border-radius:calc(11 * var(--u)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14 * var(--u)); font-weight:600; transition:background .15s ease; }'
-                + S + '.mx-empty-b:hover{ background:#1E293B; }';
+                + S + '.mx-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:calc(10 * var(--u)); min-height:58vh; background:#FFFFFF; border:1px solid #E4E8EF; border-radius:calc(22 * var(--u)); padding:calc(48 * var(--u)) calc(28 * var(--u)); box-shadow:0 calc(2 * var(--u)) calc(10 * var(--u)) rgba(15,23,42,0.04); font-family:\'Manrope\',sans-serif; animation:mxUp .4s ease both; }'
+                + S + '.mx-empty-ic{ position:relative; width:calc(96 * var(--u)); height:calc(96 * var(--u)); border-radius:50%; background:radial-gradient(circle at 50% 38%, #EEF1FF 0%, #F4F6FB 72%); display:flex; align-items:center; justify-content:center; color:#8B96AD; margin-bottom:calc(8 * var(--u)); box-shadow:0 0 0 calc(9 * var(--u)) rgba(44,59,255,0.045), 0 0 0 calc(18 * var(--u)) rgba(44,59,255,0.022); }'
+                + S + '.mx-empty-ic svg{ width:calc(42 * var(--u)); height:calc(42 * var(--u)); }'
+                + S + '.mx-empty-t{ font-size:calc(22 * var(--u)); font-weight:800; letter-spacing:-0.025em; color:#0F172A; }'
+                + S + '.mx-empty-s{ font-size:calc(14.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.6; max-width:calc(440 * var(--u)); }'
+                + S + '.mx-empty-b{ display:inline-flex; align-items:center; gap:calc(8 * var(--u)); margin-top:calc(14 * var(--u)); height:calc(46 * var(--u)); padding:0 calc(24 * var(--u)); border-radius:calc(12 * var(--u)); background:#0F172A; color:#FFFFFF !important; text-decoration:none !important; font-size:calc(14.5 * var(--u)); font-weight:600; box-shadow:0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(15,23,42,0.14); transition:background .15s ease, transform .15s ease; }'
+                + S + '.mx-empty-b:hover{ background:#1E293B; transform:translateY(-1px); }'
+                + S + '.mx-empty-b svg{ width:calc(17 * var(--u)); height:calc(17 * var(--u)); }';
             (document.head || document.documentElement).appendChild(st);
+        }
+        var PLUS_ICO   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>';
+        var SEARCH_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>';
+        // чи застосований фільтр пошуку (порожньо через пошук ≠ порожній розділ)
+        function mxFiltered(){
+            var q = location.search || '';
+            var m = q.match(/[?&]filter[a-z]*=([^&]*)/i);
+            return !!(m && decodeURIComponent(m[1]).replace(/\+/g, ' ').trim());
         }
         function run(){
             var col = document.querySelector('.client-cell-body:not(.aside-left):not(.aside-right)');
             if(!col) return false;
             var table = col.querySelector('table.os-table');
-            if(!table) return false;   // таблиця ще не відрендерилась — пробуємо ще
+            // порожній список: OneBox не малює table.os-table, лише <div class="os-message-info">Нет данных.</div>
+            var msg = col.querySelector('.os-block-panel .os-message-info') || col.querySelector('.os-message-info');
+            if(!table && !msg) return false;   // сторінка ще не відрендерилась — пробуємо ще
             // «Описи знімків» (/myorders/) — сторінковий H1 схлопнутий (0px проти 20px на custompage),
             // через що пошук стоїть на ~20px вище. Вирівнюємо відступ панелі під решту розділів.
             if(key === 'reports'){
@@ -3988,31 +4035,56 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
             }
             // тиха підпис ПОРУЧ із заголовком таблиці («Найновіші …»), тим самим кольором, без картки
             var lbl = col.querySelector('.mx-sec-label');
-            if(lbl && LIST_INFO[key] && !lbl.querySelector('.mx-list-cap')){
+            if(table && lbl && LIST_INFO[key] && !lbl.querySelector('.mx-list-cap')){
                 var cap = document.createElement('span'); cap.className = 'mx-list-cap';
                 cap.textContent = LIST_INFO[key];
                 lbl.appendChild(cap);
             }
-            var dataRows = table.querySelectorAll('tbody tr a[href*="/order/"]').length;
+            var dataRows = table ? table.querySelectorAll('tbody tr a[href*="/order/"]').length : 0;
             var wrap = col.querySelector('.os-overflow-table');
             var panel = col.querySelector('.os-block-panel');
             var massac = panel ? panel.querySelector('.nc-block-change-status') : null;
+            var tog = panel ? panel.querySelector('.nc-params-form-toggler') : null;
+            var pform = panel ? panel.querySelector('.os-block-form.params-form') : null;
             var existing = col.querySelector('.mx-empty');
             if(dataRows === 0){
+                var filtered = mxFiltered();
                 if(!existing){
                     var e = document.createElement('div'); e.className = 'mx-empty';
-                    e.innerHTML = '<div class="mx-empty-ic">' + EMPTY_ICO + '</div>'
-                        + '<div class="mx-empty-t">' + (LIST_EMPTY[key] || 'Тут поки що порожньо') + '</div>'
-                        + '<div class="mx-empty-s">Скористайтесь пошуком вище або створіть нове — кнопкою «' + ctaCfg.text + '».</div>'
-                        + '<a class="mx-empty-b" href="' + ctaCfg.href + '">' + ctaCfg.text + '</a>';
-                    (wrap || table).parentNode.insertBefore(e, (wrap || table));
+                    var eHtml;
+                    if(filtered){
+                        // порожньо через пошук — не «створи нове», а «скинь фільтр»
+                        eHtml = '<div class="mx-empty-ic">' + SEARCH_ICO + '</div>'
+                            + '<div class="mx-empty-t">Нічого не знайдено</div>'
+                            + '<div class="mx-empty-s">За вашим запитом немає результатів. Спробуйте змінити пошук або перегляньте весь список.</div>'
+                            + '<a class="mx-empty-b" href="' + location.pathname + '">Показати всі</a>';
+                    } else {
+                        eHtml = '<div class="mx-empty-ic">' + EMPTY_ICO + '</div>'
+                            + '<div class="mx-empty-t">' + (LIST_EMPTY[key] || 'Тут поки що порожньо') + '</div>'
+                            + '<div class="mx-empty-s">Коли зʼявляться — вони будуть тут. Почніть із кнопки «' + ctaCfg.text + '».</div>'
+                            + '<a class="mx-empty-b" href="' + ctaCfg.href + '">' + PLUS_ICO + ctaCfg.text + '</a>';
+                    }
+                    e.innerHTML = eHtml;
+                    var anchor = wrap || table || msg;
+                    if(anchor && anchor.parentNode){ anchor.parentNode.insertBefore(e, anchor); }
+                    else { (panel || col).appendChild(e); }
                 }
                 if(wrap) wrap.style.display = 'none';
                 if(massac) massac.style.display = 'none';
+                if(msg) msg.style.setProperty('display', 'none', 'important');
+                // порожній розділ (без фільтра) — прибираємо пошук, щоб екран був цілісним;
+                // у режимі «нічого не знайдено» пошук лишаємо (треба скинути/змінити запит)
+                if(!filtered){
+                    if(tog) tog.style.setProperty('display', 'none', 'important');
+                    if(pform) pform.style.setProperty('display', 'none', 'important');
+                }
             } else {
                 if(existing && existing.parentNode) existing.parentNode.removeChild(existing);
                 if(wrap) wrap.style.display = '';
                 if(massac) massac.style.display = '';
+                if(msg) msg.style.display = '';
+                if(tog) tog.style.display = '';
+                if(pform) pform.style.display = '';
             }
             return true;
         }
@@ -6505,6 +6577,15 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
 #mxBonusView .mxb-empty-ic svg{ width:calc(26 * var(--u)); height:calc(26 * var(--u)); }
 #mxBonusView .mxb-empty-t{ font-size:calc(17 * var(--u)); font-weight:800; letter-spacing:-0.02em; color:#0F172A; }
 #mxBonusView .mxb-empty-s{ font-size:calc(13.5 * var(--u)); font-weight:500; color:#64748B; line-height:1.55; max-width:calc(420 * var(--u)); }
+
+/* пагінація: рідний елемент OneBox («1 2 3 … 55 Вперед ›») → пілюлі у нашому стилі */
+#mxBonusView .mxb-pager{ display:flex !important; flex-wrap:wrap; align-items:center; justify-content:center; gap:calc(6 * var(--u)); margin:calc(18 * var(--u)) 0 calc(2 * var(--u)); padding:0 !important; list-style:none !important; font-family:'Manrope',sans-serif; text-align:center; }
+#mxBonusView .mxb-pager li{ display:inline-flex; margin:0 !important; padding:0 !important; list-style:none !important; background:none !important; }
+#mxBonusView .mxb-pager a, #mxBonusView .mxb-pager span, #mxBonusView .mxb-pager b, #mxBonusView .mxb-pager strong{ display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; min-width:calc(34 * var(--u)); height:calc(34 * var(--u)); padding:0 calc(11 * var(--u)); border-radius:calc(9 * var(--u)); font-size:calc(13.5 * var(--u)); font-weight:600; line-height:1; color:#334155 !important; text-decoration:none !important; background:#FFFFFF !important; border:1px solid #E4E8EF !important; box-shadow:none !important; transition:background .15s ease, border-color .15s ease, color .15s ease; }
+#mxBonusView .mxb-pager a:hover{ background:#F4F6FB !important; border-color:#CBD5E1 !important; color:#0F172A !important; }
+#mxBonusView .mxb-pager .mxb-pg-cur{ background:#0F172A !important; border-color:#0F172A !important; color:#FFFFFF !important; cursor:default; }
+#mxBonusView .mxb-pager .mxb-pg-dots{ min-width:auto !important; padding:0 calc(4 * var(--u)) !important; border:0 !important; background:transparent !important; color:#94A3B8 !important; font-weight:700; }
+#mxBonusView .mxb-pager .mxb-pg-nav{ padding:0 calc(14 * var(--u)); font-weight:700; }
 `;
     (document.head || document.documentElement).appendChild(st);
   }
@@ -6656,6 +6737,46 @@ body.mx-payflow [class*="client-info-popup"]{ display:none !important; }
     host.appendChild(view);
 
     decorate(table, mainCol);
+
+    // рідна пагінація OneBox: знаходимо контейнер із номерами сторінок / «Вперед» і переносимо
+    // під таблицю в нашому стилі. Клас точний знати не треба — шукаємо за вмістом (номери + навігація).
+    (function(){
+      var NAV = /^(вперед|назад|далі|попередня|наступна|»|«|›|‹|→|←|>>|<<|>|<)$/i;
+      function findPager(scope, exclude){
+        var groups = [], counts = [];
+        Array.prototype.forEach.call(scope.querySelectorAll('a'), function(a){
+          if(exclude && exclude.contains(a)) return;
+          var tx = (a.textContent || '').replace(/\s+/g, ' ').trim();
+          var href = a.getAttribute('href') || '';
+          var isNum = /^\d{1,4}$/.test(tx);
+          var isNav = NAV.test(tx) || /[?&#/](page|pg|p)[=/]/i.test(href);
+          if(!isNum && !isNav) return;
+          var p = a.parentElement; if(!p) return;
+          var idx = groups.indexOf(p);
+          if(idx === -1){ groups.push(p); counts.push(1); } else { counts[idx]++; }
+        });
+        var best = null, bestN = 0;
+        for(var i = 0; i < groups.length; i++){ if(counts[i] > bestN){ bestN = counts[i]; best = groups[i]; } }
+        return bestN >= 2 ? best : null;
+      }
+      function stylePager(pg){
+        if(!pg || pg.getAttribute('data-mxpg')) return;
+        pg.setAttribute('data-mxpg', '1'); pg.classList.add('mxb-pager');
+        Array.prototype.forEach.call(pg.querySelectorAll('a, span, b, strong'), function(el){
+          if(el.querySelector('a, span, b, strong')) return;   // лише «листові» вузли
+          var tx = (el.textContent || '').replace(/\s+/g, ' ').trim();
+          if(!tx){ return; }
+          if(/^(\.{2,}|…)$/.test(tx)){ el.classList.add('mxb-pg-dots'); return; }
+          if(NAV.test(tx)){ el.classList.add('mxb-pg-nav'); }
+          var isCur = /(^|\s)(active|current|selected|is-active|on)(\s|$)/i.test(el.className)
+                   || (el.tagName !== 'A' && /^\d{1,4}$/.test(tx));
+          if(isCur){ el.classList.add('mxb-pg-cur'); }
+        });
+      }
+      var pg = findPager(host, table);
+      if(pg){ if(pg.parentElement !== mainCol){ mainCol.appendChild(pg); } stylePager(pg); }
+    })();
+
     host.setAttribute('data-mxb', '1');
     return true;
   }
